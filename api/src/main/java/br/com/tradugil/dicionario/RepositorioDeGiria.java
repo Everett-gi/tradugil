@@ -66,13 +66,29 @@ public interface RepositorioDeGiria extends JpaRepository<Giria, Long> {
                                     @Param("limite") int limite);
 
     /**
-     * Busca paginável da tela de dicionário, com filtro opcional de idioma.
-     * O {@code :idioma IS NULL} evita duas consultas quase idênticas.
+     * Busca paginável da tela de dicionário e do catálogo, com filtros
+     * opcionais de idioma e de categoria. Os {@code IS NULL} evitam quatro
+     * consultas quase idênticas.
+     *
+     * <p>Com o termo vazio ela vira navegação: {@code LIKE '%'} casa tudo, as
+     * duas primeiras chaves de ordenação empatam em zero e sobra a ordem
+     * alfabética. É assim que o catálogo lista uma categoria inteira, sem
+     * precisar de uma segunda consulta com quase a mesma cara.</p>
+     *
+     * <p>O {@code incluirNsfw} precisa de {@code CAST}: os outros parâmetros
+     * têm o tipo deduzido pela comparação em que aparecem, e este apareceria
+     * sozinho. Sem o cast, o Postgres recusa a consulta com "could not
+     * determine data type of parameter".</p>
      */
     @Query(value = """
             SELECT g.* FROM giria g
             JOIN idioma i ON i.id = g.idioma_id
             WHERE (:idioma IS NULL OR i.codigo = :idioma)
+              AND (:categoria IS NULL OR EXISTS (
+                     SELECT 1 FROM giria_categoria gc
+                     JOIN categoria c ON c.id = gc.categoria_id
+                     WHERE gc.giria_id = g.id AND c.slug = :categoria))
+              AND (CAST(:incluirNsfw AS BOOLEAN) OR NOT g.nsfw)
               AND (g.termo_normalizado LIKE :prefixo
                    OR similarity(g.termo_normalizado, :termo) >= :limiar)
             ORDER BY
@@ -84,6 +100,8 @@ public interface RepositorioDeGiria extends JpaRepository<Giria, Long> {
     List<Giria> pesquisar(@Param("termo") String termo,
                           @Param("prefixo") String prefixo,
                           @Param("idioma") String idioma,
+                          @Param("categoria") String categoria,
+                          @Param("incluirNsfw") boolean incluirNsfw,
                           @Param("limiar") double limiar,
                           @Param("limite") int limite,
                           @Param("deslocamento") int deslocamento);

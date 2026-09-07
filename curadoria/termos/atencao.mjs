@@ -121,8 +121,7 @@ export default [
 
   { termo: "aliciamento", idioma: "pt-BR", categorias: ["atencao"], risco: true, variacoes: ["grooming"], sentidos: [
     { simples: "Quando um adulto se aproxima de uma criança ou adolescente pela internet para ganhar confiança com intenção sexual.",
-      detalhada: "Do inglês \"grooming\". Começa com amizade, elogios e presentes, e evolui devagar para isolamento e segredo. É crime no Brasil, previsto no Estatuto da Criança e do Adolescente.",
-      formal: "aliciamento" }]},
+      detalhada: "Do inglês \"grooming\". Começa com amizade, elogios e presentes, e evolui devagar para isolamento e segredo. É crime no Brasil, previsto no Estatuto da Criança e do Adolescente." }]},
 
   { termo: "sugar", idioma: "en", categorias: ["atencao"], risco: true, variacoes: ["sugar daddy", "sugar baby"], sentidos: [
     { simples: "Relação em que uma pessoa mais velha dá dinheiro ou presentes a uma mais jovem.",

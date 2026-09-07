@@ -69,13 +69,11 @@ export default [
 
   { termo: "ontem", idioma: "pt-BR", categorias: ["tempo"], variacoes: ["ont"], sentidos: [
     { simples: "Escrito \"ont\", é a abreviação de ontem.",
-      detalhada: "Segue o padrão de cortar o fim da palavra, comum na escrita rápida.",
-      formal: "ontem" }]},
+      detalhada: "Segue o padrão de cortar o fim da palavra, comum na escrita rápida." }]},
 
   { termo: "amanhã", idioma: "pt-BR", categorias: ["tempo"], variacoes: ["amnh", "amn"], sentidos: [
     { simples: "Escrito \"amnh\", é a abreviação de amanhã.",
-      detalhada: "A falta do til é característica da digitação rápida no celular, não erro de quem escreve.",
-      formal: "amanhã" }]},
+      detalhada: "A falta do til é característica da digitação rápida no celular, não erro de quem escreve." }]},
 
   { termo: "n", idioma: "pt-BR", categorias: ["abreviacao"], sentidos: [
     { simples: "Um \"n\" sozinho quer dizer \"não\".",
@@ -319,8 +317,7 @@ export default [
 
   { termo: "tranquilo", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["tranks", "tranquilão"], sentidos: [
     { simples: "Sem problema, sem preocupação.",
-      detalhada: "\"Tranks\" é a forma abreviada. Como resposta, equivale a \"não se preocupe\".",
-      formal: "tranquilo" }]},
+      detalhada: "\"Tranks\" é a forma abreviada. Como resposta, equivale a \"não se preocupe\"." }]},
 
   { termo: "treta", idioma: "pt-BR", categorias: ["critica"], variacoes: ["treta", "tretar"], sentidos: [
     { simples: "Briga, confusão ou desentendimento.",

@@ -4,6 +4,7 @@ import { traduzir } from './api.js';
 import { usePreferencias } from './preferencias.js';
 import { BarraDeAcessibilidade } from './componentes/BarraDeAcessibilidade.js';
 import { CartaoDaGiria } from './componentes/CartaoDaGiria.js';
+import { Catalogo } from './componentes/Catalogo.js';
 import { TextoDestacado } from './componentes/TextoDestacado.js';
 
 type Estado =
@@ -153,6 +154,14 @@ export function App() {
               {estado.fase === 'consultando' ? 'Consultando…' : 'Explicar'}
             </button>
           </form>
+
+          {/*
+            Fora do formulário, e logo abaixo dele: é a saída para quem chegou
+            sem nada para digitar. O campo em branco é onde essa pessoa
+            desiste, e o catálogo precisa estar visível a partir dali, sem
+            rolar a página.
+          */}
+          <Catalogo modoFamilia={preferencias.modoFamilia} nivel={preferencias.nivel} />
 
           {/*
             role="status" faz o leitor de tela anunciar o resultado sem roubar

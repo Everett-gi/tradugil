@@ -20,14 +20,21 @@ import java.time.Duration;
 @Configuration
 public class ConfiguracaoDeCache {
 
-    /** Verbete mudado pela curadoria aparece em no máximo uma hora. */
+    /**
+     * Verbete mudado pela curadoria aparece em no máximo uma hora. Vale também
+     * para a lista de categorias do catálogo, que muda ainda menos: ela só se
+     * altera quando uma migração cria uma categoria nova.
+     */
     private static final Duration VALIDADE = Duration.ofHours(1);
 
     private static final long MAXIMO_DE_VERBETES = 5_000;
 
     @Bean
     public CacheManager gerenciadorDeCache() {
-        CaffeineCacheManager gerenciador = new CaffeineCacheManager("verbetes");
+        // Nomes fixos, e não criação sob demanda: um @Cacheable com nome
+        // errado falha na primeira chamada em vez de criar silenciosamente um
+        // cache paralelo que ninguém invalida.
+        CaffeineCacheManager gerenciador = new CaffeineCacheManager("verbetes", "categorias");
         gerenciador.setCaffeine(Caffeine.newBuilder()
                 .expireAfterWrite(VALIDADE)
                 .maximumSize(MAXIMO_DE_VERBETES)

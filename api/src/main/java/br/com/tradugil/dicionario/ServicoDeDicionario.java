@@ -1,6 +1,7 @@
 package br.com.tradugil.dicionario;
 
 import br.com.tradugil.comum.erro.RecursoNaoEncontradoException;
+import br.com.tradugil.dicionario.GiriaDtos.CategoriaResumo;
 import br.com.tradugil.dicionario.GiriaDtos.GiriaCompleta;
 import br.com.tradugil.dicionario.GiriaDtos.GiriaResumo;
 import br.com.tradugil.dicionario.GiriaDtos.Pagina;
@@ -26,9 +27,33 @@ public class ServicoDeDicionario {
     private static final int TAMANHO_MAXIMO_DA_PAGINA = 50;
 
     private final RepositorioDeGiria repositorio;
+    private final RepositorioDeCategoria categorias;
 
-    public ServicoDeDicionario(RepositorioDeGiria repositorio) {
+    public ServicoDeDicionario(RepositorioDeGiria repositorio,
+                               RepositorioDeCategoria categorias) {
         this.repositorio = repositorio;
+        this.categorias = categorias;
+    }
+
+    /**
+     * Prateleiras do catálogo, com quantos verbetes cada uma tem.
+     *
+     * <p>Categoria sem nenhum verbete visível fica de fora. Uma prateleira
+     * vazia só se revela vazia depois que a pessoa clica e espera, e o
+     * catálogo existe justamente para quem não sabe o que procurar.</p>
+     *
+     * <p>Com o modo família ligado, a contagem é dos verbetes que a pessoa vai
+     * conseguir abrir, não do total. Mostrar 40 e listar 31 seria dizer que
+     * há algo escondido ali, que é o oposto do que o modo família faz.</p>
+     */
+    @Cacheable(cacheNames = "categorias", key = "#modoFamilia")
+    @Transactional(readOnly = true)
+    public List<CategoriaResumo> categorias(boolean modoFamilia) {
+        return categorias.contar(!modoFamilia).stream()
+                .filter(linha -> linha.getQuantidade() > 0)
+                .map(linha -> new CategoriaResumo(
+                        linha.getSlug(), linha.getNome(), linha.getQuantidade()))
+                .toList();
     }
 
     /**
@@ -46,9 +71,19 @@ public class ServicoDeDicionario {
                         "Não encontramos esse termo no dicionário."));
     }
 
+    /**
+     * Busca e navegação numa consulta só.
+     *
+     * <p>Com {@code consulta} preenchida é a busca da tela de dicionário. Com
+     * ela vazia e uma {@code categoria}, é o catálogo abrindo uma prateleira,
+     * em ordem alfabética. É o mesmo caminho de código de propósito: eram duas
+     * consultas com a mesma paginação, o mesmo filtro de idioma e a mesma
+     * regra de modo família, e manter as duas em dia seria trabalho repetido
+     * com uma chance a mais de divergirem.</p>
+     */
     @Transactional(readOnly = true)
-    public Pagina<GiriaResumo> pesquisar(String consulta, String idioma,
-                                         int pagina, int tamanho) {
+    public Pagina<GiriaResumo> pesquisar(String consulta, String idioma, String categoria,
+                                         boolean modoFamilia, int pagina, int tamanho) {
         String normalizado = Normalizador.normalizar(consulta);
         int limite = Math.min(Math.max(tamanho, 1), TAMANHO_MAXIMO_DA_PAGINA);
         int paginaSegura = Math.max(pagina, 0);
@@ -60,6 +95,8 @@ public class ServicoDeDicionario {
                 normalizado,
                 normalizado + "%",
                 idioma,
+                vazioComoNulo(categoria),
+                !modoFamilia,
                 LIMIAR_DE_SEMELHANCA,
                 limite + 1,
                 paginaSegura * limite);
@@ -71,6 +108,18 @@ public class ServicoDeDicionario {
                 .toList();
 
         return new Pagina<>(itens, paginaSegura, limite, temMais);
+    }
+
+    /**
+     * Trata {@code ?categoria=} como "sem filtro".
+     *
+     * <p>O parâmetro vazio chega como string vazia, não como nulo, e a
+     * consulta compara {@code c.slug = :categoria}: sem esta conversão, o
+     * catálogo com o filtro limpo devolveria zero resultados em vez de tudo,
+     * porque nenhum slug é a string vazia.</p>
+     */
+    private static String vazioComoNulo(String valor) {
+        return valor == null || valor.isBlank() ? null : valor;
     }
 
     /**

@@ -95,6 +95,18 @@ public final class GiriaDtos {
     }
 
     /**
+     * Prateleira do catálogo.
+     *
+     * <p>O {@code slug} é a chave estável, usada na URL e no pacote offline; o
+     * {@code nome} é o que a pessoa lê. A {@code quantidade} vai junto porque
+     * o catálogo precisa dela antes de abrir a categoria: é o que permite
+     * esconder prateleira vazia e é o que se mostra ao lado do nome, para
+     * ninguém clicar às cegas.</p>
+     */
+    public record CategoriaResumo(String slug, String nome, long quantidade) {
+    }
+
+    /**
      * @param util true para "essa explicação me ajudou", false para o contrário
      */
     public record Voto(boolean util) {

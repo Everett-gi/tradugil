@@ -107,6 +107,22 @@ function validar(termos) {
       if (s.formal && s.formal.length > 160) {
         problemas.push(`${onde} sentido ${j}: equivalente formal longo demais`);
       }
+      /*
+       * "aliciamento" com equivalente formal "aliciamento" vira, na tela,
+       * uma linha "Em outras palavras: aliciamento" logo abaixo da palavra
+       * que a pessoa acabou de ler. Nao acrescenta nada e manda reler.
+       * Entraram 41 assim antes desta checagem existir; a V20 os limpou.
+       *
+       * Deixar o campo de fora e a resposta certa: nulo quer dizer "nao ha
+       * um jeito mais formal de dizer isto", e as interfaces ja escondem a
+       * linha nesse caso.
+       */
+      if (s.formal && s.formal.toLowerCase().trim() === e.termo.toLowerCase().trim()) {
+        problemas.push(
+          `${onde} sentido ${j}: equivalente formal repete o termo; ` +
+            `deixe sem formal em vez de repetir`,
+        );
+      }
     });
   });
 

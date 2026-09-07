@@ -390,3 +390,161 @@ body {
   margin-bottom: 1rem;
   font-weight: 600;
 }
+
+/* ------------------------------------------------------------ catálogo --- */
+
+.botao-catalogo {
+  width: 100%;
+  margin-top: 0.75rem;
+  font-size: 1.05rem;
+}
+
+/*
+ * O <dialog> nativo vem com margem automática que o centraliza e com
+ * display: none quando fechado. O que se ajusta aqui é só o tamanho, a
+ * moldura e a rolagem interna: o resto do comportamento é do navegador.
+ */
+.catalogo {
+  width: min(46rem, 94vw);
+  /* Teto de altura com rolagem por dentro. Sem isso, num telefone deitado a
+     janela cresce além da tela e o botão de fechar sai de alcance. */
+  max-height: 88vh;
+  padding: 1.25rem;
+  border: 2px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--fundo);
+  color: var(--texto);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.catalogo::backdrop {
+  background: rgba(6, 19, 28, 0.6);
+}
+
+.catalogo-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  /* Fica visível ao rolar a lista: a saída não pode depender de rolar de
+     volta até o topo. */
+  position: sticky;
+  top: -1.25rem;
+  margin: -1.25rem -1.25rem 0;
+  padding: 1.25rem;
+  background: var(--fundo);
+  border-bottom: 2px solid var(--borda);
+}
+
+.catalogo-cabecalho h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.catalogo-explicacao {
+  margin: 1rem 0;
+  color: var(--texto-suave);
+}
+
+.catalogo-assuntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.chip {
+  font-size: 0.95rem;
+  padding: 0.5rem 0.85rem;
+  /* Abaixo do alvo mínimo de 48px usado nos botões principais, e de
+     propósito: são vinte e um assuntos, e no tamanho cheio a lista de
+     escolhas empurraria o conteúdo inteiro para fora da primeira tela.
+     Continua acima dos 44px que o WCAG 2.5.5 pede como mínimo. */
+  min-height: 44px;
+}
+
+.chip-contagem {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--primaria-clara);
+  color: var(--texto);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.botao[aria-pressed='true'] .chip-contagem {
+  background: var(--primaria-texto);
+  color: var(--primaria);
+}
+
+.catalogo-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--borda);
+}
+
+.catalogo-item {
+  border-bottom: 1px solid var(--borda);
+}
+
+.catalogo-termo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: var(--alvo-minimo);
+  padding: 0.75rem 0.25rem;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.catalogo-termo:hover {
+  background: var(--fundo-caixa);
+}
+
+.catalogo-termo-texto {
+  flex: 1;
+}
+
+.catalogo-seta {
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+}
+
+.etiqueta-atencao {
+  background: var(--risco-fundo);
+  border-color: var(--risco-borda);
+  color: var(--risco-texto);
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+}
+
+.catalogo-detalhe {
+  padding: 0 0.25rem 1rem;
+}
+
+.catalogo-origem {
+  color: var(--texto-suave);
+}
+
+.catalogo-exemplos {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+  color: var(--texto-suave);
+}
+
+.catalogo-variacoes {
+  margin: 0.5rem 0 0;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+}

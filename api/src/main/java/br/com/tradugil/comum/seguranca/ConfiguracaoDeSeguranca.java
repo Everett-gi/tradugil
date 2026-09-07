@@ -61,6 +61,11 @@ public class ConfiguracaoDeSeguranca {
                 .authorizeHttpRequests(auth -> auth
                         // Leitura do dicionário: pública, sem cadastro.
                         .requestMatchers(HttpMethod.GET, "/api/v1/girias/**").permitAll()
+                        // As prateleiras do catálogo. Ficam fora de /girias
+                        // porque /girias/{termo} engoliria o caminho, então
+                        // precisam da própria linha aqui: o denyAll() do fim
+                        // devolveu 401 para elas até esta linha existir.
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categorias").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/traduzir").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/api/v1/girias/definicoes/*/votos").permitAll()

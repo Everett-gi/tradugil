@@ -460,8 +460,7 @@ export default [
 
   { termo: "geração z", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["gen z", "genz"], sentidos: [
     { simples: "Pessoas nascidas aproximadamente entre 1997 e 2010.",
-      detalhada: "É a geração que cresceu com celular e redes sociais desde a infância, e de onde vem boa parte das gírias atuais.",
-      formal: "geração Z" }]},
+      detalhada: "É a geração que cresceu com celular e redes sociais desde a infância, e de onde vem boa parte das gírias atuais." }]},
 
   { termo: "alpha", idioma: "en", categorias: ["descricao"], variacoes: ["geração alpha"], sentidos: [
     { simples: "As crianças nascidas a partir de 2010.",

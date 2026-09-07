@@ -121,8 +121,7 @@ export default [
 
   { termo: "gorjeta", idioma: "pt-BR", categorias: ["streaming"], variacoes: ["tip"], sentidos: [
     { simples: "Pequena quantia enviada para quem transmite, como agradecimento.",
-      detalhada: "Termo em português para o que em inglês se chama \"tip\". Menor e mais informal que uma doação anunciada.",
-      formal: "gorjeta" }]},
+      detalhada: "Termo em português para o que em inglês se chama \"tip\". Menor e mais informal que uma doação anunciada." }]},
 
   { termo: "vod", idioma: "en", categorias: ["streaming"], sentidos: [
     { simples: "A gravação de uma transmissão, que fica salva para assistir depois.",
@@ -306,8 +305,7 @@ export default [
 
   { termo: "seguidor", idioma: "pt-BR", categorias: ["redes"], variacoes: ["follower", "seguir"], sentidos: [
     { simples: "Quem escolheu acompanhar as publicações de alguém.",
-      detalhada: "Número de seguidores virou medida informal de importância, apesar de dizer pouco sobre quantas pessoas realmente prestam atenção.",
-      formal: "seguidor" }]},
+      detalhada: "Número de seguidores virou medida informal de importância, apesar de dizer pouco sobre quantas pessoas realmente prestam atenção." }]},
 
   { termo: "unfollow", idioma: "en", categorias: ["redes"], variacoes: ["deixar de seguir"], sentidos: [
     { simples: "Parar de acompanhar as publicações de alguém.",
@@ -321,8 +319,7 @@ export default [
 
   { termo: "bloquear", idioma: "pt-BR", categorias: ["redes"], variacoes: ["block", "bloqueado"], sentidos: [
     { simples: "Impedir completamente que alguém veja seu perfil ou fale com você.",
-      detalhada: "A medida mais forte. Diferente de silenciar, é visível: a pessoa percebe que foi bloqueada.",
-      formal: "bloquear" }]},
+      detalhada: "A medida mais forte. Diferente de silenciar, é visível: a pessoa percebe que foi bloqueada." }]},
 
   { termo: "close friends", idioma: "en", categorias: ["redes"], variacoes: ["melhores amigos"], sentidos: [
     { simples: "Lista restrita de pessoas que veem publicações que os outros seguidores não veem.",

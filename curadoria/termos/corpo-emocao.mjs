@@ -68,13 +68,11 @@ export default [
 
   { termo: "autoestima", idioma: "pt-BR", categorias: ["emocao"], sentidos: [
     { simples: "O quanto a pessoa se valoriza e se sente bem consigo mesma.",
-      detalhada: "Diferente de vaidade: envolve como a pessoa se enxerga, não como quer ser vista.",
-      formal: "autoestima" }]},
+      detalhada: "Diferente de vaidade: envolve como a pessoa se enxerga, não como quer ser vista." }]},
 
   { termo: "ansiedade", idioma: "pt-BR", categorias: ["emocao", "atencao"], variacoes: ["ansioso", "ansiosa"], sentidos: [
     { simples: "Preocupação intensa e antecipada com o que pode acontecer.",
-      detalhada: "A palavra virou gíria: \"tô ansiosa\" muitas vezes é só expectativa. O transtorno de ansiedade é outra coisa, e envolve sintomas físicos e prejuízo na rotina. Vale prestar atenção quando é constante.",
-      formal: "ansiedade" }]},
+      detalhada: "A palavra virou gíria: \"tô ansiosa\" muitas vezes é só expectativa. O transtorno de ansiedade é outra coisa, e envolve sintomas físicos e prejuízo na rotina. Vale prestar atenção quando é constante." }]},
 
   { termo: "crise", idioma: "pt-BR", categorias: ["emocao", "atencao"], variacoes: ["crise de ansiedade", "ataque de pânico"], sentidos: [
     { simples: "Episódio agudo de ansiedade, com sintomas físicos fortes.",
@@ -98,8 +96,7 @@ export default [
 
   { termo: "psicólogo", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["psi", "psicologa"], sentidos: [
     { simples: "Profissional que ajuda com questões emocionais por meio de conversa.",
-      detalhada: "Diferente do psiquiatra, que é médico e pode receitar remédio. Muita gente acompanha com os dois.",
-      formal: "psicólogo" }]},
+      detalhada: "Diferente do psiquiatra, que é médico e pode receitar remédio. Muita gente acompanha com os dois." }]},
 
   { termo: "surto", idioma: "pt-BR", categorias: ["emocao", "atencao"], variacoes: ["surtar", "surtei"], sentidos: [
     { simples: "Reação emocional muito intensa.",
@@ -123,8 +120,7 @@ export default [
 
   { termo: "luto", idioma: "pt-BR", categorias: ["emocao"], sentidos: [
     { simples: "O processo de sofrer uma perda importante.",
-      detalhada: "Não se aplica só a morte: também se fala em luto por fim de relação, mudança de cidade ou perda de emprego.",
-      formal: "luto" }]},
+      detalhada: "Não se aplica só a morte: também se fala em luto por fim de relação, mudança de cidade ou perda de emprego." }]},
 
   { termo: "gatilhado", idioma: "pt-BR", categorias: ["emocao", "atencao"], variacoes: ["me gatilhou"], sentidos: [
     { simples: "Ter uma reação emocional forte despertada por algo.",
@@ -138,8 +134,7 @@ export default [
 
   { termo: "acolher", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["acolhimento"], sentidos: [
     { simples: "Receber alguém com atenção e sem julgamento.",
-      detalhada: "Vocabulário de cuidado que passou da área da saúde para o uso comum.",
-      formal: "acolher" }]},
+      detalhada: "Vocabulário de cuidado que passou da área da saúde para o uso comum." }]},
 
   { termo: "descarrego", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["desabafo", "desabafar"], sentidos: [
     { simples: "Falar sobre o que está incomodando, para aliviar.",
@@ -153,8 +148,7 @@ export default [
 
   { termo: "no limite", idioma: "pt-BR", categorias: ["emocao", "atencao"], variacoes: ["no meu limite"], sentidos: [
     { simples: "Perto de não aguentar mais.",
-      detalhada: "Costuma ser desabafo passageiro. Quando aparece com frequência e junto de isolamento, vale conversar com atenção.",
-      formal: "no limite" }]},
+      detalhada: "Costuma ser desabafo passageiro. Quando aparece com frequência e junto de isolamento, vale conversar com atenção." }]},
 
   { termo: "respira", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["respira fundo"], sentidos: [
     { simples: "Conselho para se acalmar antes de reagir.",
@@ -188,18 +182,15 @@ export default [
 
   { termo: "indignado", idioma: "pt-BR", categorias: ["emocao"], sentidos: [
     { simples: "Reação forte diante de algo considerado errado.",
-      detalhada: "Palavra formal que circula normalmente em conversa comum, principalmente sobre notícias.",
-      formal: "indignado" }]},
+      detalhada: "Palavra formal que circula normalmente em conversa comum, principalmente sobre notícias." }]},
 
   { termo: "frustrado", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["frustração"], sentidos: [
     { simples: "Decepcionado por algo que não saiu como esperava.",
-      detalhada: "Diferente de triste: a frustração vem especificamente da expectativa não atendida.",
-      formal: "frustrado" }]},
+      detalhada: "Diferente de triste: a frustração vem especificamente da expectativa não atendida." }]},
 
   { termo: "aliviado", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["alívio"], sentidos: [
     { simples: "Sensação boa de quando uma preocupação passa.",
-      detalhada: "\"Que alívio\" é reação comum a boa notícia depois de espera tensa.",
-      formal: "aliviado" }]},
+      detalhada: "\"Que alívio\" é reação comum a boa notícia depois de espera tensa." }]},
 
   { termo: "empolgado", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["empolgação", "animado"], sentidos: [
     { simples: "Muito animado com algo que vai acontecer.",
@@ -208,8 +199,7 @@ export default [
 
   { termo: "orgulhoso", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["orgulho"], sentidos: [
     { simples: "Sentimento bom por algo que a pessoa ou alguém próximo conseguiu.",
-      detalhada: "\"Tô orgulhosa de você\" é elogio afetivo. Diferente de arrogância, que é outro sentido de orgulho.",
-      formal: "orgulhoso" }]},
+      detalhada: "\"Tô orgulhosa de você\" é elogio afetivo. Diferente de arrogância, que é outro sentido de orgulho." }]},
 
   { termo: "grato", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["gratidão", "grata"], sentidos: [
     { simples: "Sentimento de agradecimento.",
@@ -228,8 +218,7 @@ export default [
 
   { termo: "insônia", idioma: "pt-BR", categorias: ["atencao"], sentidos: [
     { simples: "Dificuldade persistente para dormir.",
-      detalhada: "Quando dura semanas e atrapalha o dia seguinte, deixa de ser noite ruim e vira questão de saúde que pede avaliação.",
-      formal: "insônia" }]},
+      detalhada: "Quando dura semanas e atrapalha o dia seguinte, deixa de ser noite ruim e vira questão de saúde que pede avaliação." }]},
 
   { termo: "procrastinar", idioma: "pt-BR", categorias: ["acao"], variacoes: ["procrastinação"], sentidos: [
     { simples: "Adiar o que precisa ser feito, mesmo sabendo que vai fazer falta.",
@@ -243,18 +232,15 @@ export default [
 
   { termo: "disciplina", idioma: "pt-BR", categorias: ["acao"], sentidos: [
     { simples: "Manter uma rotina mesmo sem vontade.",
-      detalhada: "\"Disciplina supera motivação\" é frase comum em conteúdo de produtividade, e resume a ideia de não depender do ânimo do dia.",
-      formal: "disciplina" }]},
+      detalhada: "\"Disciplina supera motivação\" é frase comum em conteúdo de produtividade, e resume a ideia de não depender do ânimo do dia." }]},
 
   { termo: "rotina", idioma: "pt-BR", categorias: ["tempo"], variacoes: ["rotininha"], sentidos: [
     { simples: "A sequência de coisas que a pessoa faz todo dia.",
-      detalhada: "\"Montar uma rotina\" é assunto frequente em conteúdo sobre organização e saúde mental.",
-      formal: "rotina" }]},
+      detalhada: "\"Montar uma rotina\" é assunto frequente em conteúdo sobre organização e saúde mental." }]},
 
   { termo: "produtividade", idioma: "pt-BR", categorias: ["trabalho"], variacoes: ["produtivo"], sentidos: [
     { simples: "O quanto a pessoa consegue realizar num tempo.",
-      detalhada: "Virou tema de uma indústria inteira de conteúdo, e também alvo de crítica por transformar descanso em culpa.",
-      formal: "produtividade" }]},
+      detalhada: "Virou tema de uma indústria inteira de conteúdo, e também alvo de crítica por transformar descanso em culpa." }]},
 
   { termo: "pomodoro", idioma: "en", categorias: ["escolar", "trabalho"], sentidos: [
     { simples: "Técnica de estudo que alterna 25 minutos de trabalho com 5 de pausa.",
@@ -268,13 +254,11 @@ export default [
 
   { termo: "tdah", idioma: "pt-BR", categorias: ["atencao"], variacoes: ["déficit de atenção"], sentidos: [
     { simples: "Condição que afeta atenção, organização e controle de impulsos.",
-      detalhada: "Transtorno do Déficit de Atenção com Hiperatividade. O termo virou piada na internet (\"meu TDAH falou mais alto\"), o que banaliza um diagnóstico que precisa de avaliação profissional.",
-      formal: "TDAH" }]},
+      detalhada: "Transtorno do Déficit de Atenção com Hiperatividade. O termo virou piada na internet (\"meu TDAH falou mais alto\"), o que banaliza um diagnóstico que precisa de avaliação profissional." }]},
 
   { termo: "neurodivergente", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["neuroatípico"], sentidos: [
     { simples: "Pessoa cujo funcionamento mental difere do considerado típico.",
-      detalhada: "Inclui autismo, TDAH e outras condições. \"Neurotípico\" é o termo para quem não é. Vocabulário criado pela própria comunidade.",
-      formal: "neurodivergente" }]},
+      detalhada: "Inclui autismo, TDAH e outras condições. \"Neurotípico\" é o termo para quem não é. Vocabulário criado pela própria comunidade." }]},
 
   { termo: "espectro", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["tea", "autista"], sentidos: [
     { simples: "Referência ao transtorno do espectro autista.",
@@ -293,23 +277,19 @@ export default [
 
   { termo: "introvertido", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["intro", "extrovertido"], sentidos: [
     { simples: "Pessoa que recarrega as energias ficando sozinha.",
-      detalhada: "Não é o mesmo que tímido: um introvertido pode ser sociável e ainda assim precisar de tempo sozinho para descansar.",
-      formal: "introvertido" }]},
+      detalhada: "Não é o mesmo que tímido: um introvertido pode ser sociável e ainda assim precisar de tempo sozinho para descansar." }]},
 
   { termo: "sociável", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["gente boa de rolê"], sentidos: [
     { simples: "Pessoa que se relaciona bem com os outros.",
-      detalhada: "Diferente de extrovertido: dá para ser sociável e ainda assim precisar de silêncio depois.",
-      formal: "sociável" }]},
+      detalhada: "Diferente de extrovertido: dá para ser sociável e ainda assim precisar de silêncio depois." }]},
 
   { termo: "vergonha alheia", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["cringe"], sentidos: [
     { simples: "Desconforto sentido por causa do constrangimento de outra pessoa.",
-      detalhada: "É o mesmo sentimento que o inglês chama de \"cringe\", e o português tem nome próprio para ele há muito tempo.",
-      formal: "vergonha alheia" }]},
+      detalhada: "É o mesmo sentimento que o inglês chama de \"cringe\", e o português tem nome próprio para ele há muito tempo." }]},
 
   { termo: "constrangido", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["constrangimento"], sentidos: [
     { simples: "Sem graça, desconfortável numa situação.",
-      detalhada: "\"Constrangimento\" também tem sentido legal, quando alguém é forçado a fazer algo contra a vontade.",
-      formal: "constrangido" }]},
+      detalhada: "\"Constrangimento\" também tem sentido legal, quando alguém é forçado a fazer algo contra a vontade." }]},
 
   { termo: "sem graça", idioma: "pt-BR", categorias: ["emocao"], sentidos: [
     { simples: "Envergonhado, sem saber como agir.",
@@ -353,8 +333,7 @@ export default [
 
   { termo: "cansaço", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["cansada", "exausto"], sentidos: [
     { simples: "Falta de energia física ou mental.",
-      detalhada: "\"Cansaço que dormir não resolve\" é a forma como muita gente descreve exaustão emocional, diferente do cansaço físico.",
-      formal: "cansaço" }]},
+      detalhada: "\"Cansaço que dormir não resolve\" é a forma como muita gente descreve exaustão emocional, diferente do cansaço físico." }]},
 
   { termo: "recarregar", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["recarregar as energias"], sentidos: [
     { simples: "Descansar para recuperar disposição.",
@@ -373,8 +352,7 @@ export default [
 
   { termo: "desapegar", idioma: "pt-BR", categorias: ["acao", "emocao"], variacoes: ["desapego"], sentidos: [
     { simples: "Deixar ir algo ou alguém a que se estava preso.",
-      detalhada: "Também usado literalmente para objetos: \"desapego\" é o nome dado a vendas de coisas usadas nas redes.",
-      formal: "desapegar" }]},
+      detalhada: "Também usado literalmente para objetos: \"desapego\" é o nome dado a vendas de coisas usadas nas redes." }]},
 
   { termo: "seguir em frente", idioma: "pt-BR", categorias: ["acao"], variacoes: ["move on"], sentidos: [
     { simples: "Superar algo e continuar a vida.",
@@ -388,13 +366,11 @@ export default [
 
   { termo: "recomeçar", idioma: "pt-BR", categorias: ["acao"], variacoes: ["recomeço"], sentidos: [
     { simples: "Começar de novo depois de uma perda ou mudança.",
-      detalhada: "Palavra comum em conversas sobre mudança de cidade, de carreira ou fim de relação.",
-      formal: "recomeçar" }]},
+      detalhada: "Palavra comum em conversas sobre mudança de cidade, de carreira ou fim de relação." }]},
 
   { termo: "resiliência", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["resiliente"], sentidos: [
     { simples: "Capacidade de se recuperar depois de algo difícil.",
-      detalhada: "Termo da física que passou para a psicologia. É criticado quando usado para exigir que a pessoa aguente condições ruins em vez de mudá-las.",
-      formal: "resiliência" }]},
+      detalhada: "Termo da física que passou para a psicologia. É criticado quando usado para exigir que a pessoa aguente condições ruins em vez de mudá-las." }]},
 
   { termo: "vitimismo", idioma: "pt-BR", categorias: ["critica"], variacoes: ["se vitimizar"], sentidos: [
     { simples: "Acusação de que alguém exagera o próprio sofrimento para conseguir algo.",
@@ -453,8 +429,7 @@ export default [
 
   { termo: "vaidoso", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["vaidade"], sentidos: [
     { simples: "Quem se preocupa muito com a própria aparência.",
-      detalhada: "Nem sempre é crítica: cuidar de si é visto como positivo, e o excesso é o que gera o julgamento.",
-      formal: "vaidoso" }]},
+      detalhada: "Nem sempre é crítica: cuidar de si é visto como positivo, e o excesso é o que gera o julgamento." }]},
 
   { termo: "produzida", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["produzido", "se produzir"], sentidos: [
     { simples: "Arrumada com capricho para uma ocasião.",

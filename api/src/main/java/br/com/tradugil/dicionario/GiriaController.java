@@ -30,15 +30,34 @@ public class GiriaController {
     }
 
     @Operation(
-            summary = "Busca gírias",
-            description = "Tolera erro de digitação: 'crinje' encontra 'cringe'.")
+            summary = "Busca e navegação no dicionário",
+            description = """
+                    Com `q` preenchido é busca, e tolera erro de digitação:
+                    'crinje' encontra 'cringe'.
+
+                    Com `q` vazio e `categoria` preenchida vira navegação: lista
+                    a categoria inteira em ordem alfabética. É o que o catálogo
+                    usa para abrir uma prateleira.
+
+                    `modoFamilia` ausente equivale a ligado, igual ao
+                    `/traduzir`. Num endereço que se navega, o padrão precisa
+                    ser o seguro: aqui a pessoa esbarra no conteúdo em vez de
+                    procurá-lo.""")
     @GetMapping
     public ResponseEntity<Pagina<GiriaResumo>> buscar(
             @RequestParam(name = "q", defaultValue = "") String consulta,
             @RequestParam(name = "idioma", required = false) String idioma,
+            @RequestParam(name = "categoria", required = false) String categoria,
+            @RequestParam(name = "modoFamilia", required = false) Boolean modoFamilia,
             @RequestParam(name = "pagina", defaultValue = "0") int pagina,
             @RequestParam(name = "tamanho", defaultValue = "20") int tamanho) {
-        return ResponseEntity.ok(servico.pesquisar(consulta, idioma, pagina, tamanho));
+        return ResponseEntity.ok(servico.pesquisar(
+                consulta, idioma, categoria, familiaLigado(modoFamilia), pagina, tamanho));
+    }
+
+    /** Ausente equivale a ligado: o padrão protege o caso em que errar custa caro. */
+    private static boolean familiaLigado(Boolean modoFamilia) {
+        return modoFamilia == null || modoFamilia;
     }
 
     @Operation(

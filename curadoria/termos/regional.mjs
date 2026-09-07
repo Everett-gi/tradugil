@@ -102,13 +102,11 @@ export default [
 
   { termo: "biscoito", idioma: "pt-BR", categorias: ["regional", "comida"], variacoes: ["bolacha"], sentidos: [
     { simples: "O que em São Paulo se chama bolacha.",
-      detalhada: "A discussão entre \"biscoito\" e \"bolacha\" é uma das brigas regionais mais antigas e mais brincalhonas do Brasil.",
-      formal: "biscoito" }]},
+      detalhada: "A discussão entre \"biscoito\" e \"bolacha\" é uma das brigas regionais mais antigas e mais brincalhonas do Brasil." }]},
 
   { termo: "pão francês", idioma: "pt-BR", categorias: ["regional", "comida"], variacoes: ["pão careca", "cacetinho", "pão d'água"], sentidos: [
     { simples: "O pãozinho comum de padaria, que muda de nome conforme o estado.",
-      detalhada: "É \"cacetinho\" no Rio Grande do Sul, \"pão careca\" em partes do Nordeste, \"pão d'água\" no Rio de Janeiro.",
-      formal: "pão francês" }]},
+      detalhada: "É \"cacetinho\" no Rio Grande do Sul, \"pão careca\" em partes do Nordeste, \"pão d'água\" no Rio de Janeiro." }]},
 
   { termo: "sinaleira", idioma: "pt-BR", categorias: ["regional"], variacoes: ["semáforo", "farol", "sinal"], sentidos: [
     { simples: "O semáforo, no sul do Brasil.",
@@ -147,8 +145,7 @@ export default [
 
   { termo: "açaí", idioma: "pt-BR", categorias: ["regional", "comida"], variacoes: ["acai"], sentidos: [
     { simples: "Fruta amazônica, servida no Norte com peixe e farinha, e no resto do país como sobremesa doce.",
-      detalhada: "A diferença surpreende quem viaja: no Pará, açaí com açúcar é considerado quase uma ofensa.",
-      formal: "açaí" }]},
+      detalhada: "A diferença surpreende quem viaja: no Pará, açaí com açúcar é considerado quase uma ofensa." }]},
 
   { termo: "quentinha", idioma: "pt-BR", categorias: ["regional", "comida"], variacoes: ["marmitex", "marmita"], sentidos: [
     { simples: "Refeição pronta servida em embalagem de alumínio, vendida para viagem.",
@@ -162,8 +159,7 @@ export default [
 
   { termo: "rapadura", idioma: "pt-BR", categorias: ["regional", "comida"], sentidos: [
     { simples: "Doce duro feito de caldo de cana, típico do Nordeste.",
-      detalhada: "\"Rapadura é doce mas não é mole não\" é ditado sobre pessoa firme, e virou frase de orgulho nordestino.",
-      formal: "rapadura" }]},
+      detalhada: "\"Rapadura é doce mas não é mole não\" é ditado sobre pessoa firme, e virou frase de orgulho nordestino." }]},
 
   { termo: "peixe", idioma: "pt-BR", categorias: ["descricao"], variacoes: ["ser peixe"], sentidos: [
     { simples: "Ser protegido ou favorecido por alguém importante.",
@@ -362,8 +358,7 @@ export default [
 
   { termo: "salário mínimo", idioma: "pt-BR", categorias: ["trabalho"], variacoes: ["mínimo"], sentidos: [
     { simples: "O menor salário que a lei permite pagar por mês de trabalho.",
-      detalhada: "Muito usado como unidade de medida informal: \"ganha dois mínimos\" descreve a faixa de renda.",
-      formal: "salário mínimo" }]},
+      detalhada: "Muito usado como unidade de medida informal: \"ganha dois mínimos\" descreve a faixa de renda." }]},
 
   { termo: "carteira assinada", idioma: "pt-BR", categorias: ["trabalho"], variacoes: ["clt"], sentidos: [
     { simples: "Emprego formal, com direitos garantidos por lei.",
@@ -387,8 +382,7 @@ export default [
 
   { termo: "reunião", idioma: "pt-BR", categorias: ["trabalho", "humor"], variacoes: ["call", "meeting"], sentidos: [
     { simples: "Conversa de trabalho marcada, hoje quase sempre por vídeo.",
-      detalhada: "\"Call\" virou o termo mais usado. \"Essa reunião podia ser um e-mail\" é reclamação comum.",
-      formal: "reunião" }]},
+      detalhada: "\"Call\" virou o termo mais usado. \"Essa reunião podia ser um e-mail\" é reclamação comum." }]},
 
   { termo: "burnout", idioma: "en", categorias: ["trabalho", "emocao", "atencao"], variacoes: ["esgotamento"], sentidos: [
     { simples: "Esgotamento profundo causado por excesso de trabalho.",
@@ -452,13 +446,11 @@ export default [
 
   { termo: "estágio", idioma: "pt-BR", categorias: ["escolar", "trabalho"], variacoes: ["estagiário"], sentidos: [
     { simples: "Trabalho de aprendizado feito por estudante, com carga e pagamento reduzidos.",
-      detalhada: "Regulado por lei própria no Brasil. \"Culpa do estagiário\" virou piada para explicar qualquer erro público.",
-      formal: "estágio" }]},
+      detalhada: "Regulado por lei própria no Brasil. \"Culpa do estagiário\" virou piada para explicar qualquer erro público." }]},
 
   { termo: "monitoria", idioma: "pt-BR", categorias: ["escolar"], variacoes: ["monitor"], sentidos: [
     { simples: "Quando um aluno mais adiantado ajuda a ensinar os colegas.",
-      detalhada: "Costuma valer bolsa ou crédito na faculdade. É a primeira experiência de ensino de muita gente.",
-      formal: "monitoria" }]},
+      detalhada: "Costuma valer bolsa ou crédito na faculdade. É a primeira experiência de ensino de muita gente." }]},
 
   { termo: "grupo do trabalho", idioma: "pt-BR", categorias: ["escolar", "humor"], variacoes: ["trabalho em grupo"], sentidos: [
     { simples: "Tarefa escolar feita em equipe.",

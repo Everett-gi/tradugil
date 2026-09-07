@@ -93,3 +93,17 @@ export interface ErroDaApi {
   campos: Array<{ campo: string; mensagem: string }>;
   momento: string;
 }
+
+/**
+ * Prateleira do catálogo.
+ *
+ * O `slug` é a chave estável, usada na URL e no pacote offline; o `nome` é o
+ * que a pessoa lê. A `quantidade` vem junto porque o catálogo precisa dela
+ * antes de abrir a categoria: é o que permite esconder prateleira vazia e é
+ * o que se mostra ao lado do nome, para ninguém clicar às cegas.
+ */
+export interface CategoriaResumo {
+  slug: string;
+  nome: string;
+  quantidade: number;
+}

@@ -50,7 +50,7 @@ class ServicoDeDicionarioIT {
     void toleraErroDeDigitacao() {
         // O caso que justifica a extensão pg_trgm existir no projeto: quem
         // não conhece a palavra também não sabe escrevê-la.
-        Pagina<GiriaResumo> achados = servico.pesquisar("crinje", "en", 0, 10);
+        Pagina<GiriaResumo> achados = servico.pesquisar("crinje", "en", null, true, 0, 10);
 
         assertThat(achados.itens())
                 .extracting(GiriaResumo::termo)
@@ -94,7 +94,7 @@ class ServicoDeDicionarioIT {
     @Test
     @DisplayName("a paginação sinaliza que há mais resultados sem contar tudo")
     void paginacaoSinalizaProximaPagina() {
-        Pagina<GiriaResumo> primeira = servico.pesquisar("a", null, 0, 2);
+        Pagina<GiriaResumo> primeira = servico.pesquisar("a", null, null, true, 0, 2);
 
         assertThat(primeira.itens()).hasSizeLessThanOrEqualTo(2);
         assertThat(primeira.pagina()).isZero();

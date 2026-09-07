@@ -1,4 +1,5 @@
 import type {
+  CategoriaResumo,
   ErroDaApi,
   GiriaCompleta,
   GiriaResumo,
@@ -68,15 +69,37 @@ export class ClienteTradugil {
     });
   }
 
+  /**
+   * Busca e navegação no mesmo método, como na API.
+   *
+   * Com `consulta` preenchida é busca. Com ela vazia e uma `categoria`, é o
+   * catálogo abrindo uma prateleira em ordem alfabética.
+   */
   async buscar(
     consulta: string,
-    opcoes: { idioma?: string; pagina?: number; tamanho?: number } = {},
+    opcoes: {
+      idioma?: string;
+      categoria?: string;
+      modoFamilia?: boolean;
+      pagina?: number;
+      tamanho?: number;
+    } = {},
   ): Promise<Pagina<GiriaResumo>> {
     const parametros = new URLSearchParams({ q: consulta });
     if (opcoes.idioma) parametros.set('idioma', opcoes.idioma);
+    if (opcoes.categoria) parametros.set('categoria', opcoes.categoria);
+    // Só manda quando é false: ausente já significa ligado na API, e repetir
+    // o padrão no cliente é uma segunda cópia da regra para manter em dia.
+    if (opcoes.modoFamilia === false) parametros.set('modoFamilia', 'false');
     if (opcoes.pagina !== undefined) parametros.set('pagina', String(opcoes.pagina));
     if (opcoes.tamanho !== undefined) parametros.set('tamanho', String(opcoes.tamanho));
     return this.requisitar<Pagina<GiriaResumo>>(`/girias?${parametros}`);
+  }
+
+  /** Prateleiras do catálogo, já sem as vazias. */
+  async categorias(modoFamilia = true): Promise<CategoriaResumo[]> {
+    const sufixo = modoFamilia ? '' : '?modoFamilia=false';
+    return this.requisitar<CategoriaResumo[]>(`/categorias${sufixo}`);
   }
 
   async verbete(termo: string, idioma?: string): Promise<GiriaCompleta> {

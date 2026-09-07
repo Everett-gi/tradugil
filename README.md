@@ -197,6 +197,19 @@ curl -s -X POST http://localhost:8080/api/v1/traduzir -H "Content-Type: applicat
 A primeira consulta demonstra a tolerância a erro de digitação: `crinje`
 encontra `cringe`.
 
+O catálogo usa os mesmos dois endereços de outra forma. As prateleiras:
+
+```bash
+curl -s "http://localhost:8080/api/v1/categorias"
+```
+
+E o conteúdo de uma delas, com o `q` vazio, o que transforma a busca em
+navegação alfabética:
+
+```bash
+curl -s "http://localhost:8080/api/v1/girias?categoria=gaming&tamanho=5"
+```
+
 ## Rodando o site
 
 ```bash
