@@ -5,6 +5,7 @@ import br.com.tradugiria.traducao.Normalizador;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +25,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  * é exatamente o que o Java calcularia. Se as regras divergirem, a CI quebra
  * no mesmo dia.</p>
  */
+/*
+ * @Transactional aqui é necessidade do teste, não sinal de problema no
+ * código. Ele percorre o dicionário inteiro tocando as coleções lazy de cada
+ * verbete — algo que nenhum caminho de produção faz. Com
+ * `open-in-view: false` (que é a configuração certa: sem ela, consultas
+ * disparariam durante a renderização da resposta, longe do serviço que
+ * deveria controlá-las), não há sessão fora da transação, e é o teste que
+ * precisa abrir a sua.
+ */
 @TestecomBanco
+@Transactional
 class ConsistenciaDoSeedIT {
 
     @Autowired

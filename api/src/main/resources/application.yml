@@ -60,6 +60,13 @@ tradugiria:
   cors:
     origens: http://localhost:5173,http://localhost:4173
 
+  ia:
+    # Teto diario de chamadas ao modelo. Deliberadamente baixo: e mais facil
+    # subir o numero depois de ver a fatura do que explicar uma fatura que
+    # nao deveria ter existido. Sem ANTHROPIC_API_KEY, a camada fica
+    # desligada e a API atende normalmente pelos niveis 0 a 2.
+    cota-diaria: 500
+
 logging:
   level:
     root: INFO

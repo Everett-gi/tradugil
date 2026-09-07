@@ -4,6 +4,7 @@ import br.com.tradugiria.dicionario.Definicao;
 import br.com.tradugiria.dicionario.Giria;
 import br.com.tradugiria.dicionario.GiriaVariacao;
 import br.com.tradugiria.dicionario.RepositorioDeGiria;
+import br.com.tradugiria.ia.ServicoDeIa;
 import br.com.tradugiria.telemetria.RepositorioDeTermoDesconhecido;
 import br.com.tradugiria.traducao.TraducaoDtos.GiriaDetectada;
 import br.com.tradugiria.traducao.TraducaoDtos.NivelDeExplicacao;
@@ -24,11 +25,15 @@ import java.util.Set;
 /**
  * Percorre a cascata de resolução descrita na seção 3.2 do documento.
  *
- * <p>Esta classe cobre os níveis 1 e 2 (cache do servidor e banco curado) e
- * alimenta o nível 5 (fila de desconhecidos). Os níveis 3 e 4 — fontes
- * externas e IA — entram na F1 atrás desta mesma interface, para que os
- * clientes não precisem saber de onde a explicação veio além do campo
- * {@code origem}.</p>
+ * <p>Cobre os níveis 1 e 2 (cache do servidor e banco curado), alimenta o
+ * nível 5 (fila de desconhecidos) e delega o nível 4 a {@code ServicoDeIa}.
+ * O nível 3 — fontes externas — ainda não existe; quando entrar, será atrás
+ * desta mesma estrutura, para que os clientes continuem sem precisar saber de
+ * onde a explicação veio além do campo {@code origem}.</p>
+ *
+ * <p>A ordem importa e não é acidental: cada nível só recebe o que o anterior
+ * não resolveu. É isso que mantém o custo de IA perto de zero e o p95 baixo,
+ * já que a esmagadora maioria das consultas termina no nível 2.</p>
  */
 @Service
 public class ServicoDeTraducao {
@@ -60,13 +65,27 @@ public class ServicoDeTraducao {
 
     private static final double CONFIANCA_DO_DICIONARIO = 1.0;
 
+    /**
+     * Quantos termos desconhecidos de uma mesma requisição podem ir à IA.
+     *
+     * <p>Colar uma conversa inteira produz dezenas de palavras que o
+     * dicionário não conhece — nomes próprios, erros de digitação, ruído de
+     * OCR. Sem teto, uma única requisição viraria dezenas de chamadas pagas
+     * para explicar coisas que não são gíria. Os poucos primeiros cobrem o
+     * caso real; o resto vai para a fila de curadoria, que é de graça.</p>
+     */
+    private static final int MAXIMO_DE_TERMOS_POR_IA = 3;
+
     private final RepositorioDeGiria repositorioDeGiria;
     private final RepositorioDeTermoDesconhecido repositorioDeDesconhecidos;
+    private final ServicoDeIa servicoDeIa;
 
     public ServicoDeTraducao(RepositorioDeGiria repositorioDeGiria,
-                             RepositorioDeTermoDesconhecido repositorioDeDesconhecidos) {
+                             RepositorioDeTermoDesconhecido repositorioDeDesconhecidos,
+                             ServicoDeIa servicoDeIa) {
         this.repositorioDeGiria = repositorioDeGiria;
         this.repositorioDeDesconhecidos = repositorioDeDesconhecidos;
+        this.servicoDeIa = servicoDeIa;
     }
 
     @Transactional
@@ -105,13 +124,76 @@ public class ServicoDeTraducao {
 
         registrarDesconhecidos(naoResolvidos, pedido.idiomaOuNulo());
 
+        // Nível 4: só o que sobrou, e só até o teto por requisição.
+        boolean usouIa = resolverComIa(pedido, candidatos, naoResolvidos, detectadas, ocupado);
+
         detectadas.sort((a, b) -> Integer.compare(a.posicao().get(0), b.posicao().get(0)));
 
         return new RespostaDeTraducao(
                 pedido.idiomaOuNulo(),
                 detectadas,
-                false,
+                usouIa,
                 List.copyOf(naoResolvidos));
+    }
+
+    /**
+     * Última camada da cascata.
+     *
+     * <p>Devolve se alguma explicação veio da IA, para a resposta poder
+     * marcar {@code geradoPorIa} — a interface é obrigada a rotular o que não
+     * foi verificado por pessoa (seção 7.1).</p>
+     */
+    private boolean resolverComIa(PedidoDeTraducao pedido,
+                                  List<Trecho> candidatos,
+                                  Set<String> naoResolvidos,
+                                  List<GiriaDetectada> detectadas,
+                                  boolean[] ocupado) {
+        if (naoResolvidos.isEmpty() || !servicoDeIa.estaDisponivel()) {
+            return false;
+        }
+
+        boolean alguma = false;
+        int consultados = 0;
+
+        for (Trecho candidato : candidatos) {
+            if (consultados >= MAXIMO_DE_TERMOS_POR_IA) {
+                break;
+            }
+            if (!naoResolvidos.contains(candidato.normalizado())
+                    || intervaloOcupado(ocupado, candidato)) {
+                continue;
+            }
+
+            consultados++;
+            var explicacao = servicoDeIa.explicar(candidato.normalizado(), pedido.contexto());
+            if (explicacao.isEmpty()) {
+                continue;
+            }
+
+            var ia = explicacao.get();
+            if (pedido.familiaLigado() && ia.nsfw()) {
+                marcarOcupado(ocupado, candidato);
+                continue;
+            }
+
+            detectadas.add(new GiriaDetectada(
+                    candidato.original(),
+                    List.of(candidato.inicio(), candidato.fim()),
+                    pedido.nivelOuPadrao() == NivelDeExplicacao.DETALHADA
+                            && ia.explicacaoDetalhada() != null
+                            ? ia.explicacaoDetalhada()
+                            : ia.explicacaoSimples(),
+                    ia.equivalenteFormal(),
+                    ia.nsfw(),
+                    ia.riscoMenor(),
+                    ia.confianca(),
+                    OrigemDaResposta.IA));
+            marcarOcupado(ocupado, candidato);
+            // Resolvido: sai da lista de não resolvidos que volta ao cliente.
+            naoResolvidos.remove(candidato.normalizado());
+            alguma = true;
+        }
+        return alguma;
     }
 
     /**

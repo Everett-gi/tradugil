@@ -15,7 +15,7 @@ acompanha a velocidade com que a linguagem online muda.
 | Fase | Entrega | Situação |
 |------|---------|----------|
 | F0 | Monorepo, esquema, seed inicial, API de consulta | Código pronto; falta subir contra o banco |
-| F1 | PWA instalável com offline, lógica compartilhada | PWA pronto; falta a camada de IA |
+| F1 | PWA instalável, lógica compartilhada, cascata com IA | Pronta; falta subir contra o banco |
 | F2 | Android: bolha flutuante, OCR local, Modo Família | Domínio e tela prontos; falta o build |
 
 **Distribuição do Android:** APK baixável pelo site. A publicação na Google
@@ -33,11 +33,45 @@ Parar cedo é o que mantém a latência baixa e o custo de IA perto de zero:
 | 1 | Cache em memória da API (Caffeine) | zero | Pronto |
 | 2 | PostgreSQL curado, com busca tolerante a erro de digitação | baixo | Pronto |
 | 3 | Fontes externas, sempre com rótulo de origem | baixo | Não iniciado |
-| 4 | IA generativa, rotulada como não verificada | pago | Não iniciado |
+| 4 | IA generativa, rotulada como não verificada | pago | Pronto |
 | 5 | Fila de termos desconhecidos → curadoria | — | Pronto |
 
 O nível 5 é o que impede o dicionário de envelhecer: todo termo que ninguém
 soube explicar vira item de uma fila anônima que alimenta a curadoria.
+
+### A camada de IA e o texto do usuário
+
+O nível 4 é o ponto mais sensível da aplicação, porque o texto que chega nele
+foi lido da tela do usuário e é **dado não confiável por definição**: pode
+conter instruções escritas de propósito para o modelo, plantadas por quem
+escreveu a mensagem que a vítima está tentando entender. O atacante não
+precisa de acesso nenhum ao sistema — basta mandar uma mensagem para alguém
+que usa o TraduGíria.
+
+São quatro camadas de defesa, e nenhuma delas basta sozinha:
+
+1. **Delimitação** — termo e trecho vão dentro de tags, e o prompt diz que o
+   conteúdo delas é objeto de análise, nunca instrução.
+2. **Neutralização do delimitador** — as tags são removidas do texto do
+   usuário antes de montar o prompt. Sem isso, bastaria escrever a tag de
+   fechamento no meio da mensagem para sair da área de dados.
+3. **Esquema de saída** — a resposta é obrigada a ser um JSON de campos
+   fixos. Uma injeção bem-sucedida não tem campo de texto livre por onde sair.
+4. **Validação semântica** — o esquema garante o formato, não o conteúdo.
+   Tamanho, faixa de confiança e coerência são conferidos do lado de cá.
+
+E a defesa que não está no prompt: a resposta **nunca** é apresentada como
+verbete revisado. Chega à interface marcada como gerada por IA e não
+verificada. Mesmo que todas as camadas falhem, o pior resultado é um texto
+errado rotulado como não confiável — não um texto errado com a autoridade do
+dicionário.
+
+As defesas são testadas em `DefesaContraPromptInjectionTest`, que roda sem
+chave de API.
+
+**Sem `ANTHROPIC_API_KEY` configurada, a camada fica desligada e a API
+atende normalmente pelos níveis 0 a 2.** Isso não é um modo degradado a
+evitar: é o comportamento correto em desenvolvimento e se a verba acabar.
 
 ## Privacidade
 
