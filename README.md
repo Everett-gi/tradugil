@@ -29,7 +29,7 @@ Parar cedo é o que mantém a latência baixa e o custo de IA perto de zero:
 
 | Nível | Onde | Custo | Situação |
 |-------|------|-------|----------|
-| 0 | Dicionário local no dispositivo | zero, offline | Pronto na web e no Android |
+| 0 | Dicionário local no dispositivo | zero, offline | Pronto na web e no Android, com pacote de sincronização |
 | 1 | Cache em memória da API (Caffeine) | zero | Pronto |
 | 2 | PostgreSQL curado, com busca tolerante a erro de digitação | baixo | Pronto |
 | 3 | Fontes externas, sempre com rótulo de origem | baixo | Não iniciado |

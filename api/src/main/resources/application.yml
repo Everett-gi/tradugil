@@ -39,6 +39,13 @@ server:
     include-message: never
     include-stacktrace: never
   compression:
+    # Ligado, mas nao vale contar com ele: as respostas grandes desta API
+    # saem com Transfer-Encoding chunked, sem Content-Length, e nesse caso
+    # o conector nao comprime -- verificado no /dicionario/pacotes, que
+    # voltou com 23 KB identicos com e sem Accept-Encoding: gzip.
+    #
+    # Quem comprime de verdade e o Caddy, na borda (ver infra/Caddyfile).
+    # Isto fica como rede de segurança para quem rodar a API sem ele.
     enabled: true
     mime-types: application/json
 

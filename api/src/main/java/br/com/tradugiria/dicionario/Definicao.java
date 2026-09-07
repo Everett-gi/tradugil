@@ -112,6 +112,10 @@ public class Definicao {
         return votosInuteis;
     }
 
+    public OffsetDateTime getAtualizadoEm() {
+        return atualizadoEm;
+    }
+
     public List<Exemplo> getExemplos() {
         return exemplos;
     }
