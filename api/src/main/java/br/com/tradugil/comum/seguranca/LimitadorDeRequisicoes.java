@@ -166,27 +166,33 @@ public class LimitadorDeRequisicoes extends OncePerRequestFilter {
     /**
      * De onde veio a requisição.
      *
-     * <p>Usa {@code X-Forwarded-For} quando existe, porque atrás do Caddy o
-     * endereço da conexão é sempre o do próprio proxy e limitar por ele
-     * limitaria o mundo inteiro junto. Pega o <b>primeiro</b> da lista, que é
-     * o cliente original.</p>
+     * <h2>Por que NÃO lê X-Forwarded-For aqui</h2>
      *
-     * <p>Esse cabeçalho é forjável por quem fala direto com a aplicação, e a
-     * mitigação não está aqui: está em não expor a porta 8080 fora do
-     * proxy. Vale registrar o limite em vez de fingir que ele não existe.</p>
+     * <p>A primeira versão lia o cabeçalho direto, para não limitar o mundo
+     * inteiro junto pelo endereço do proxy. Era um furo: quem falasse direto
+     * com a aplicação escrevia o cabeçalho que quisesse e ganhava uma cota
+     * nova a cada requisição, o que anula o limitador exatamente contra quem
+     * ele existe para conter.</p>
+     *
+     * <p>Quem faz esse trabalho corretamente é o {@code RemoteIpValve} do
+     * Tomcat, ligado em {@code server.tomcat.remoteip}. Ele só reescreve o
+     * endereço quando a conexão veio de um proxy confiável (as faixas
+     * privadas, onde o Caddy roda), e ignora o cabeçalho quando a requisição
+     * chega de fora. Depois dele, {@code getRemoteAddr()} já é o endereço
+     * real do cliente, validado.</p>
+     *
+     * <p>Ler o cabeçalho por conta própria desfazia essa validação. A regra
+     * geral: confie no que a camada de transporte apurou, nunca no que o
+     * cliente afirmou.</p>
      */
     private static String origem(HttpServletRequest requisicao) {
-        String encaminhado = requisicao.getHeader("X-Forwarded-For");
-        if (encaminhado != null && !encaminhado.isBlank()) {
-            int virgula = encaminhado.indexOf(',');
-            String primeiro = virgula < 0 ? encaminhado : encaminhado.substring(0, virgula);
-            String limpo = primeiro.trim();
-            // Teto de tamanho: o cabeçalho vem de fora e vira chave de cache.
-            if (!limpo.isEmpty() && limpo.length() <= 45) {
-                return limpo;
-            }
+        String endereco = requisicao.getRemoteAddr();
+        // Teto de tamanho porque este valor vira chave de cache. Um IPv6 com
+        // zona cabe em 45 caracteres; acima disso, não é endereço.
+        if (endereco == null || endereco.isBlank() || endereco.length() > 45) {
+            return "desconhecido";
         }
-        return requisicao.getRemoteAddr();
+        return endereco;
     }
 
     /**

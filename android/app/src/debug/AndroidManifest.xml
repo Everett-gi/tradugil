@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manifesto so da build de depuracao. O Gradle funde este com o principal, e
+  nada daqui alcanca a build de release.
+
+  A unica coisa que ele faz e apontar para a configuracao de rede que libera
+  HTTP para o servidor local. Ver o comentario em res/xml/network_security_config.xml.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="ManifestResource"
+        xmlns:tools="http://schemas.android.com/tools" />
+
+</manifest>

@@ -12,6 +12,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Menor privilegio para o GITHUB_TOKEN.
+#
+# Sem este bloco o token herda o padrao do repositorio, que em muitos casos e
+# leitura E ESCRITA. Uma acao de terceiro comprometida, ou um passo de build
+# que execute codigo de uma dependencia, teria permissao de empurrar commit,
+# criar release e mexer em issue com a identidade do repositorio.
+#
+# A CI aqui so le codigo e publica artefato de build, entao contents: read
+# basta. Um job que precisar de mais declara o proprio bloco, o que torna a
+# necessidade visivel na revisao em vez de implicita.
+permissions:
+  contents: read
+
 jobs:
   api:
     name: API (Java 21)

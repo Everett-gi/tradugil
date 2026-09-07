@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Permite HTTP sem TLS, e SO na build de depuracao, e SO para o servidor
+  local.
+
+  O PROBLEMA QUE ISTO RESOLVE
+
+  A build de depuracao aponta para http://10.0.2.2:8080, que e como o
+  emulador enxerga o localhost da maquina que o hospeda. Desde o Android 9,
+  com targetSdk 28 ou maior, trafego em texto puro e BLOQUEADO por padrao:
+  toda chamada da build de depuracao falharia com "Cleartext HTTP traffic not
+  permitted", e nada no codigo indicaria por que.
+
+  POR QUE ESTE ARQUIVO FICA EM src/debug, E NAO EM src/main
+
+  O caminho facil seria android:usesCleartextTraffic="true" no manifesto
+  principal. Isso liberaria texto puro para QUALQUER endereco, inclusive na
+  build que vai para o telefone das pessoas, e e uma das primeiras coisas que
+  analise automatica de aplicativo aponta como risco: um app que aceita HTTP
+  aceita ser interceptado em rede publica.
+
+  Aqui a permissao vale so no que roda na maquina de quem desenvolve, e so
+  para dois enderecos que nao existem fora dela. A build de release nunca ve
+  este arquivo, continua sem configuracao nenhuma e portanto segue o padrao
+  do sistema: HTTPS obrigatorio.
+
+  cleartextTrafficPermitted="false" no bloco base-config e explicito de
+  proposito. Ele ja e o padrao, e escreve-lo deixa claro que a liberacao
+  abaixo e excecao pontual, e nao o comeco de uma politica frouxa.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Como o emulador do Android enxerga o localhost do computador. -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- Aparelho fisico ligado por cabo, com adb reverse. -->
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

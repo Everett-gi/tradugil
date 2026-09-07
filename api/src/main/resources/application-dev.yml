@@ -5,6 +5,11 @@
 # Nada aqui deve valer em producao, e nada aqui e lido sem o perfil ativo.
 
 tradugil:
+  cors:
+    # As origens do Vite. Ficam aqui, e nao no application.yml, para nao
+    # viajarem para producao junto com o resto da configuracao.
+    origens: http://localhost:5173,http://localhost:4173
+
   documentacao:
     # O Swagger em http://localhost:8080/swagger-ui.html. Fechado por padrao;
     # aberto aqui porque na maquina de quem desenvolve ele e a forma mais

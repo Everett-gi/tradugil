@@ -58,8 +58,15 @@ server:
   tomcat:
     max-http-form-post-size: 64KB
     max-swallow-size: 64KB
-    # Nao anunciar a versao do servidor. Nao impede ataque nenhum sozinho,
-    # mas poupa ao atacante o trabalho de descobrir qual CVE tentar.
+    # Faz o Tomcat reescrever o endereco do cliente a partir do
+    # X-Forwarded-For, e SO quando a conexao vem de um proxy confiavel (as
+    # faixas privadas, onde o Caddy roda). Requisicao que chega de fora tem o
+    # cabecalho ignorado.
+    #
+    # Isso importa para o limitador por IP: e daqui que sai o endereco em que
+    # ele confia. Ler o cabecalho por conta propria, como a primeira versao do
+    # filtro fazia, desfazia essa validacao e deixava qualquer um forjar o
+    # proprio endereco para ganhar cota nova.
     remoteip:
       remote-ip-header: X-Forwarded-For
       protocol-header: X-Forwarded-Proto
@@ -95,7 +102,22 @@ springdoc:
 
 tradugil:
   cors:
-    origens: http://localhost:5173,http://localhost:4173
+    # O PADRAO E O DOMINIO REAL, e nao localhost.
+    #
+    # A versao anterior trazia localhost aqui, o que significava que uma
+    # implantacao feita sem sobrescrever a variavel aceitaria requisicao
+    # vinda da maquina de qualquer pessoa e recusaria a do proprio site.
+    #
+    # Nao era um furo grave (a API nao usa cookie, entao CORS nao concede
+    # acesso a credencial de ninguem, e as rotas liberadas ja sao publicas),
+    # mas e o tipo de padrao que envelhece mal: no dia em que existir um
+    # endpoint com credencial, o valor errado ja estaria em producao.
+    #
+    # As origens de desenvolvimento vivem em application-dev.yml. O site em
+    # producao nem precisa desta lista: o Caddy serve site e API na mesma
+    # origem, e requisicao de mesma origem nao passa por CORS. Quem precisa
+    # dela e a extensao de navegador.
+    origens: https://tradugil.app,https://www.tradugil.app
 
   documentacao:
     # A documentacao descreve toda a superficie da API: e material de trabalho

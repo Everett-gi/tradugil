@@ -1,0 +1,17 @@
+# Como avisar sobre uma falha de seguranca no Tradugil.
+#
+# Este arquivo segue a RFC 9116. Ele existe para quem encontrar um problema
+# ter um caminho obvio ate quem consegue resolver, em vez de precisar caçar um
+# contato ou desistir e publicar o achado.
+
+Contact: mailto:seguranca@tradugil.app
+Preferred-Languages: pt-BR, en
+Canonical: https://tradugil.app/.well-known/security.txt
+
+# Data em que este arquivo deixa de valer. A RFC exige, e por um bom motivo:
+# um contato sem prazo vira um endereco morto que ninguem percebe que morreu.
+Expires: 2027-09-07T00:00:00.000Z
+
+# O codigo e aberto. Ler a implementacao antes de reportar costuma poupar
+# tempo dos dois lados.
+Policy: https://github.com/Everett-gi/tradugil/blob/main/docs/SEGURANCA.md

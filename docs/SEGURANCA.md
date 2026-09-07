@@ -208,6 +208,109 @@ não em documentação publicada sem ninguém ter decidido isso.
 
 Em desenvolvimento: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`.
 
+## Auditoria de setembro de 2026
+
+Varredura completa das superfícies, com as checagens rodadas e não supostas.
+O que estava limpo:
+
+| Verificação | Resultado |
+|---|---|
+| Segredo em qualquer commit do histórico | nenhum |
+| `.env`, `.jks`, `keystore.properties` rastreados | nenhum, e todos ignorados |
+| `npm audit` nos três pacotes | zero vulnerabilidades |
+| SQL por concatenação | nenhum: tudo parametrizado |
+| `dangerouslySetInnerHTML`, `innerHTML`, `eval` | nenhum |
+| `Runtime.exec`, desserialização Java | nenhum |
+| Permissões do Android | só `INTERNET` e `ACCESS_NETWORK_STATE` |
+| Injeção de script no workflow | nenhuma interpolação perigosa |
+| Corpo de erro ecoando o que foi enviado | não, e há teste |
+| Cabeçalho `Server` na resposta | ausente |
+
+E as quatro coisas que ela encontrou:
+
+### 1. O limitador podia ser burlado com um cabeçalho forjado
+
+A pior das quatro, e era minha. O filtro lia `X-Forwarded-For` direto para
+descobrir o cliente. Quem falasse com a aplicação sem passar pelo proxy
+escrevia o cabeçalho que quisesse e ganhava um balde novo a cada requisição:
+o limitador continuava contando e não limitava ninguém.
+
+Quem valida esse cabeçalho é o `RemoteIpValve` do Tomcat, que já estava
+ligado e que só o respeita quando a conexão vem de um proxy confiável. Ler o
+cabeçalho por conta própria desfazia essa validação. Agora usa
+`getRemoteAddr()`, que é o endereço já apurado.
+
+`LimitadorDeRequisicoesTest` cobre. O teste foi conferido contra o código
+antigo: falha com ele, passa com a correção.
+
+### 2. O `GITHUB_TOKEN` da CI era mais poderoso do que precisava
+
+O workflow não declarava `permissions:`, então o token herdava o padrão do
+repositório, que costuma ser leitura **e escrita**. Uma ação de terceiro
+comprometida teria permissão de empurrar commit com a identidade do
+repositório. Agora é `contents: read`.
+
+### 3. A build de depuração do Android não conseguia falar com a API local
+
+Ela aponta para `http://10.0.2.2:8080`, e o Android bloqueia tráfego em
+texto puro por padrão desde a versão 9. Toda chamada falharia com "Cleartext
+HTTP traffic not permitted".
+
+O caminho fácil seria `usesCleartextTraffic="true"` no manifesto principal,
+que liberaria HTTP para qualquer endereço **inclusive na build que vai para o
+telefone das pessoas**, e é das primeiras coisas que análise automática aponta
+como risco. A correção é um `network_security_config.xml` em `src/debug`,
+válido só para `10.0.2.2` e `localhost`. Conferido no APK: a configuração
+está na build de depuração e não está na de release.
+
+### 4. O CORS de produção só permitia localhost
+
+O padrão em `application.yml` trazia as origens do Vite, o que significa que
+uma implantação feita sem sobrescrever a variável aceitaria requisição da
+máquina de qualquer pessoa e recusaria a do próprio site. Não era furo grave,
+porque a API não usa cookie e as rotas liberadas já são públicas, mas é o tipo
+de padrão que envelhece mal. As origens de desenvolvimento foram para
+`application-dev.yml`.
+
+## Os certificados, e o que ainda faz o aplicativo parecer suspeito
+
+Esta parte não é sobre o código estar correto: é sobre os sistemas de
+segurança de terceiros confiarem nele.
+
+**O APK está assinado**, com certificado próprio
+(`CN=Gildean Monteiro Do Nascimento`, SHA-256 começando em `abab4cc9`), e
+essa assinatura é o que permite atualizar quem já instalou. Ela não é o que
+faz o Android confiar no aplicativo.
+
+**O que ainda vai assustar quem instalar:** fora da Google Play, o Android
+mostra o aviso de "fontes desconhecidas" e o Play Protect exibe uma tela de
+alerta na primeira execução. Isso não é sinal de que algo está errado no
+aplicativo; é o comportamento padrão para qualquer APK que não veio da loja.
+Só há dois caminhos para remover esse atrito, e ambos custam:
+
+- publicar na Google Play (US$ 25, uma vez), que é o que faz o Play Protect
+  parar de alertar;
+- ou publicar o SHA-256 do APK no site, ao lado do link, para quem quiser
+  conferir que baixou o arquivo íntegro. Não remove o aviso, e dá a quem
+  desconfia uma forma de verificar.
+
+**A extensão** hoje só se instala em modo desenvolvedor. Para chegar a alguém
+que não seja você, ela precisa passar pela análise da Chrome Web Store, que é
+justamente o processo que atesta que ela não é maliciosa. O desenho já foi
+feito pensando nisso: ela não declara script de conteúdo, pede quatro
+permissões e duas origens, e nada disso é gratuito na análise.
+
+**O `AccessibilityService`** do Android, previsto para a F2, é o item mais
+delicado do projeto inteiro. É a permissão que aplicativos maliciosos mais
+usam para ler tela alheia, e a Play Console exige justificativa em vídeo para
+liberá-la. Fora da loja não há essa análise, o que foi registrado como
+vantagem no README; vale registrar aqui o outro lado: é também o recurso que
+mais faz um APK de fora da loja parecer malicioso para um antivírus.
+
+**`/.well-known/security.txt`** passou a ser publicado (RFC 9116), com
+contato e prazo de validade, para quem encontrar uma falha ter caminho até
+quem resolve.
+
 ## O que ainda não está feito
 
 Escrito aqui porque uma lista de defesas sem a lista de buracos é propaganda.
