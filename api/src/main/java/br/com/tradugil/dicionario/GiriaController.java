@@ -51,8 +51,10 @@ public class GiriaController {
             @RequestParam(name = "modoFamilia", required = false) Boolean modoFamilia,
             @RequestParam(name = "pagina", defaultValue = "0") int pagina,
             @RequestParam(name = "tamanho", defaultValue = "20") int tamanho) {
-        return ResponseEntity.ok(servico.pesquisar(
-                consulta, idioma, categoria, familiaLigado(modoFamilia), pagina, tamanho));
+        return ResponseEntity.ok()
+                .cacheControl(CacheHttp.DE_LEITURA_PUBLICA)
+                .body(servico.pesquisar(consulta, idioma, categoria,
+                        familiaLigado(modoFamilia), pagina, tamanho));
     }
 
     /** Ausente equivale a ligado: o padrão protege o caso em que errar custa caro. */
@@ -81,6 +83,8 @@ public class GiriaController {
     public ResponseEntity<GiriaCompleta> porTermo(
             @PathVariable String termo,
             @RequestParam(name = "idioma", required = false) String idioma) {
-        return ResponseEntity.ok(servico.porTermo(termo, idioma));
+        return ResponseEntity.ok()
+                .cacheControl(CacheHttp.DE_LEITURA_PUBLICA)
+                .body(servico.porTermo(termo, idioma));
     }
 }

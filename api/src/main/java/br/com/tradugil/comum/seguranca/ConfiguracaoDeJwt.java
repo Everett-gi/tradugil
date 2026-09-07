@@ -8,8 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -69,10 +71,26 @@ public class ConfiguracaoDeJwt {
     }
 
     @Bean
-    public JwtDecoder decodificadorDeJwt() {
-        return NimbusJwtDecoder.withSecretKey(chaveSecreta())
-                .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256)
+    public JwtDecoder decodificadorDeJwt(
+            @Value("${tradugil.jwt.emissor:tradugil}") String emissor) {
+        NimbusJwtDecoder decodificador = NimbusJwtDecoder.withSecretKey(chaveSecreta())
+                // Algoritmo fixo, e não "o que o token disser". Aceitar o
+                // cabeçalho do token como fonte da verdade sobre o algoritmo é
+                // a família de ataques "alg confusion", incluindo o clássico
+                // alg=none. Aqui só HS256 passa, venha o que vier escrito.
+                .macAlgorithm(MacAlgorithm.HS256)
                 .build();
+
+        /*
+         * O padrão do Nimbus valida só as datas. O emissor era escrito no
+         * token e nunca conferido, o que deixava valer qualquer token assinado
+         * com esta chave, tenha sido emitido para o que for. Enquanto a chave
+         * serve a um sistema só isso é teórico; deixa de ser no dia em que a
+         * mesma chave for reaproveitada em outro lugar, e nesse dia ninguém
+         * lembra de voltar aqui.
+         */
+        decodificador.setJwtValidator(JwtValidators.createDefaultWithIssuer(emissor));
+        return decodificador;
     }
 
     /**

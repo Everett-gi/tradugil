@@ -48,8 +48,10 @@ class ServicoDeAutenticacaoIT {
         String guardado = repositorioDeUsuario.findByEmail(email).orElseThrow().getSenhaHash();
 
         assertThat(guardado).doesNotContain("senhaboa123");
-        // BCrypt: o prefixo identifica o algoritmo e o custo.
-        assertThat(guardado).startsWith("$2");
+        // O prefixo nomeia o algoritmo, e é ele que permite trocar de
+        // algoritmo depois sem invalidar os hashes já gravados. Dentro dele,
+        // "$2a$12$" é o BCrypt com custo 12.
+        assertThat(guardado).startsWith("{pimenta}$2a$12$");
     }
 
     @Test

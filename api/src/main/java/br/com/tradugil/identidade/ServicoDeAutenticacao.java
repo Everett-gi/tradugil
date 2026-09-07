@@ -34,12 +34,49 @@ public class ServicoDeAutenticacao {
 
     private static final int TAMANHO_MINIMO_DA_SENHA = 8;
 
+    /**
+     * Teto do tamanho da senha.
+     *
+     * <p>Não é para limitar quem escolhe uma frase longa: 200 caracteres cabem
+     * em qualquer frase-senha razoável. É para impedir que alguém envie um
+     * megabyte de texto e faça o servidor calcular BCrypt em cima disso, que é
+     * negação de serviço de graça: o custo é todo do servidor.</p>
+     */
+    private static final int TAMANHO_MAXIMO_DA_SENHA = 200;
+
+    /** Tentativas erradas seguidas antes do primeiro travamento. */
+    private static final int TENTATIVAS_ATE_TRAVAR = 5;
+
+    private static final Duration ESPERA_BASE = Duration.ofMinutes(1);
+
+    /**
+     * Teto da espera. Sem teto, a curva que dobra chegaria a anos e um
+     * atacante conseguiria trancar a conta de alguém para sempre só errando
+     * senha de propósito. Uma hora já torna a força bruta inviável.
+     */
+    private static final Duration ESPERA_MAXIMA = Duration.ofHours(1);
+
     private final RepositorioDeUsuario repositorioDeUsuario;
     private final RepositorioDeToken repositorioDeToken;
     private final PasswordEncoder codificador;
     private final EmissorDeJwt emissor;
     private final RevogadorDeSessao revogador;
     private final SecureRandom aleatorio = new SecureRandom();
+
+    /**
+     * Hash descartável, com que a senha é comparada quando o e-mail não
+     * existe. Calculado na subida, com o codificador de verdade, para custar
+     * exatamente o mesmo que uma comparação real.
+     *
+     * <p>Antes disto havia aqui uma constante escrita à mão que <b>não era um
+     * hash BCrypt válido</b>: tinha 57 caracteres onde o formato exige 53. O
+     * Spring rejeita pelo formato antes de calcular coisa alguma, então a
+     * comparação voltava em microssegundos. O efeito era o oposto do
+     * pretendido: e-mail inexistente respondia na hora e senha errada demorava
+     * os 250 ms do BCrypt, e o tempo de resposta virava exatamente o oráculo
+     * de "esta pessoa tem conta aqui" que o código dizia estar evitando.</p>
+     */
+    private final String hashDescartavel;
 
     public ServicoDeAutenticacao(RepositorioDeUsuario repositorioDeUsuario,
                                  RepositorioDeToken repositorioDeToken,
@@ -51,16 +88,18 @@ public class ServicoDeAutenticacao {
         this.codificador = codificador;
         this.emissor = emissor;
         this.revogador = revogador;
+
+        byte[] semente = new byte[32];
+        new SecureRandom().nextBytes(semente);
+        this.hashDescartavel = codificador.encode(
+                Base64.getEncoder().encodeToString(semente));
     }
 
     @Transactional
     public ParDeTokens registrar(NovoUsuario novo) {
         String email = novo.email().trim().toLowerCase(java.util.Locale.ROOT);
 
-        if (novo.senha().length() < TAMANHO_MINIMO_DA_SENHA) {
-            throw new RegraDeNegocioException("SENHA_CURTA",
-                    "A senha precisa ter pelo menos " + TAMANHO_MINIMO_DA_SENHA + " caracteres.");
-        }
+        conferirSenha(novo.senha(), email);
         if (repositorioDeUsuario.existsByEmail(email)) {
             // O e-mail já existe, mas a mensagem não confirma isso: dizer
             // "e-mail já cadastrado" transforma o registro num oráculo que
@@ -78,22 +117,108 @@ public class ServicoDeAutenticacao {
     @Transactional
     public ParDeTokens autenticar(Credenciais credenciais) {
         String email = credenciais.email().trim().toLowerCase(java.util.Locale.ROOT);
+        OffsetDateTime agora = OffsetDateTime.now();
         Optional<Usuario> encontrado = repositorioDeUsuario.findByEmail(email);
 
-        // Compara a senha mesmo quando o usuário não existe, contra um hash
-        // descartável. Sem isso, a resposta volta muito mais rápido para
-        // e-mail inexistente do que para senha errada, e o tempo de resposta
-        // vira um oráculo de quem tem conta.
+        /*
+         * Conta travada não chega a comparar senha. Responde a mesma frase de
+         * credencial errada, de propósito: dizer "sua conta está bloqueada"
+         * confirmaria que a conta existe, que é justamente o que o atacante
+         * está tentando descobrir enquanto tenta senhas.
+         */
+        if (encontrado.isPresent() && encontrado.get().estaBloqueado(agora)) {
+            log.warn("Login recusado para conta travada: usuário {}.",
+                    encontrado.get().getId());
+            throw credenciaisInvalidas();
+        }
+
+        // Compara a senha mesmo quando o e-mail não existe, contra um hash
+        // descartável de verdade. Ver o comentário de `hashDescartavel`.
         String hashParaComparar = encontrado
                 .map(Usuario::getSenhaHash)
-                .orElse("$2a$10$ignoreignoreignoreignoreignoreignoreignoreignoreignoreign");
+                .orElse(hashDescartavel);
         boolean senhaConfere = codificador.matches(credenciais.senha(), hashParaComparar);
 
-        if (encontrado.isEmpty() || !senhaConfere) {
-            throw new RegraDeNegocioException("CREDENCIAIS_INVALIDAS",
-                    "E-mail ou senha incorretos.");
+        if (encontrado.isEmpty()) {
+            throw credenciaisInvalidas();
         }
-        return emitirPar(encontrado.get(), UUID.randomUUID());
+
+        Usuario usuario = encontrado.get();
+
+        if (!senhaConfere) {
+            OffsetDateTime travadoAte = usuario.registrarFalha(
+                    agora, TENTATIVAS_ATE_TRAVAR, ESPERA_BASE, ESPERA_MAXIMA);
+            if (travadoAte != null) {
+                log.warn("Conta {} travada até {} após {} tentativas erradas.",
+                        usuario.getId(), travadoAte, usuario.getTentativasFalhas());
+            }
+            throw credenciaisInvalidas();
+        }
+
+        usuario.registrarAcerto();
+
+        /*
+         * Regrava o hash quando ele está num formato antigo. É o que permite
+         * trocar de algoritmo sem pedir a ninguém que redefina a senha: cada
+         * conta migra sozinha no primeiro login depois da troca. Só é possível
+         * aqui, porque este é o único ponto do sistema em que a senha em claro
+         * existe.
+         */
+        if (codificador.upgradeEncoding(usuario.getSenhaHash())) {
+            usuario.trocarHashDaSenha(codificador.encode(credenciais.senha()));
+            log.info("Hash da senha do usuário {} regravado no formato atual.",
+                    usuario.getId());
+        }
+
+        return emitirPar(usuario, UUID.randomUUID());
+    }
+
+    /**
+     * A mesma exceção para e-mail inexistente, senha errada e conta travada.
+     *
+     * <p>Três respostas diferentes seriam três formas de perguntar ao servidor
+     * quem tem conta aqui. A pessoa legítima que errou a senha entende pela
+     * frase; quem está sondando não aprende nada.</p>
+     */
+    private static RegraDeNegocioException credenciaisInvalidas() {
+        return new RegraDeNegocioException("CREDENCIAIS_INVALIDAS",
+                "E-mail ou senha incorretos.");
+    }
+
+    /**
+     * Regras da senha nova.
+     *
+     * <p>Sem exigência de maiúscula, número e símbolo: essa regra empurra as
+     * pessoas para "Senha@123" e o NIST deixou de recomendá-la em 2017 por
+     * isso. O que fica são as três checagens que de fato ajudam: comprimento
+     * mínimo, teto contra abuso e recusa das senhas mais óbvias.</p>
+     */
+    private static void conferirSenha(String senha, String email) {
+        if (senha == null || senha.length() < TAMANHO_MINIMO_DA_SENHA) {
+            throw new RegraDeNegocioException("SENHA_CURTA",
+                    "A senha precisa ter pelo menos " + TAMANHO_MINIMO_DA_SENHA
+                            + " caracteres.");
+        }
+        if (senha.length() > TAMANHO_MAXIMO_DA_SENHA) {
+            throw new RegraDeNegocioException("SENHA_LONGA",
+                    "A senha pode ter no máximo " + TAMANHO_MAXIMO_DA_SENHA
+                            + " caracteres.");
+        }
+
+        String simplificada = senha.toLowerCase(java.util.Locale.ROOT);
+        if (SenhasProibidas.contem(simplificada)) {
+            throw new RegraDeNegocioException("SENHA_PREVISIVEL",
+                    "Essa senha é uma das mais usadas do mundo e seria adivinhada "
+                            + "em segundos. Escolha outra.");
+        }
+
+        // A senha ser o próprio e-mail, ou a parte antes do arroba, é a
+        // primeira coisa que qualquer ataque tenta.
+        String usuario = email.split("@")[0];
+        if (simplificada.equals(email) || simplificada.equals(usuario)) {
+            throw new RegraDeNegocioException("SENHA_PREVISIVEL",
+                    "A senha não pode ser o seu e-mail. Escolha outra.");
+        }
     }
 
     /**

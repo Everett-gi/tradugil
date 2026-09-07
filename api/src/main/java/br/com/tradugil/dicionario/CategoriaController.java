@@ -48,6 +48,8 @@ public class CategoriaController {
     @GetMapping
     public ResponseEntity<List<CategoriaResumo>> listar(
             @RequestParam(name = "modoFamilia", required = false) Boolean modoFamilia) {
-        return ResponseEntity.ok(servico.categorias(modoFamilia == null || modoFamilia));
+        return ResponseEntity.ok()
+                .cacheControl(CacheHttp.DE_LEITURA_PUBLICA)
+                .body(servico.categorias(modoFamilia == null || modoFamilia));
     }
 }

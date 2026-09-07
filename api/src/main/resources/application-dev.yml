@@ -1,0 +1,21 @@
+# Perfil de desenvolvimento. Ative com:
+#
+#     mvn spring-boot:run -Dspring-boot.run.profiles=dev
+#
+# Nada aqui deve valer em producao, e nada aqui e lido sem o perfil ativo.
+
+tradugil:
+  documentacao:
+    # O Swagger em http://localhost:8080/swagger-ui.html. Fechado por padrao;
+    # aberto aqui porque na maquina de quem desenvolve ele e a forma mais
+    # rapida de experimentar a API.
+    publica: true
+
+logging:
+  level:
+    # Mostra o SQL que o Hibernate realmente emite, com os parametros. E o que
+    # torna visivel um N+1 antes de ele virar lentidao em producao: se uma
+    # requisicao imprime a mesma consulta cinquenta vezes com ids diferentes,
+    # o problema esta na tela.
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

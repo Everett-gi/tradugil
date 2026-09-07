@@ -26,6 +26,24 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+        # O QUE ISTO RESOLVE: N+1.
+        #
+        # GiriaResumo le, de cada giria, as definicoes aprovadas, as
+        # categorias e o idioma. As tres sao LAZY, entao uma pagina de 50
+        # resultados custava 1 consulta da lista + 50 de definicoes + 50 de
+        # categorias + 50 de idioma. Medido contra o Neon: 1 item em 98 ms,
+        # 50 itens em 1,97 s. Linear no numero de itens, que e a assinatura
+        # do problema.
+        #
+        # Com o lote, o Hibernate junta os carregamentos pendentes num
+        # "WHERE giria_id IN (...)" e as 150 consultas viram 3.
+        #
+        # Global, e nao @BatchSize em cada colecao, de proposito: assim vale
+        # tambem para os caminhos que ninguem auditou e para os que ainda vao
+        # existir. O modo de falhar de @BatchSize e alguem criar uma consulta
+        # nova e esquecer a anotacao, e esse esquecimento nao aparece em teste
+        # nenhum: so aparece como lentidao em producao.
+        default_batch_fetch_size: 64
 
   flyway:
     enabled: true
@@ -33,6 +51,18 @@ spring:
 
 server:
   port: 8080
+  # O maior corpo legitimo e o /traduzir com 5000 caracteres, que da uns 20 KB
+  # em UTF-8 no pior caso. 64 KB deixa folga e ainda recusa cedo quem manda
+  # megabytes so para ocupar memoria e thread.
+  max-http-request-header-size: 16KB
+  tomcat:
+    max-http-form-post-size: 64KB
+    max-swallow-size: 64KB
+    # Nao anunciar a versao do servidor. Nao impede ataque nenhum sozinho,
+    # mas poupa ao atacante o trabalho de descobrir qual CVE tentar.
+    remoteip:
+      remote-ip-header: X-Forwarded-For
+      protocol-header: X-Forwarded-Proto
   error:
     # O texto enviado para traducao pode aparecer numa stack trace. Nada de
     # detalhe de erro sai para o cliente.
@@ -66,6 +96,14 @@ springdoc:
 tradugil:
   cors:
     origens: http://localhost:5173,http://localhost:4173
+
+  documentacao:
+    # A documentacao descreve toda a superficie da API: e material de trabalho
+    # para quem desenvolve e material de reconhecimento para quem ataca.
+    # Fechada por padrao, e ligada explicitamente em desenvolvimento
+    # (application-dev.yml). Assim o esquecimento deixa a documentacao
+    # indisponivel, em vez de publicada sem ninguem ter decidido isso.
+    publica: false
 
   ia:
     # Teto diario de chamadas ao modelo. Deliberadamente baixo: e mais facil

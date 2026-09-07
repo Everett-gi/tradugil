@@ -46,7 +46,21 @@ public class EmissorDeJwt {
                 // token: no máximo 15 minutos de atraso, aceitável para o
                 // que este produto faz.
                 .claim("papel", usuario.getPapel().name())
-                .claim("email", usuario.getEmail())
+                /*
+                 * O e-mail NÃO entra aqui, e já entrou.
+                 *
+                 * Um JWT é Base64, não é cifrado: qualquer um que veja o token
+                 * lê o conteúdo. E o token vai junto em toda requisição, fica
+                 * guardado no navegador e sobra em qualquer lugar por onde um
+                 * cabeçalho passe. Carregar o e-mail ali significava espalhar
+                 * o único dado pessoal do sistema por todos esses lugares, sem
+                 * necessidade: o `sub` já identifica a conta, e a interface que
+                 * quiser exibir o e-mail pode buscá-lo uma vez.
+                 *
+                 * A seção 8 do documento diz que o produto não guarda dado
+                 * pessoal que não precise ter. Isto era uma exceção silenciosa
+                 * a essa regra.
+                 */
                 .build();
 
         return codificador.encode(JwtEncoderParameters.from(

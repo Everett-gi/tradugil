@@ -34,6 +34,13 @@ android/tradugil.jks
 android/keystore.properties
 ```
 
+**Guarde junto o conteúdo de `.env`**, em especial a linha
+`TRADUGIL_PIMENTA_DE_SENHA`. Essa chave entra no cálculo do hash das senhas
+e não fica no banco de propósito: é o que torna um vazamento só do banco
+inútil para quem o roubou. Perdê-la significa que nenhuma senha cadastrada
+funciona mais, e não há como recalcular sem a senha em claro, que ninguém
+tem. Ela é tão irreversível quanto a chave do APK.
+
 Se você usa um gerenciador de senhas, guarde a senha lá também. Perder o
 `.jks` ou a senha significa nunca mais conseguir atualizar quem instalou.
 

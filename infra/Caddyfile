@@ -24,11 +24,33 @@ tradugil.app, www.tradugil.app {
 
 	# ------------------------------------------------------------------ API
 
+	# Autenticacao tem teto proprio, e bem mais baixo. Antes ela dividia os
+	# 60/min com a consulta ao dicionario, o que dava 60 tentativas de senha
+	# por minuto por IP: muito para uma rota cujo uso legitimo e entrar uma
+	# vez a cada 30 dias, que e a validade do refresh token.
+	#
+	# A ordem importa: este handle vem primeiro e o Caddy usa o mais
+	# especifico, entao /api/v1/auth/* nunca cai no bloco geral abaixo.
+	handle /api/v1/auth/* {
+		rate_limit {
+			zone autenticacao {
+				key {remote_host}
+				events 10
+				window 1m
+			}
+		}
+		reverse_proxy api:8080
+	}
+
 	handle /api/* {
 		# Limite por IP na borda. E a mitigacao de negacao de servico do
 		# threat model: o /traduzir e publico e, sem teto aqui, alguem
 		# automatiza consultas de termos inventados para gerar custo de IA.
 		# A cota diaria da aplicacao e a segunda linha, nao a primeira.
+		#
+		# A aplicacao tem o proprio limitador, por classe de rota. Os dois
+		# existem de proposito: este some junto com o Caddy, e defesa que
+		# depende de uma peca externa estar no lugar falha em silencio.
 		rate_limit {
 			zone consultas {
 				key {remote_host}
@@ -39,13 +61,15 @@ tradugil.app, www.tradugil.app {
 		reverse_proxy api:8080
 	}
 
-	handle /swagger-ui/* {
-		reverse_proxy api:8080
-	}
-
-	handle /v3/api-docs/* {
-		reverse_proxy api:8080
-	}
+	# A documentacao da API NAO e publicada. Ela descreve toda a superficie do
+	# servico, o que e material de trabalho para quem desenvolve e material de
+	# reconhecimento para quem ataca. A aplicacao ja a fecha por padrao
+	# (tradugil.documentacao.publica); nao encaminhar daqui e a segunda tranca,
+	# para o dia em que alguem ligar a primeira sem pensar.
+	#
+	# Para consultar em desenvolvimento:
+	#     mvn spring-boot:run -Dspring-boot.run.profiles=dev
+	#     http://localhost:8080/swagger-ui.html
 
 	# --------------------------------------------------------------- Site
 
