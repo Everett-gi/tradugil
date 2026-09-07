@@ -1,6 +1,7 @@
 package br.com.tradugiria.traducao;
 
 import java.text.Normalizer;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -48,7 +49,11 @@ public final class Normalizador {
         }
         String semAcento = ACENTOS.matcher(
                 Normalizer.normalize(bruto, Normalizer.Form.NFD)).replaceAll("");
-        String limpo = RUIDO.matcher(semAcento.toLowerCase()).replaceAll(" ");
+        // Locale.ROOT, e nao o locale padrao: em turco, "I".toLowerCase()
+        // devolve "i" sem ponto. O servidor rodaria com um locale e o celular
+        // do usuario com outro, e o mesmo termo geraria chaves diferentes --
+        // exatamente a divergencia que esta classe existe para impedir.
+        String limpo = RUIDO.matcher(semAcento.toLowerCase(Locale.ROOT)).replaceAll(" ");
         return ESPACOS.matcher(limpo).replaceAll(" ").trim();
     }
 

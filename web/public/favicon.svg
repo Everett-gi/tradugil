@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="TraduGíria">
+  <rect width="100" height="100" rx="22" fill="#1b4965"/>
+  <path d="M27 22h47a9 9 0 0 1 9 9v25a9 9 0 0 1-9 9H45L27 78V65h0a9 9 0 0 1-9-9V31a9 9 0 0 1 9-9z" fill="#ffffff"/>
+  <path d="M53 50h31a7 7 0 0 1 7 7v17a7 7 0 0 1-7 7H70l-4 9-2-9h-11a7 7 0 0 1-7-7V57a7 7 0 0 1 7-7z" fill="#ffd166"/>
+</svg>

@@ -28,3 +28,6 @@ api/src/main/resources/application-local.yml
 .vscode/
 Thumbs.db
 desktop.ini
+
+# Artefatos do Vite / PWA gerados no build
+web/dev-dist/
