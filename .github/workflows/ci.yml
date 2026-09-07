@@ -153,6 +153,49 @@ jobs:
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 7
 
+  extensao:
+    name: Extensao de navegador
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: extension/package-lock.json
+
+      # Nao precisa instalar packages/core-ts antes: o esbuild resolve o
+      # TypeScript dele direto pelo link file:, e ele nao tem dependencias de
+      # execucao proprias. Conferido rodando o build com o node_modules de
+      # core-ts removido.
+      - run: npm ci
+        working-directory: extension
+
+      - name: Verificacao de tipos
+        run: npm run typecheck
+        working-directory: extension
+
+      - name: Empacotar
+        run: npm run build
+        working-directory: extension
+        env:
+          NODE_ENV: production
+
+      # Prova que o dist gerado e carregavel: o manifesto tem que ser JSON
+      # valido e cada arquivo que ele cita tem que existir. Um caminho errado
+      # no manifesto so aparece na hora de instalar, e nao ha instalacao na CI.
+      - name: Conferir o pacote
+        run: node conferir-pacote.mjs
+        working-directory: extension
+
+      - name: Publicar extensao
+        uses: actions/upload-artifact@v4
+        with:
+          name: extensao
+          path: extension/dist/
+          retention-days: 7
+
   dependencias:
     name: Auditoria de dependencias
     runs-on: ubuntu-latest
@@ -170,3 +213,4 @@ jobs:
         run: |
           npm audit --audit-level=high --prefix packages/core-ts
           npm audit --audit-level=high --prefix web
+          npm audit --audit-level=high --prefix extension

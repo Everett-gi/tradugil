@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Tradugil",
+  "version": "0.1.0",
+  "description": "Selecione uma gíria em qualquer página e veja o que ela significa, em linguagem simples.",
+
+  "icons": {
+    "192": "icones/icone-192.png",
+    "512": "icones/icone-512.png"
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tradugil"
+  },
+
+  "background": {
+    "service_worker": "fundo.js",
+    "type": "module"
+  },
+
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "http://localhost:8080/*",
+    "https://tradugil.app/*"
+  ],
+
+  "commands": {
+    "explicar-selecao": {
+      "suggested_key": { "default": "Ctrl+Shift+E" },
+      "description": "Explicar o texto selecionado"
+    }
+  }
+}

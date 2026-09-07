@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tradugil</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Tradugil</h1>
+      <p class="dica">
+        Selecione uma gíria em qualquer página e aperte
+        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>, ou use o botão
+        direito.
+      </p>
+    </header>
+
+    <main>
+      <form id="busca">
+        <label for="termo">Consultar uma gíria</label>
+        <div class="linha">
+          <input
+            id="termo"
+            name="termo"
+            type="search"
+            autocomplete="off"
+            placeholder="mó cringe"
+            required
+          />
+          <button type="submit">Explicar</button>
+        </div>
+      </form>
+
+      <!--
+        aria-live faz o leitor de tela anunciar o resultado quando ele chega.
+        Sem isso, quem navega por leitor recebe o foco de volta no campo e
+        nada indica que a resposta apareceu logo abaixo.
+      -->
+      <section id="resultado" aria-live="polite"></section>
+    </main>
+
+    <footer>
+      <label class="alternador">
+        <input id="modo-familia" type="checkbox" />
+        <span>
+          Modo família
+          <small>Avisa quando o termo costuma pedir atenção.</small>
+        </span>
+      </label>
+
+      <details>
+        <summary>Servidor</summary>
+        <label for="url-da-api">Endereço da API</label>
+        <input id="url-da-api" type="url" spellcheck="false" />
+        <p id="aviso-da-url" class="erro" hidden>
+          Só valem <code>https://tradugil.app</code> e
+          <code>http://localhost:8080</code>.
+        </p>
+      </details>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

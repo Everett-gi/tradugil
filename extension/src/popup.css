@@ -1,0 +1,221 @@
+/* Estilo do popup da extensao. Segue a mesma paleta do site. */
+
+:root {
+  --tinta: #16202a;
+  --papel: #ffffff;
+  --marca: #1b4965;
+  --marca-clara: #e7f0f6;
+  --borda: #cbd8e1;
+  --apagado: #5b6b78;
+  --alerta: #a4262c;
+  --alerta-fundo: #fdecea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tinta: #e8eff4;
+    --papel: #142530;
+    --marca: #8dc0dd;
+    --marca-clara: #1c3646;
+    --borda: #33505f;
+    --apagado: #a7bcc9;
+    --alerta: #f4a9a4;
+    --alerta-fundo: #3a1e1f;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 22rem;
+  margin: 0;
+  padding: 0.9rem 1rem 1rem;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* 15px, e nao os 12px habituais de popup: parte do publico do produto tem
+     dificuldade de leitura, e a extensao nao pode ser a parte ilegivel. */
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--marca);
+}
+
+.dica {
+  margin: 0.25rem 0 0.9rem;
+  font-size: 0.82rem;
+  color: var(--apagado);
+}
+
+kbd {
+  padding: 0.05rem 0.3rem;
+  border: 1px solid var(--borda);
+  border-radius: 4px;
+  background: var(--marca-clara);
+  font-family: inherit;
+  font-size: 0.78rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.linha {
+  display: flex;
+  gap: 0.4rem;
+}
+
+input[type="search"],
+input[type="url"] {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+}
+
+button[type="submit"] {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--marca);
+  border-radius: 6px;
+  background: var(--marca);
+  color: var(--papel);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  filter: brightness(1.1);
+}
+
+:focus-visible {
+  outline: 2px solid var(--marca);
+  outline-offset: 2px;
+}
+
+#resultado:empty {
+  display: none;
+}
+
+#resultado {
+  margin-top: 0.85rem;
+}
+
+.verbete {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--marca-clara);
+}
+
+.verbete + .verbete {
+  margin-top: 0.5rem;
+}
+
+.verbete h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.verbete p {
+  margin: 0 0 0.3rem;
+}
+
+.verbete p:last-child {
+  margin-bottom: 0;
+}
+
+.formal {
+  font-size: 0.85rem;
+  color: var(--apagado);
+}
+
+.aviso {
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--alerta);
+  border-radius: 6px;
+  background: var(--alerta-fundo);
+  color: var(--alerta);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.rotulo-ia {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--marca);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.erro {
+  color: var(--alerta);
+  font-size: 0.85rem;
+}
+
+.carregando {
+  color: var(--apagado);
+  font-style: italic;
+}
+
+footer {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--borda);
+}
+
+.alternador {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.alternador input {
+  margin-top: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--marca);
+}
+
+.alternador small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--apagado);
+}
+
+details {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--apagado);
+}
+
+details label {
+  margin-top: 0.5rem;
+}
+
+details input {
+  width: 100%;
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@tradugil/extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Extensao de navegador: explica a giria selecionada na propria pagina",
+  "scripts": {
+    "build": "node build.mjs",
+    "conferir": "node conferir-pacote.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tradugil/core": "file:../packages/core-ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^5.6.3",
+    "@types/chrome": "^0.2.9"
+  }
+}
