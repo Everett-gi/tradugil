@@ -152,6 +152,12 @@ public class ConfiguracaoDeSeguranca {
                         .requestMatchers("/api/v1/moderacao/**")
                                 .hasAnyRole("MODERATOR", "ADMIN")
 
+                        // Promover e rebaixar. So ADMIN, e por isso o
+                        // primeiro administrador nao pode sair daqui: viria
+                        // um ciclo. Ele vem de PromotorInicialDeAdmin, por
+                        // variavel de ambiente.
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
                         .anyRequest().denyAll())
                 .oauth2ResourceServer(oauth -> oauth
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(conversorDeAutenticacao)));

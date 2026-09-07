@@ -978,3 +978,204 @@ body {
     border-radius: 0;
   }
 }
+
+/* -------------------------------------- conta, contribuicao e moderacao --- */
+
+/*
+ * A conta vive no rodape, discreta. Consultar o dicionario nunca exige
+ * cadastro, e essa e uma decisao de produto: quem chegou para entender uma
+ * mensagem nao pode nem chegar a pensar que precisa de conta. Um botao
+ * grande de "entrar" no topo diria o contrario.
+ */
+.conta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.conta-status {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--tinta-suave);
+}
+
+.conta-formulario {
+  display: block;
+  max-width: 24rem;
+  margin: 0 auto 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--curva);
+  background: var(--folha);
+  box-shadow: var(--relevo-2);
+  text-align: left;
+}
+
+.conta-titulo {
+  margin: 0 0 1.25rem;
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 60, 'opsz' 40;
+}
+
+/* Campo de uma linha: o .campo padrao e a caixa de texto alta do formulario
+   principal, e aqui herdar a altura dela deixaria o login estranho. */
+.campo-linha {
+  min-height: var(--alvo-minimo);
+  margin-bottom: 1rem;
+  resize: none;
+}
+
+.conta-alternativas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/*
+ * Botao com cara de link. Existe para as acoes secundarias do formulario
+ * ("ja tenho conta", "cancelar") nao competirem com o botao principal. Como
+ * e <button> de verdade, o teclado e o leitor de tela continuam entendendo
+ * que e um controle.
+ */
+.link {
+  min-height: 2.75rem;
+  padding: 0.25rem;
+  border: none;
+  background: none;
+  color: var(--marca);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.contribuir,
+.moderacao {
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--borda);
+}
+
+.contribuir h2,
+.moderacao h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 60, 'opsz' 40;
+}
+
+.contribuir-subtitulo {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.lista-contribuicoes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.contribuicao {
+  margin-bottom: 1rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--curva);
+  background: var(--areia);
+  border-left: 4px solid var(--borda-forte);
+}
+
+.contribuicao-cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.contribuicao-texto {
+  margin: 0;
+}
+
+.contribuicao-motivo {
+  margin: 0.75rem 0 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--curva-p);
+  background: var(--risco-fundo);
+  color: var(--risco-texto);
+}
+
+.etiqueta-pendente {
+  background: var(--areia-funda);
+}
+
+.etiqueta-aprovada {
+  background: var(--marca-tenue);
+  border-color: var(--marca);
+  color: var(--marca);
+}
+
+.etiqueta-rejeitada {
+  background: var(--risco-fundo);
+  border-color: var(--risco-borda);
+  color: var(--risco-texto);
+}
+
+/*
+ * A fila de moderacao. Aprovar e recusar ficam separados de proposito, e nao
+ * como dois botoes iguais lado a lado: e uma decisao irreversivel tomada em
+ * sequencia, dezenas de vezes seguidas, e e assim que se clica no errado por
+ * automatismo.
+ */
+.contribuicao-fila {
+  border-left-color: var(--marca);
+  background: var(--folha);
+  box-shadow: var(--relevo-1);
+}
+
+.botao-aprovar {
+  width: 100%;
+  margin-top: 1rem;
+  background: var(--marca);
+  border-color: var(--marca);
+  color: var(--marca-texto);
+}
+
+.botao-aprovar:hover:not(:disabled) {
+  background: var(--marca-viva);
+  border-color: var(--marca-viva);
+}
+
+.rejeitar {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--borda-forte);
+}
+
+.rejeitar .campo-linha {
+  margin-bottom: 0.75rem;
+}
+
+/*
+ * O recusar so ganha a cor de alerta quando ha motivo escrito. Desabilitado
+ * ele fica neutro, o que evita um botao vermelho chamando atencao antes de
+ * a acao estar disponivel.
+ */
+.botao-rejeitar:not(:disabled) {
+  border-color: var(--risco-borda);
+  color: var(--risco-texto);
+  background: var(--risco-fundo);
+}
+
+.botao-rejeitar:not(:disabled):hover {
+  background: var(--risco-borda);
+  border-color: var(--risco-borda);
+  color: var(--folha);
+}

@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import br.com.tradugil.traducao.Normalizador;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
@@ -84,6 +85,35 @@ public class Giria {
     private List<Categoria> categorias = new ArrayList<>();
 
     protected Giria() {
+    }
+
+    /**
+     * Cria um verbete a partir de uma proposta aprovada na moderação.
+     *
+     * <p>As duas chaves de busca são <b>calculadas aqui</b>, e não recebidas.
+     * É o mesmo cuidado que existe no gerador de migrações, e pelo mesmo
+     * motivo: chave escrita à mão erra em silêncio, o verbete entra no banco
+     * e nunca é encontrado por ninguém, porque não corresponde ao que o
+     * cliente calcula na busca.</p>
+     *
+     * <p>Nasce sem marca de conteúdo impróprio nem de risco. Quem aprovou não
+     * tem como classificar isso pelo formulário atual, e o padrão precisa ser
+     * o que não esconde nada indevidamente: um termo delicado que passe por
+     * aqui é problema da moderação, não do valor inicial de uma coluna.</p>
+     */
+    public static Giria daComunidade(String termo, Idioma idioma) {
+        Giria nova = new Giria();
+        nova.termo = termo.trim();
+        nova.termoNormalizado = Normalizador.normalizar(nova.termo);
+        nova.termoColapsado = Normalizador.colapsarRepeticoes(nova.termoNormalizado);
+        nova.idioma = idioma;
+        nova.nsfw = false;
+        nova.riscoMenor = false;
+        return nova;
+    }
+
+    public void acrescentar(Definicao definicao) {
+        definicoes.add(definicao);
     }
 
     /**

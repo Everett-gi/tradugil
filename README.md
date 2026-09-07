@@ -100,6 +100,15 @@ obrigatória, o campo de contribuição vira um canal aberto para definições
 ofensivas e desinformação, exibidas com a autoridade de um verbete para um
 público que inclui pessoas idosas e famílias.
 
+Aprovar **publica**: cria o verbete com as chaves de busca calculadas e a
+explicação marcada como vinda da **comunidade**, e não da curadoria. A origem
+aparece na tela, e é o que permite a quem lê calibrar a confiança.
+
+O primeiro administrador vem de `TRADUGIL_ADMIN_INICIAL`, e não de um
+endpoint: promover exige ser administrador, então sem alguém vindo de fora
+ninguém nunca seria promovido. Ele só promove uma conta que já existe, nunca
+cria e nunca rebaixa.
+
 **A trilha de auditoria é append-only, garantida pelo banco.** A coluna
 `moderador_id` guarda o estado atual, e estado atual pode ser sobrescrito:
 um moderador que aprova algo impróprio e depois rejeita para encobrir faz a

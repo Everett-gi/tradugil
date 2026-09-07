@@ -72,6 +72,28 @@ public class Definicao {
     protected Definicao() {
     }
 
+    /**
+     * A explicação escrita por quem contribuiu, já aprovada por uma pessoa.
+     *
+     * <p>Entra como APROVADA porque a moderação é o que aprova: passar por
+     * aqui significa que alguém leu e decidiu publicar. E entra com fonte
+     * COMUNIDADE, que a interface exibe: uma explicação enviada por usuário
+     * não pode se passar por verbete escrito pela curadoria, mesmo depois de
+     * revisada.</p>
+     *
+     * <p>Só o resumo é preenchido. O formulário de contribuição pede um texto
+     * só, e inventar um detalhe ou um equivalente formal a partir dele seria
+     * escrever curadoria em nome de quem contribuiu.</p>
+     */
+    public static Definicao daComunidade(Giria giria, String explicacao, Fonte fonte) {
+        Definicao nova = new Definicao();
+        nova.giria = giria;
+        nova.explicacaoSimples = explicacao.trim();
+        nova.fonte = fonte;
+        nova.status = StatusDeDefinicao.APROVADA;
+        return nova;
+    }
+
     public boolean estaAprovada() {
         return status == StatusDeDefinicao.APROVADA;
     }

@@ -1,6 +1,11 @@
 import type {
   CategoriaResumo,
+  ContribuicaoResposta,
+  Credenciais,
+  DecisaoDeModeracao,
   ErroDaApi,
+  NovaContribuicao,
+  ParDeTokens,
   GiriaCompleta,
   GiriaResumo,
   Pagina,
@@ -101,6 +106,92 @@ export class ClienteTradugil {
     const sufixo = modoFamilia ? '' : '?modoFamilia=false';
     return this.requisitar<CategoriaResumo[]>(`/categorias${sufixo}`);
   }
+
+  /* ------------------------------------------------------- identidade --- */
+
+  async registrar(credenciais: Credenciais): Promise<ParDeTokens> {
+    return this.requisitar<ParDeTokens>('/auth/registro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credenciais),
+    });
+  }
+
+  async entrar(credenciais: Credenciais): Promise<ParDeTokens> {
+    return this.requisitar<ParDeTokens>('/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credenciais),
+    });
+  }
+
+  async renovar(refreshToken: string): Promise<ParDeTokens> {
+    return this.requisitar<ParDeTokens>('/auth/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+  }
+
+  /**
+   * Encerra a sessão no servidor.
+   *
+   * Avisar importa: sem isto o refresh token continuaria válido por 30 dias
+   * mesmo depois de a pessoa clicar em sair, e "sair" viraria só apagar o
+   * token do navegador.
+   */
+  async sair(refreshToken: string): Promise<void> {
+    await this.requisitar<void>('/auth/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+  }
+
+  /* ------------------------------------------------------ contribuicao --- */
+
+  async propor(
+    contribuicao: NovaContribuicao,
+    token: string,
+  ): Promise<ContribuicaoResposta> {
+    return this.requisitar<ContribuicaoResposta>('/contribuicoes', {
+      method: 'POST',
+      headers: this.comToken(token),
+      body: JSON.stringify(contribuicao),
+    });
+  }
+
+  async minhasContribuicoes(token: string): Promise<ContribuicaoResposta[]> {
+    return this.requisitar<ContribuicaoResposta[]>('/contribuicoes/minhas', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  /* --------------------------------------------------------- moderacao --- */
+
+  async filaDeModeracao(token: string): Promise<ContribuicaoResposta[]> {
+    return this.requisitar<ContribuicaoResposta[]>('/moderacao/contribuicoes', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  }
+
+  async decidir(
+    id: number,
+    decisao: DecisaoDeModeracao,
+    token: string,
+  ): Promise<ContribuicaoResposta> {
+    return this.requisitar<ContribuicaoResposta>(`/moderacao/contribuicoes/${id}`, {
+      method: 'PATCH',
+      headers: this.comToken(token),
+      body: JSON.stringify(decisao),
+    });
+  }
+
+  private comToken(token: string): Record<string, string> {
+    return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+  }
+
+  /* ---------------------------------------------------------- verbetes --- */
 
   async verbete(termo: string, idioma?: string): Promise<GiriaCompleta> {
     const sufixo = idioma ? `?idioma=${encodeURIComponent(idioma)}` : '';

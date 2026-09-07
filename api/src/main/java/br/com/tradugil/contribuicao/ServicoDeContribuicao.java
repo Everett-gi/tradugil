@@ -6,7 +6,14 @@ import br.com.tradugil.contribuicao.Contribuicao.StatusDeContribuicao;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.ContribuicaoResposta;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.DecisaoDeModeracao;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.NovaContribuicao;
+import br.com.tradugil.dicionario.Definicao;
+import br.com.tradugil.dicionario.Fonte;
+import br.com.tradugil.dicionario.Fonte.TipoDeFonte;
+import br.com.tradugil.dicionario.Giria;
 import br.com.tradugil.dicionario.Idioma;
+import br.com.tradugil.dicionario.RepositorioDeDefinicao;
+import br.com.tradugil.dicionario.RepositorioDeFonte;
+import br.com.tradugil.dicionario.RepositorioDeGiria;
 import br.com.tradugil.dicionario.RepositorioDeIdioma;
 import br.com.tradugil.identidade.RepositorioDeUsuario;
 import br.com.tradugil.identidade.Usuario;
@@ -33,15 +40,27 @@ public class ServicoDeContribuicao {
     private final RepositorioDeAuditoria auditoria;
     private final RepositorioDeUsuario repositorioDeUsuario;
     private final RepositorioDeIdioma repositorioDeIdioma;
+    private final RepositorioDeGiria repositorioDeGiria;
+    private final RepositorioDeDefinicao repositorioDeDefinicao;
+    private final RepositorioDeFonte repositorioDeFonte;
+    private final org.springframework.cache.CacheManager gerenciadorDeCache;
 
     public ServicoDeContribuicao(RepositorioDeContribuicao repositorio,
                                  RepositorioDeAuditoria auditoria,
                                  RepositorioDeUsuario repositorioDeUsuario,
-                                 RepositorioDeIdioma repositorioDeIdioma) {
+                                 RepositorioDeIdioma repositorioDeIdioma,
+                                 RepositorioDeGiria repositorioDeGiria,
+                                 RepositorioDeDefinicao repositorioDeDefinicao,
+                                 RepositorioDeFonte repositorioDeFonte,
+                                 org.springframework.cache.CacheManager gerenciadorDeCache) {
         this.repositorio = repositorio;
         this.auditoria = auditoria;
         this.repositorioDeUsuario = repositorioDeUsuario;
         this.repositorioDeIdioma = repositorioDeIdioma;
+        this.repositorioDeGiria = repositorioDeGiria;
+        this.repositorioDeDefinicao = repositorioDeDefinicao;
+        this.repositorioDeFonte = repositorioDeFonte;
+        this.gerenciadorDeCache = gerenciadorDeCache;
     }
 
     @Transactional
@@ -121,6 +140,7 @@ public class ServicoDeContribuicao {
 
         if (decisao.aprovar()) {
             contribuicao.aprovar(moderador);
+            publicar(contribuicao);
         } else {
             if (decisao.motivo() == null || decisao.motivo().isBlank()) {
                 // Rejeição sem motivo não ensina nada a quem contribuiu, e a
@@ -138,5 +158,65 @@ public class ServicoDeContribuicao {
                 contribuicao.getMotivoRejeicao()));
 
         return ContribuicaoResposta.de(contribuicao);
+    }
+
+    /**
+     * Leva a proposta aprovada para o dicionário.
+     *
+     * <h2>Isto faltava, e o efeito era grave</h2>
+     *
+     * <p>Até aqui, aprovar marcava a contribuição como APROVADA e gravava a
+     * auditoria, e parava. O verbete nunca era criado. A pessoa via a própria
+     * sugestão aprovada, procurava o termo no dicionário e não encontrava
+     * nada, sem nenhuma explicação possível.</p>
+     *
+     * <p>Pior para o produto: o nível 5 da cascata existe para o dicionário
+     * não envelhecer, e a contribuição é o caminho pelo qual termo novo
+     * entra. Com a publicação faltando, esse caminho terminava num beco.</p>
+     *
+     * <h2>Termo que já existe ganha um sentido, não um verbete novo</h2>
+     *
+     * <p>É a mesma regra do gerador de migrações: dois verbetes para a mesma
+     * palavra fazem a resposta depender da ordem das linhas no banco. Se o
+     * termo já está lá, a explicação aprovada entra como mais um sentido
+     * dele.</p>
+     *
+     * <p>E não entra se já existir uma igual. Uma proposta que repete o que o
+     * dicionário já diz deveria ter sido recusada pela moderação; aprovada
+     * por engano, o pior resultado possível é o verbete mostrar a mesma frase
+     * duas vezes, que é exatamente o defeito que as migrações V29 e V33
+     * limparam.</p>
+     */
+    private void publicar(Contribuicao contribuicao) {
+        Idioma idioma = contribuicao.getIdioma();
+        String normalizado = Normalizador.normalizar(contribuicao.getTermo());
+
+        Giria giria = repositorioDeGiria
+                .findByTermoNormalizadoAndIdiomaCodigo(normalizado, idioma.getCodigo())
+                .orElseGet(() -> repositorioDeGiria.save(
+                        Giria.daComunidade(contribuicao.getTermo(), idioma)));
+
+        String explicacao = contribuicao.getExplicacaoProposta().trim();
+        boolean jaExiste = giria.getDefinicoes().stream()
+                .anyMatch(d -> explicacao.equals(d.getExplicacaoSimples()));
+        if (jaExiste) {
+            return;
+        }
+
+        Fonte fonte = repositorioDeFonte.findFirstByTipo(TipoDeFonte.COMUNIDADE)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Fonte COMUNIDADE ausente. Ela vem da V2 e o banco está incompleto."));
+
+        repositorioDeDefinicao.save(Definicao.daComunidade(giria, explicacao, fonte));
+
+        /*
+         * O verbete em cache é o anterior. Sem limpar, a explicação recém
+         * publicada só apareceria quando o cache vencesse, em até uma hora, e
+         * quem aprovou veria a própria decisão não fazer efeito nenhum.
+         */
+        var cache = gerenciadorDeCache.getCache("verbetes");
+        if (cache != null) {
+            cache.clear();
+        }
     }
 }

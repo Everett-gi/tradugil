@@ -3,4 +3,6 @@ export { tokenizar, candidatos, MAXIMO_DE_PALAVRAS } from './tokenizador.js';
 export type { Trecho } from './tokenizador.js';
 export { ClienteTradugil, ErroDeApi, ErroDeRede } from './cliente.js';
 export type { OpcoesDoCliente } from './cliente.js';
+export { Sessao } from './sessao.js';
+export type { EstadoDaSessao } from './sessao.js';
 export * from './tipos.js';

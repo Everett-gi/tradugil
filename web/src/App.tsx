@@ -2,9 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import type { RespostaDeTraducao } from '@tradugil/core';
 import { traduzir } from './api.js';
 import { usePreferencias } from './preferencias.js';
+import { useConta } from './sessao.js';
 import { BarraDeAcessibilidade } from './componentes/BarraDeAcessibilidade.js';
 import { CartaoDaGiria } from './componentes/CartaoDaGiria.js';
 import { Catalogo } from './componentes/Catalogo.js';
+import { Conta } from './componentes/Conta.js';
+import { Contribuir } from './componentes/Contribuir.js';
+import { Moderacao } from './componentes/Moderacao.js';
 import { IconeSemRede } from './componentes/Icone.js';
 import { TextoDestacado } from './componentes/TextoDestacado.js';
 
@@ -24,6 +28,7 @@ export function App() {
     alternarModoFamilia,
   } = usePreferencias();
 
+  const { autenticado, podeModerar } = useConta();
   const [texto, setTexto] = useState('');
   const [estado, setEstado] = useState<Estado>({ fase: 'inicial' });
   const [selecionada, setSelecionada] = useState<number | null>(null);
@@ -216,7 +221,22 @@ export function App() {
           </div>
         </main>
 
+        {/*
+          Contribuir e moderar ficam DEPOIS do resultado, e so aparecem para
+          quem entrou. Quem chegou para consultar nao precisa saber que existe
+          conta: exigir cadastro para entender uma mensagem afastaria
+          exatamente o publico que o produto quer atender.
+        */}
+        {autenticado && (
+          <>
+            <Contribuir />
+            {podeModerar && <Moderacao />}
+          </>
+        )}
+
         <footer className="rodape">
+          <Conta />
+
           <p>
             O Tradugil não guarda o texto que você consulta. Nada do que
             você escreve aqui fica salvo nos nossos servidores.

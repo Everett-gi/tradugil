@@ -17,10 +17,22 @@ public final class IdentidadeDtos {
             String email,
 
             @NotBlank(message = "Informe a senha.")
-            // O teto existe porque o BCrypt ignora o que passa de 72 bytes:
-            // sem ele, o usuário digitaria uma senha longa acreditando estar
-            // mais protegido, enquanto só os primeiros 72 bytes contariam.
-            @Size(min = 8, max = 72, message = "A senha deve ter entre 8 e 72 caracteres.")
+            /*
+             * O teto era 72 porque o BCrypt ignora o que passa disso, e uma
+             * senha mais longa daria falsa sensação de proteção. Deixou de ser
+             * verdade quando a senha passou a ser resumida por HMAC antes do
+             * BCrypt: o hash tem sempre 32 bytes, qualquer que seja a entrada,
+             * e o truncamento não alcança mais ninguém.
+             *
+             * Os 200 que ficaram existem por outro motivo, que continua de pé:
+             * sem teto nenhum, alguém envia um megabyte e o servidor paga o
+             * BCrypt em cima disso.
+             *
+             * O número precisa bater com TAMANHO_MAXIMO_DA_SENHA no serviço.
+             * Enquanto era 72 aqui e 200 lá, a validação do serviço era
+             * inalcançável por HTTP: o pedido morria antes de chegar nela.
+             */
+            @Size(min = 8, max = 200, message = "A senha deve ter entre 8 e 200 caracteres.")
             String senha
     ) {
     }

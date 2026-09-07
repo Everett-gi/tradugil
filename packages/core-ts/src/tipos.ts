@@ -107,3 +107,46 @@ export interface CategoriaResumo {
   nome: string;
   quantidade: number;
 }
+
+/* ------------------------------------------------------------ identidade --- */
+
+export type Papel = 'USER' | 'MODERATOR' | 'ADMIN';
+
+export interface Credenciais {
+  email: string;
+  senha: string;
+}
+
+export interface ParDeTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiraEmSegundos: number;
+  papel: Papel;
+}
+
+/* ---------------------------------------------------------- contribuicao --- */
+
+export type StatusDeContribuicao = 'PENDENTE' | 'APROVADA' | 'REJEITADA';
+
+export interface NovaContribuicao {
+  termo: string;
+  idioma: CodigoDeIdioma;
+  explicacaoProposta: string;
+}
+
+export interface ContribuicaoResposta {
+  id: number;
+  termo: string;
+  idioma: string;
+  explicacaoProposta: string;
+  status: StatusDeContribuicao;
+  /** Preenchido só na rejeição. É o que a pessoa precisa ler para reenviar. */
+  motivoRejeicao: string | null;
+  criadoEm: string;
+}
+
+export interface DecisaoDeModeracao {
+  aprovar: boolean;
+  /** Obrigatório na rejeição: sem ele, quem contribuiu não aprende nada. */
+  motivo?: string;
+}
