@@ -48,6 +48,28 @@ public interface RepositorioDeGiria extends JpaRepository<Giria, Long> {
     List<Giria> findByTermoColapsado(String termoColapsado);
 
     /**
+     * Busca o verbete pela variação de escrita.
+     *
+     * <p>Existe por causa de um erro real. O {@code /traduzir} sempre olhou as
+     * variações, pelo {@code buscarPorCandidatos}; a consulta de um termo só
+     * olhava o termo canônico e caía direto na busca por semelhança. O
+     * resultado é que {@code /girias/pepelef} devolvia <b>pepeD</b>, porque
+     * "pepelef" e "peped" compartilham trigramas suficientes.</p>
+     *
+     * <p>Isso é pior do que não encontrar: quem procurou lê a explicação de
+     * outro verbete acreditando ter achado o certo, e nada na tela indica que
+     * a resposta veio de um palpite.</p>
+     */
+    @Query("""
+            SELECT DISTINCT g FROM Giria g
+            JOIN g.variacoes v
+            WHERE v.variacaoNormalizada = :normalizado
+               OR v.variacaoColapsada = :colapsado
+            """)
+    List<Giria> buscarPorVariacao(@Param("normalizado") String normalizado,
+                                  @Param("colapsado") String colapsado);
+
+    /**
      * Nível 2 da cascata: busca tolerante a erro de digitação.
      *
      * <p>Nativa porque {@code similarity()} é do pg_trgm e não existe em JPQL.

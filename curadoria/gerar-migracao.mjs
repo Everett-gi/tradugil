@@ -248,7 +248,47 @@ async function procurarEmOutrosArquivos(termos, arquivoAtual) {
       }
     }
   }
-  return achados.sort();
+
+  for (const [chave, onde] of doSeedEscritoAMao()) {
+    if (meus.has(chave)) {
+      achados.push(`${meus.get(chave)}  ja esta em ${onde}`);
+    }
+  }
+
+  return [...new Set(achados)].sort();
+}
+
+/**
+ * Termos que existem no banco mas em nenhum arquivo de curadoria.
+ *
+ * O seed inicial (V3) foi escrito a mao, antes de este gerador existir. Os
+ * verbetes dele nao estao em termos/ nenhum, entao a varredura acima nao os
+ * enxerga: e um ponto cego, e ele custou dois falsos "termo novo" neste lote
+ * ("Poggers" e "EZ"), pegos so na conferencia manual contra o banco.
+ *
+ * A extracao le a lista de VALUES do INSERT de giria. E frouxa de proposito:
+ * se o formato do SQL mudar e a regex parar de casar, ela devolve lista
+ * vazia e a checagem volta a ter o ponto cego, em vez de quebrar a geracao
+ * de todo mundo por causa de um arquivo antigo.
+ */
+function doSeedEscritoAMao() {
+  const pasta = join(AQUI, "..", "api", "src", "main", "resources", "db", "migration");
+  const encontrados = [];
+
+  for (const nome of readdirSync(pasta).filter((n) => n.endsWith(".sql"))) {
+    const sql = readFileSync(join(pasta, nome), "utf8");
+    if (!/INSERT INTO giria\s*\(/.test(sql)) continue;
+
+    // Linhas como:  ('pog', 'pog', 'en', false, false),
+    const linhas = sql.matchAll(
+      /\(\s*'((?:[^']|'')*)'\s*,\s*'((?:[^']|'')*)'\s*,\s*'(pt-BR|en)'/g,
+    );
+    for (const linha of linhas) {
+      const termo = linha[1].replace(/''/g, "'");
+      encontrados.push([normalizar(termo) + "|" + linha[3], nome]);
+    }
+  }
+  return encontrados;
 }
 
 /* ------------------------------------------------------------ geracao ---- */

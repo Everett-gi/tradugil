@@ -143,12 +143,30 @@ public class ServicoDeDicionario {
         // Colapsado contra colapsado: o usuário escreveu "kkkkkkk" e o
         // verbete guardado é "kkk". Comparar a forma reduzida do usuário com
         // a forma original do banco nunca casaria.
+        String colapsado = Normalizador.colapsarRepeticoes(normalizado);
         java.util.Optional<Giria> porEnfase = repositorio
-                .findByTermoColapsado(Normalizador.colapsarRepeticoes(normalizado))
+                .findByTermoColapsado(colapsado)
                 .stream()
                 .findFirst();
         if (porEnfase.isPresent()) {
             return porEnfase;
+        }
+
+        /*
+         * Variação de escrita, ANTES da busca por semelhança.
+         *
+         * A ordem é o ponto: sem este passo, "pepelef" (variação registrada de
+         * "PepeLaugh") caía no trigram e voltava "pepeD", que compartilha
+         * trigramas suficientes. Uma variação registrada à mão pela curadoria
+         * é uma resposta exata, e resposta exata nunca pode perder para
+         * palpite.
+         */
+        java.util.Optional<Giria> porVariacao = repositorio
+                .buscarPorVariacao(normalizado, colapsado)
+                .stream()
+                .findFirst();
+        if (porVariacao.isPresent()) {
+            return porVariacao;
         }
 
         return repositorio

@@ -11,7 +11,7 @@ Nada a fazer nestes:
 
 | Item | Situação |
 |------|----------|
-| Banco de dados (Neon) | Conectado, 24 migrações aplicadas, 854 verbetes |
+| Banco de dados (Neon) | Conectado, 27 migrações aplicadas, 934 verbetes |
 | `.env` local | Preenchido, e fora do git |
 | Chave de assinatura do APK | `android/tradugil.jks` gerada, fora do git |
 | APK assinado | `android/app/build/outputs/apk/release/app-release.apk` |

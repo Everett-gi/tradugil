@@ -85,6 +85,33 @@ class ServicoDeDicionarioIT {
     }
 
     @Test
+    @DisplayName("variação de escrita ganha da busca por semelhança")
+    void variacaoGanhaDaSemelhanca() {
+        /*
+         * O BUG QUE ESTE TESTE PEGA
+         *
+         * "pepelef" é a variação registrada de "PepeLaugh": é como o
+         * brasileiro escreve o que ouviu. Antes desta correção, a consulta de
+         * um termo não olhava a tabela de variações e caía direto no trigram,
+         * que devolvia "pepeD" porque as duas palavras compartilham
+         * trigramas.
+         *
+         * Isso é pior do que não encontrar. Quem procurou lia a explicação de
+         * outro verbete acreditando ter achado o certo, e nada na tela
+         * indicava que a resposta tinha vindo de um palpite.
+         *
+         * O /traduzir sempre acertou este caso, porque ele consulta as
+         * variações. A divergência entre os dois caminhos é justamente o que
+         * torna o erro difícil de notar: testar por um lado não prova nada
+         * sobre o outro.
+         */
+        assertThat(servico.porTermo("pepelef", "en").termo()).isEqualTo("PepeLaugh");
+        assertThat(servico.porTermo("omegalol", "en").termo()).isEqualTo("OMEGALUL");
+        // Sem espaço: só a variação registrada leva a este verbete.
+        assertThat(servico.porTermo("laele", "pt-BR").termo()).isEqualTo("lá ele");
+    }
+
+    @Test
     @DisplayName("termo inexistente devolve erro de recurso não encontrado")
     void termoInexistente() {
         assertThatThrownBy(() -> servico.porTermo("xyzabc123naoexiste", "pt-BR"))
