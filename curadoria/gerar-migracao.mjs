@@ -250,6 +250,45 @@ async function procurarEmOutrosArquivos(termos, arquivoAtual) {
   const meus = new Map(termos.map((e) => [normalizar(e.termo), e]));
   const emArquivos = [];
   const noSeed = [];
+  const contraVariacoes = [];
+
+  /*
+   * Termo novo que colide com VARIACAO de um verbete que ja existe.
+   *
+   * Foi o erro do "PogChamp": "pogchamp" ja era variacao de "pog", e criar um
+   * verbete com esse nome fez a mesma palavra apontar para dois lugares. O
+   * /traduzir resolve os dois e descarta o segundo por ocupar a mesma posicao
+   * no texto, entao um deles fica inalcancavel e qual depende da ordem das
+   * linhas.
+   *
+   * Aconteceu de novo depois: o termo "media" (a nota da escola) contra
+   * "media" ja cadastrada como variacao de "pingado", o cafe com leite.
+   *
+   * POR QUE ISTO AVISA E NAO BLOQUEIA
+   *
+   * A primeira versao bloqueava, e apontou ~50 casos nos 18 arquivos. Quase
+   * todos sao benignos: sao pares de sinonimos que se referenciam, como
+   * "mutar" e "silenciar", ou "print" e "printar". Nesses, qual dos dois
+   * responde nao importa, porque os dois dizem a mesma coisa.
+   *
+   * So uma pessoa distingue esses do caso ruim, que e a mesma palavra levando
+   * a dois SIGNIFICADOS diferentes. Bloquear tornaria o gerador inutilizavel
+   * e treinaria quem usa a ignorar o aviso, que e o pior resultado possivel
+   * para uma checagem.
+   */
+  const conferirContraVariacoes = (entradas, onde) => {
+    for (const e of entradas) {
+      for (const v of e.variacoes ?? []) {
+        const meu = meus.get(normalizar(v));
+        if (meu && normalizar(meu.termo) !== normalizar(e.termo)) {
+          contraVariacoes.push(
+            `${meu.termo}  colide com a variacao "${v}" de "${e.termo}"` +
+              ` em ${onde}`,
+          );
+        }
+      }
+    }
+  };
 
   const registrar = (destino, encontrado, idiomaLa, onde) => {
     const meu = meus.get(normalizar(encontrado));
@@ -270,7 +309,13 @@ async function procurarEmOutrosArquivos(termos, arquivoAtual) {
     for (const e of outros) {
       registrar(emArquivos, e.termo, e.idioma, `termos/${nome}`);
     }
+    conferirContraVariacoes(outros, `termos/${nome}`);
   }
+
+  // E dentro do proprio arquivo: um termo pode colidir com a variacao de
+  // outro verbete do mesmo lote, e a checagem de duplicata do validador so
+  // compara termo com termo.
+  conferirContraVariacoes(termos, "este arquivo");
 
   for (const [termo, idioma, onde] of doSeedEscritoAMao()) {
     registrar(noSeed, termo, idioma, onde);
@@ -279,6 +324,7 @@ async function procurarEmOutrosArquivos(termos, arquivoAtual) {
   return {
     emArquivos: [...new Set(emArquivos)].sort(),
     noSeed: [...new Set(noSeed)].sort(),
+    contraVariacoes: [...new Set(contraVariacoes)].sort(),
   };
 }
 
@@ -486,7 +532,8 @@ if (!arquivo || !versao) {
 
 const termos = (await import("file://" + resolve(AQUI, arquivo))).default;
 
-const { emArquivos, noSeed } = await procurarEmOutrosArquivos(termos, arquivo);
+const { emArquivos, noSeed, contraVariacoes } =
+  await procurarEmOutrosArquivos(termos, arquivo);
 
 /*
  * Duas severidades diferentes, por um motivo concreto.
@@ -520,6 +567,24 @@ if (emArquivos.length) {
   console.error("  ja existe, edite o arquivo onde ele ja esta.");
   console.error("");
   process.exit(1);
+}
+
+if (contraVariacoes.length) {
+  console.warn("");
+  console.warn(`aviso: ${contraVariacoes.length} termo(s) colidem com variacao de outro verbete:`);
+  console.warn("");
+  contraVariacoes.slice(0, 15).forEach((x) => console.warn("  " + x));
+  if (contraVariacoes.length > 15) {
+    console.warn(`  ... e mais ${contraVariacoes.length - 15}`);
+  }
+  console.warn("");
+  console.warn("  A mesma palavra passa a levar a dois verbetes, e o /traduzir");
+  console.warn("  descarta o segundo por ocupar a mesma posicao: um deles fica");
+  console.warn("  inalcancavel, e qual depende da ordem das linhas no banco.");
+  console.warn("");
+  console.warn("  Nao bloqueia porque a maioria e par de sinonimo, onde tanto");
+  console.warn("  faz qual responde. Vale olhar os que tem SIGNIFICADO diferente.");
+  console.warn("");
 }
 
 if (noSeed.length) {
