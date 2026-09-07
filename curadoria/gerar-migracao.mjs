@@ -233,8 +233,34 @@ async function procurarEmOutrosArquivos(termos, arquivoAtual) {
   const pasta = join(AQUI, "termos");
   const atual = resolve(AQUI, arquivoAtual);
 
-  const meus = new Map(termos.map((e) => [normalizar(e.termo) + "|" + e.idioma, e.termo]));
-  const achados = [];
+  /*
+   * A chave é só o termo normalizado, SEM o idioma.
+   *
+   * A chave única do banco é (termo_normalizado, idioma_id), então o mesmo
+   * termo em dois idiomas são duas linhas legítimas. Só que o /traduzir não
+   * filtra por idioma: ele resolve as duas e descarta a segunda por ocupar a
+   * mesma posição no texto. O efeito é que um dos dois verbetes fica
+   * inalcançável, e qual deles depende da ordem em que o banco devolveu.
+   *
+   * Aconteceu de verdade com "feed": o sentido de jogo (en) e o de rede
+   * social (pt-BR) eram verbetes separados, e um sombreava o outro. A V31
+   * juntou os dois num verbete com dois sentidos, que é como o esquema
+   * representa isso.
+   */
+  const meus = new Map(termos.map((e) => [normalizar(e.termo), e]));
+  const emArquivos = [];
+  const noSeed = [];
+
+  const registrar = (destino, encontrado, idiomaLa, onde) => {
+    const meu = meus.get(normalizar(encontrado));
+    if (!meu) return;
+    const nota = meu.idioma === idiomaLa
+      ? ""
+      : ` (aqui como ${meu.idioma}, la como ${idiomaLa}: sao linhas`
+        + ` diferentes no banco, mas o /traduzir nao filtra por idioma e uma`
+        + ` sombreia a outra)`;
+    destino.push(`${meu.termo}  ja esta em ${onde}${nota}`);
+  };
 
   for (const nome of readdirSync(pasta).filter((n) => n.endsWith(".mjs"))) {
     const caminho = join(pasta, nome);
@@ -242,20 +268,18 @@ async function procurarEmOutrosArquivos(termos, arquivoAtual) {
 
     const outros = (await import("file://" + caminho)).default;
     for (const e of outros) {
-      const chave = normalizar(e.termo) + "|" + e.idioma;
-      if (meus.has(chave)) {
-        achados.push(`${meus.get(chave)}  ja esta em termos/${nome}`);
-      }
+      registrar(emArquivos, e.termo, e.idioma, `termos/${nome}`);
     }
   }
 
-  for (const [chave, onde] of doSeedEscritoAMao()) {
-    if (meus.has(chave)) {
-      achados.push(`${meus.get(chave)}  ja esta em ${onde}`);
-    }
+  for (const [termo, idioma, onde] of doSeedEscritoAMao()) {
+    registrar(noSeed, termo, idioma, onde);
   }
 
-  return [...new Set(achados)].sort();
+  return {
+    emArquivos: [...new Set(emArquivos)].sort(),
+    noSeed: [...new Set(noSeed)].sort(),
+  };
 }
 
 /**
@@ -284,8 +308,7 @@ function doSeedEscritoAMao() {
       /\(\s*'((?:[^']|'')*)'\s*,\s*'((?:[^']|'')*)'\s*,\s*'(pt-BR|en)'/g,
     );
     for (const linha of linhas) {
-      const termo = linha[1].replace(/''/g, "'");
-      encontrados.push([normalizar(termo) + "|" + linha[3], nome]);
+      encontrados.push([linha[1].replace(/''/g, "'"), linha[3], nome]);
     }
   }
   return encontrados;
@@ -357,7 +380,27 @@ function gerar(termos, descricao) {
   );
   p(") AS d(norm, idioma, simples, detalhada, formal)");
   p("JOIN idioma i ON i.codigo = d.idioma");
-  p("JOIN giria g ON g.termo_normalizado = d.norm AND g.idioma_id = i.id;");
+  p("JOIN giria g ON g.termo_normalizado = d.norm AND g.idioma_id = i.id");
+  p("-- Guarda contra explicacao duplicada.");
+  p("--");
+  p("-- O INSERT de giria tem ON CONFLICT DO NOTHING; este nao pode ter, porque");
+  p("-- acrescentar um SENTIDO NOVO a um termo existente e caso legitimo e uma");
+  p("-- chave unica sobre o texto impediria isso.");
+  p("--");
+  p("-- Sem esta clausula, um termo que ja existe no banco (por outro lote ou");
+  p("-- pelo seed escrito a mao) recebia a MESMA explicacao de novo. A migracao");
+  p("-- aplicava sem reclamar, os testes passavam, e o verbete aparecia na tela");
+  p("-- com a mesma frase escrita duas ou tres vezes. Foram 14 verbetes assim,");
+  p("-- limpos pelas V29 e V33.");
+  p("--");
+  p("-- Compara pelo resumo, e nao pela linha inteira: e o resumo que a pessoa");
+  p("-- le, e duas versoes do mesmo sentido com detalhes diferentes continuam");
+  p("-- sendo repeticao aos olhos de quem consulta.");
+  p("WHERE NOT EXISTS (");
+  p("    SELECT 1 FROM definicao ja");
+  p("    WHERE ja.giria_id = g.id");
+  p("      AND ja.explicacao_simples = d.simples");
+  p(");");
   p();
 
   if (comVariacoes.length) {
@@ -443,24 +486,53 @@ if (!arquivo || !versao) {
 
 const termos = (await import("file://" + resolve(AQUI, arquivo))).default;
 
-const jaDefinidos = await procurarEmOutrosArquivos(termos, arquivo);
-if (jaDefinidos.length) {
+const { emArquivos, noSeed } = await procurarEmOutrosArquivos(termos, arquivo);
+
+/*
+ * Duas severidades diferentes, por um motivo concreto.
+ *
+ * O SQL gerado agora ignora explicacao que ja existe (o WHERE NOT EXISTS do
+ * INSERT de definicao), entao nenhum dos dois casos consegue mais duplicar
+ * texto no banco. O que sobra e uma questao de organizacao da curadoria.
+ *
+ * BLOQUEIA quando o termo esta em outro arquivo de curadoria: duas pessoas
+ * escreveram o mesmo verbete, e alguem precisa decidir qual fica. Deixar
+ * passar mantem duas versoes divergindo em paralelo.
+ *
+ * AVISA quando o termo esta no seed escrito a mao (V3). Ali nao ha decisao a
+ * tomar: o arquivo de curadoria tem a versao completa, o seed tem a antiga,
+ * e o banco ja ficou com a completa. Bloquear tornaria impossivel acrescentar
+ * um termo novo a gaming.mjs por causa de um "gg" cadastrado em 2026.
+ */
+if (emArquivos.length) {
   console.error("");
-  console.error(`${jaDefinidos.length} termo(s) ja definidos em outro arquivo:`);
+  console.error(`${emArquivos.length} termo(s) ja definidos em outro arquivo de curadoria:`);
   console.error("");
-  jaDefinidos.slice(0, 30).forEach((x) => console.error("  " + x));
-  if (jaDefinidos.length > 30) {
-    console.error(`  ... e mais ${jaDefinidos.length - 30}`);
+  emArquivos.slice(0, 30).forEach((x) => console.error("  " + x));
+  if (emArquivos.length > 30) {
+    console.error(`  ... e mais ${emArquivos.length - 30}`);
   }
   console.error("");
-  console.error("  O INSERT de giria tem ON CONFLICT DO NOTHING e nao duplica o");
-  console.error("  verbete, mas o INSERT de definicao NAO TEM: o termo apareceria");
-  console.error("  na tela com a mesma explicacao escrita duas vezes.");
+  console.error("  Duas versoes do mesmo verbete divergem com o tempo, e a que a");
+  console.error("  pessoa recebe passa a depender da ordem das linhas no banco.");
   console.error("");
-  console.error("  Para acrescentar um sentido novo a um termo que ja existe,");
-  console.error("  edite o arquivo onde ele ja esta, e gere a migracao de la.");
+  console.error("  Escolha uma. Para acrescentar um sentido novo a um termo que");
+  console.error("  ja existe, edite o arquivo onde ele ja esta.");
   console.error("");
   process.exit(1);
+}
+
+if (noSeed.length) {
+  console.warn("");
+  console.warn(`aviso: ${noSeed.length} termo(s) tambem estao no seed escrito a mao:`);
+  console.warn("");
+  noSeed.slice(0, 15).forEach((x) => console.warn("  " + x));
+  if (noSeed.length > 15) console.warn(`  ... e mais ${noSeed.length - 15}`);
+  console.warn("");
+  console.warn("  Nao bloqueia: o INSERT de definicao ignora explicacao que ja");
+  console.warn("  existe, entao nada e duplicado. Fica registrado porque o seed");
+  console.warn("  e historico e um dia deve sair de cena.");
+  console.warn("");
 }
 
 const problemas = validar(termos);

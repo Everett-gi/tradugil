@@ -99,11 +99,6 @@ export default [
       detalhada: "De \"sad\", triste, com terminação inventada. É o equivalente escrito de um suspiro de decepção.",
       formal: "que pena" }]},
 
-  { termo: "based", idioma: "en", categorias: ["streaming", "redes"], sentidos: [
-    { simples: "Elogio a quem fala o que pensa sem se importar com a opinião alheia.",
-      detalhada: "Começou como gíria de rua nos Estados Unidos e foi ressignificado na internet. O oposto costuma ser \"cringe\".",
-      formal: "autêntico" }]},
-
   { termo: "clip it", idioma: "en", categorias: ["streaming"], variacoes: ["clipa isso"], sentidos: [
     { simples: "Pedido no chat para alguém gravar o momento antes que ele se perca.",
       detalhada: "Transmissões ao vivo somem depois de um tempo, então o público pede o recorte quando acontece algo memorável.",
@@ -465,11 +460,6 @@ export default [
     { simples: "Algo elogiado muito além do que realmente merece.",
       detalhada: "Chamar algo popular de overrated é uma das discussões mais recorrentes da internet.",
       formal: "superestimado" }]},
-
-  { termo: "mid", idioma: "en", categorias: ["critica"], sentidos: [
-    { simples: "Mediano, nada demais.",
-      detalhada: "Do inglês \"middle\", meio. Usado para dizer que algo muito elogiado é, na verdade, comum.",
-      formal: "mediano" }]},
 
   { termo: "peak", idioma: "en", categorias: ["elogio"], sentidos: [
     { simples: "O melhor momento de algo ou de alguém.",

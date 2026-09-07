@@ -79,11 +79,6 @@ export default [
       detalhada: "Envolve coração acelerado, falta de ar e sensação de perigo iminente. Quem está em crise precisa de calma e ar, não de conselhos. Se for frequente, pede acompanhamento profissional.",
       formal: "crise de ansiedade" }]},
 
-  { termo: "burnout", idioma: "en", categorias: ["emocao", "trabalho", "atencao"], sentidos: [
-    { simples: "Esgotamento profundo causado por excesso de trabalho.",
-      detalhada: "Reconhecido pela Organização Mundial da Saúde como fenômeno ocupacional. Não é apenas cansaço: envolve exaustão, distanciamento do trabalho e queda de desempenho.",
-      formal: "esgotamento profissional" }]},
-
   { termo: "sobrecarga", idioma: "pt-BR", categorias: ["emocao", "trabalho"], variacoes: ["sobrecarregado"], sentidos: [
     { simples: "Ter mais responsabilidades do que consegue dar conta.",
       detalhada: "Diferente de burnout, que é o esgotamento já instalado. A sobrecarga é o estágio anterior, ainda reversível.",
@@ -391,11 +386,6 @@ export default [
     { simples: "Reação exagerada a algo pequeno.",
       detalhada: "Pode ser brincadeira entre amigos ou crítica séria. \"Drama\" também nomeia a confusão em si: \"o drama da semana\".",
       formal: "exagero" }]},
-
-  { termo: "climão", idioma: "pt-BR", categorias: ["emocao"], sentidos: [
-    { simples: "Clima constrangedor depois de algo desagradável.",
-      detalhada: "\"Ficou um climão\" descreve o silêncio incômodo que se instala num grupo.",
-      formal: "constrangimento" }]},
 
   { termo: "paz", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["em paz", "minha paz"], sentidos: [
     { simples: "Estado de tranquilidade emocional.",

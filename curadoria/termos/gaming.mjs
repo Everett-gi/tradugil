@@ -45,11 +45,6 @@ export default [
       detalhada: "De \"carry\", carregar. Também usado como verbo: \"ele carregou\" quer dizer que o resto do time contribuiu pouco.",
       formal: "puxar o time" }]},
 
-  { termo: "feed", idioma: "en", categorias: ["gaming"], variacoes: ["feedar", "feedando"], sentidos: [
-    { simples: "Morrer muitas vezes e com isso deixar o time adversário mais forte.",
-      detalhada: "De \"feed\", alimentar. Em vários jogos, derrotar alguém dá recursos ao adversário, então morrer demais literalmente alimenta o outro time.",
-      formal: "favorecer o adversário" }]},
-
   { termo: "gank", idioma: "en", categorias: ["gaming"], variacoes: ["gankar", "gankou"], sentidos: [
     { simples: "Atacar alguém de surpresa, em grupo, quando a pessoa está sozinha.",
       detalhada: "Provável junção de \"gang\" com \"kill\". É estratégia comum e não é considerada desleal.",

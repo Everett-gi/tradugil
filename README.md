@@ -17,7 +17,7 @@ acompanha a velocidade com que a linguagem online muda.
 
 | Fase | Entrega | Situação |
 |------|---------|----------|
-| F0 | Monorepo, esquema, API de consulta | Pronta, rodando contra o Neon com 933 verbetes |
+| F0 | Monorepo, esquema, API de consulta | Pronta, rodando contra o Neon com 967 verbetes |
 | F1 | PWA instalável, lógica compartilhada, cascata com IA, catálogo, extensão de navegador | Pronta; falta o nível 3 da cascata |
 | F2 | Android: bolha flutuante, OCR local, Modo Família | App compila com dicionário offline; falta a leitura de tela |
 
@@ -109,7 +109,7 @@ direto, o que o teste de integração confirma.
 
 ## O dicionário
 
-**933 verbetes curados** no banco, com explicações escritas para quem está
+**967 verbetes curados** no banco, com explicações escritas para quem está
 fora da cultura digital: uma ou duas frases, sem jargão, sem pressupor que a
 pessoa saiba o que é Twitch, chat ou emote.
 
@@ -122,7 +122,7 @@ O conteúdo não é escrito direto em SQL. A fonte editável fica em
 [`curadoria/termos/`](curadoria/termos/) e um gerador produz a migração:
 
 ```bash
-node curadoria/gerar-migracao.mjs termos/gaming.mjs V29 "novas girias de jogos"
+node curadoria/gerar-migracao.mjs termos/gaming.mjs V34 "novas girias de jogos"
 ```
 
 Isso existe porque cada verbete precisa de duas chaves derivadas do termo, a
@@ -137,12 +137,19 @@ duplicado no mesmo arquivo, termo **já definido em outro arquivo** ou
 equivalente formal que só repete o próprio termo. Cada uma dessas checagens
 existe por causa de um erro que aconteceu de verdade.
 
-A de duplicata entre arquivos é a mais recente e a que mais pega: com 850
-verbetes, ninguém sabe de cabeça que "coroa" e "cara de pau" já estão em
-`rua-br.mjs`. Ela precisa bloquear, e não só avisar, porque o `INSERT` de
-`giria` tem `ON CONFLICT DO NOTHING` mas o de `definicao` não tem: repetir
-um termo grava a mesma explicação duas vezes, a migração aplica sem
-reclamar, e o defeito só aparece para quem abrir aquele verbete.
+A de duplicata entre arquivos é a que mais pega: com quase mil verbetes,
+ninguém sabe de cabeça que "coroa" e "cara de pau" já estão em `rua-br.mjs`.
+
+O SQL gerado também se defende sozinho. O `INSERT` de `definicao` traz um
+`WHERE NOT EXISTS` que ignora explicação já cadastrada para aquele verbete.
+Sem ele, um termo repetido gravava a mesma frase duas vezes, a migração
+aplicava sem reclamar, os testes passavam, e o defeito só aparecia para quem
+abrisse aquele verbete. **Foram 14 verbetes assim**, alguns com a mesma
+explicação escrita três vezes, limpos pelas migrações V29 e V33.
+
+A checagem prévia continua existindo porque resolve outra coisa: ela avisa
+que duas pessoas escreveram o mesmo verbete em arquivos diferentes, o que é
+uma decisão de curadoria e não um problema de banco.
 
 ## Privacidade
 

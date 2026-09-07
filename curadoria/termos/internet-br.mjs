@@ -190,10 +190,27 @@ export default [
       detalhada: "Formato criado pelo Snapchat e copiado por todas as redes. O caráter temporário deixa as publicações mais soltas.",
       formal: "publicação de 24 horas" }]},
 
-  { termo: "feed", idioma: "pt-BR", categorias: ["redes"], sentidos: [
+  /*
+   * Dois sentidos, e nao dois verbetes.
+   *
+   * O sentido de jogo morava em gaming.mjs como um verbete separado, com
+   * idioma "en". No banco isso vira outra linha, porque a chave unica e
+   * (termo_normalizado, idioma_id), mas o /traduzir NAO filtra por idioma:
+   * ele resolvia os dois e descartava o segundo por ocupar a mesma posicao
+   * no texto. O resultado era que um dos dois sentidos ficava inalcancavel,
+   * e qual deles dependia da ordem das linhas.
+   *
+   * A V31 juntou os dois aqui. O verbete e o mesmo; o que muda com o
+   * contexto e o sentido, que e exatamente o que o esquema de sentidos
+   * multiplos existe para representar.
+   */
+  { termo: "feed", idioma: "pt-BR", categorias: ["redes", "gaming"], variacoes: ["feedar", "feedando"], sentidos: [
     { simples: "A sequência de publicações que aparece quando a pessoa abre a rede social.",
       detalhada: "\"Cuidar do feed\" é escolher as fotos pensando em como o perfil fica no conjunto.",
-      formal: "linha do tempo" }]},
+      formal: "linha do tempo" },
+    { simples: "Nos jogos, morrer muitas vezes e com isso deixar o time adversário mais forte.",
+      detalhada: "De \"feed\", alimentar. Em vários jogos, derrotar alguém dá recursos ao adversário, então morrer demais literalmente alimenta o outro time.",
+      formal: "favorecer o adversário" }]},
 
   { termo: "arroba", idioma: "pt-BR", categorias: ["redes"], sentidos: [
     { simples: "O nome de usuário de alguém numa rede social.",

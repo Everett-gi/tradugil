@@ -160,11 +160,6 @@ export default [
       detalhada: "\"Viajei\" quer dizer que a pessoa se distraiu. \"Que viagem\" comenta uma ideia estranha.",
       formal: "distrair-se" }]},
 
-  { termo: "brisar", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["brisa", "brisado"], sentidos: [
-    { simples: "Ficar pensativo ou distraído, num estado meio solto.",
-      detalhada: "\"Que brisa\" comenta um pensamento curioso. \"Brisado\" é quem está distraído.",
-      formal: "distraído" }]},
-
   { termo: "zoar a cabeça", idioma: "pt-BR", categorias: ["emocao"], variacoes: ["mexer com a cabeça"], sentidos: [
     { simples: "Deixar alguém confuso ou abalado emocionalmente.",
       detalhada: "\"Isso zoou minha cabeça\" descreve algo que afetou a pessoa mais do que ela esperava.",
