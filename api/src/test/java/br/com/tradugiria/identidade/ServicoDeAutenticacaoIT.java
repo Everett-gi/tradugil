@@ -24,6 +24,9 @@ class ServicoDeAutenticacaoIT {
     @Autowired
     private RepositorioDeUsuario repositorioDeUsuario;
 
+    @Autowired
+    private RepositorioDeToken repositorioDeToken;
+
     @Test
     @DisplayName("registro cria a conta como USER e já devolve os tokens")
     void registroCriaContaComoUser() {
@@ -110,6 +113,20 @@ class ServicoDeAutenticacaoIT {
         assertThat(segundo.accessToken()).isNotBlank();
     }
 
+    /**
+     * Este teste pegou um bug de segurança real.
+     *
+     * <p>A detecção de reuso revogava a família e, logo depois, lançava a
+     * exceção que recusa a requisição. Como {@code RegraDeNegocioException} é
+     * {@code RuntimeException}, o Spring fazia rollback da transação — e
+     * levava a revogação junto. O sistema registrava no log que havia
+     * detectado o reuso, devolvia erro ao cliente, e deixava a sessão roubada
+     * funcionando normalmente.</p>
+     *
+     * <p>Por isso a asserção não para no erro devolvido: ela vai ao banco
+     * confirmar que a revogação ficou gravada. Um teste que só checasse a
+     * exceção teria passado com a mitigação inteira anulada.</p>
+     */
     @Test
     @DisplayName("reusar um refresh token já trocado derruba a sessão inteira")
     void reusoDerrubaASessaoInteira() {
@@ -121,7 +138,14 @@ class ServicoDeAutenticacaoIT {
         assertThatThrownBy(() -> servico.renovar(primeiro.refreshToken()))
                 .isInstanceOf(RegraDeNegocioException.class);
 
-        // E o token novo, que o ladrão poderia ter, também morre junto.
+        // A revogação precisa ter sobrevivido ao rollback da exceção.
+        assertThat(repositorioDeToken.findByHashDoToken(hashDe(segundo.refreshToken())))
+                .get()
+                .extracting(TokenDeAtualizacao::getRevogadoEm)
+                .as("o token da família continua válido: a revogação foi desfeita pelo rollback")
+                .isNotNull();
+
+        // E, na prática, o token novo que o ladrão poderia ter não renova mais.
         assertThatThrownBy(() -> servico.renovar(segundo.refreshToken()))
                 .isInstanceOf(RegraDeNegocioException.class)
                 .hasMessageContaining("Entre novamente");
@@ -150,6 +174,21 @@ class ServicoDeAutenticacaoIT {
     void senhaCurtaERecusada() {
         assertThatThrownBy(() -> servico.registrar(new NovoUsuario(emailNovo(), "1234")))
                 .isInstanceOf(RegraDeNegocioException.class);
+    }
+
+    /**
+     * Repete o hash do serviço, que é privado de propósito. Duplicar a
+     * expressão aqui é aceitável: o teste precisa olhar o banco pela mesma
+     * chave, e abrir o método só para o teste enfraqueceria o serviço.
+     */
+    private static String hashDe(String token) {
+        try {
+            return java.util.HexFormat.of().formatHex(
+                    java.security.MessageDigest.getInstance("SHA-256")
+                            .digest(token.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /** E-mail único por teste: os testes compartilham o mesmo banco. */

@@ -38,16 +38,19 @@ public class ServicoDeAutenticacao {
     private final RepositorioDeToken repositorioDeToken;
     private final PasswordEncoder codificador;
     private final EmissorDeJwt emissor;
+    private final RevogadorDeSessao revogador;
     private final SecureRandom aleatorio = new SecureRandom();
 
     public ServicoDeAutenticacao(RepositorioDeUsuario repositorioDeUsuario,
                                  RepositorioDeToken repositorioDeToken,
                                  PasswordEncoder codificador,
-                                 EmissorDeJwt emissor) {
+                                 EmissorDeJwt emissor,
+                                 RevogadorDeSessao revogador) {
         this.repositorioDeUsuario = repositorioDeUsuario;
         this.repositorioDeToken = repositorioDeToken;
         this.codificador = codificador;
         this.emissor = emissor;
+        this.revogador = revogador;
     }
 
     @Transactional
@@ -110,7 +113,10 @@ public class ServicoDeAutenticacao {
                         "Sua sessão expirou. Entre novamente."));
 
         if (guardado.foiReutilizado(agora)) {
-            int derrubados = repositorioDeToken.revogarFamilia(guardado.getFamilia(), agora);
+            // Em transacao propria: a excecao logo abaixo desfaria a
+            // revogacao se ela acontecesse nesta mesma transacao, e a
+            // deteccao de reuso ficaria anulada em silencio.
+            int derrubados = revogador.revogarFamilia(guardado.getFamilia());
             log.warn("Reuso de refresh token detectado para o usuário {}. "
                             + "{} tokens da família revogados.",
                     guardado.getUsuario().getId(), derrubados);
@@ -131,8 +137,7 @@ public class ServicoDeAutenticacao {
     @Transactional
     public void encerrar(String refreshToken) {
         repositorioDeToken.findByHashDoToken(hashDe(refreshToken))
-                .ifPresent(token -> repositorioDeToken.revogarFamilia(
-                        token.getFamilia(), OffsetDateTime.now()));
+                .ifPresent(token -> revogador.revogarFamilia(token.getFamilia()));
     }
 
     /** Sair de todos os aparelhos. */
