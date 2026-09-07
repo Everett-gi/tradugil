@@ -77,8 +77,52 @@ salvo no aparelho. Então:
   Perder essa chave significa nunca mais conseguir atualizar quem já
   instalou.
 
-O `signingConfig` está comentado em `app/build.gradle.kts`, esperando o
-keystore.
+### Gerando a chave
+
+O `keytool` vem junto com o Java, que já está instalado. Abra o PowerShell,
+entre na pasta `android` e rode isto **em uma linha só**:
+
+```bash
+keytool -genkeypair -v -keystore tradugil.jks -alias tradugil -keyalg RSA -keysize 4096 -validity 10000
+```
+
+Ele vai perguntar, nesta ordem:
+
+1. Uma senha, e depois a confirmação. **Nada aparece na tela enquanto você
+   digita**, nem asteriscos. Isso é normal e é o que mais confunde: parece
+   travado, mas está recebendo.
+2. Nome, unidade, organização, cidade, estado e país. Pode preencher com
+   seus dados; nada disso vira público no aplicativo.
+3. Uma confirmação final, em que a resposta esperada é `sim` ou `yes`.
+
+`-validity 10000` são cerca de 27 anos. Um prazo curto obrigaria a trocar a
+chave depois, e trocar a chave é justamente o que não dá para fazer.
+
+### Ligando a assinatura no build
+
+Copie `keystore.properties.exemplo` para `keystore.properties` e preencha as
+senhas. O arquivo está no `.gitignore`, junto com o próprio `.jks`.
+
+```bash
+./gradlew assembleRelease
+```
+
+O APK sai em `app/build/outputs/apk/release/app-release.apk`, já assinado.
+
+**O build funciona sem esse arquivo**, e gera um APK sem assinatura. Isso é
+necessário, não descuido: a CI não tem o keystore e não deveria ter, porque
+a chave de release dentro do repositório é exatamente o que não pode
+acontecer. Sem o arquivo, a CI ainda prova que o código compila; o APK
+distribuível sai só da máquina de quem tem a chave.
+
+### Conferindo a assinatura
+
+```bash
+apksigner verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+```
+
+O esperado é `v2 scheme: true` e `v1 scheme: false`. O V1 só é necessário
+abaixo da API 24, e o `minSdk` aqui é 26.
 
 ## Por que sem Google Play
 

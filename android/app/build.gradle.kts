@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     // A partir do AGP 9.0 o suporte a Kotlin e embutido: aplicar tambem o
     // plugin org.jetbrains.kotlin.android faz o build falhar na configuracao.
@@ -5,6 +7,23 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
+
+/*
+ * Credenciais da chave de assinatura.
+ *
+ * Ficam em keystore.properties, fora do git. O arquivo pode nao existir: na
+ * CI ele nao existe, e nem deveria, porque isso significaria a chave de
+ * release dentro do repositorio. Nesse caso o build de release sai sem
+ * assinatura, o que serve para conferir que compila, e nao para distribuir.
+ */
+val arquivoDeAssinatura = rootProject.file("keystore.properties")
+val credenciais = Properties().apply {
+    if (arquivoDeAssinatura.exists()) {
+        arquivoDeAssinatura.inputStream().use { load(it) }
+    }
+}
+val temChaveDeAssinatura = arquivoDeAssinatura.exists() &&
+    credenciais.getProperty("storeFile") != null
 
 android {
     namespace = "br.com.tradugil.android"
@@ -21,6 +40,27 @@ android {
         versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        if (temChaveDeAssinatura) {
+            create("release") {
+                storeFile = rootProject.file(credenciais.getProperty("storeFile"))
+                storePassword = credenciais.getProperty("storePassword")
+                keyAlias = credenciais.getProperty("keyAlias")
+                keyPassword = credenciais.getProperty("keyPassword")
+
+                // So o V2. O V1 (assinatura no estilo JAR) e necessario
+                // apenas abaixo da API 24, e o minSdk aqui e 26: todo
+                // aparelho que instala este APK entende V2.
+                //
+                // Pedir V1 mesmo assim nao da erro, o AGP simplesmente
+                // ignora, o que e pior que recusar: o build passa, o
+                // apksigner reporta "v1: false", e quem le acha que a
+                // configuracao nao funcionou.
+                enableV2Signing = true
+            }
+        }
     }
 
     buildTypes {
@@ -47,8 +87,9 @@ android {
             // precisa ser guardado com backup -- perde-lo significa nunca
             // mais conseguir atualizar quem ja instalou.
             //
-            // signingConfig = signingConfigs.getByName("release")
-            //
+            if (temChaveDeAssinatura) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

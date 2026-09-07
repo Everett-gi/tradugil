@@ -33,6 +33,8 @@ desktop.ini
 web/dev-dist/
 
 # Android
+# As senhas da chave de assinatura. O .exemplo, sem valores, e versionado.
+android/keystore.properties
 android/.gradle/
 android/.idea/
 android/build/
