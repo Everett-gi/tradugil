@@ -1,5 +1,5 @@
 -- ---------------------------------------------------------------------------
--- Tradugil - esquema inicial.
+-- TraduGiria - esquema inicial.
 --
 -- Duas decisoes estruturais atravessam este arquivo:
 --
