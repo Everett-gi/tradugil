@@ -345,7 +345,7 @@ export default [
       detalhada: "\"Tô de rolê\" quer dizer que a pessoa está na rua, sem destino fixo.",
       formal: "passeando" }]},
 
-  { termo: "role", idioma: "pt-BR", categorias: ["acao"], variacoes: ["rolê", "rolezinho"], sentidos: [
+  { termo: "rolê", idioma: "pt-BR", categorias: ["acao"], variacoes: ["role", "rolezinho"], sentidos: [
     { simples: "Passeio ou programa com amigos.",
       detalhada: "\"O rolê tava bom\" avalia o programa. \"Rolezinho\" ganhou sentido político em 2013, quando grupos de jovens de periferia começaram a se encontrar em shoppings.",
       formal: "passeio" }]},

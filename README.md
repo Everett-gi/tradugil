@@ -101,6 +101,35 @@ aprovação desaparecer. A tabela `auditoria_de_moderacao` registra o que
 aconteceu, e um gatilho recusa `UPDATE` e `DELETE`: inclusive por SQL
 direto, o que o teste de integração confirma.
 
+## O dicionário
+
+**754 verbetes curados**, com explicações escritas para quem está fora da
+cultura digital: uma ou duas frases, sem jargão, sem pressupor que a pessoa
+saiba o que é Twitch, chat ou emote.
+
+Termos com mais de um sentido trazem todos. "Dropar" é soltar item no jogo e
+também lançar uma música; "bug" é erro de programa e também pessoa que
+travou; "gostoso" é elogio à aparência e também comida saborosa, e a
+explicação avisa quando o primeiro uso vira importunação.
+
+O conteúdo não é escrito direto em SQL. A fonte editável fica em
+[`curadoria/termos/`](curadoria/termos/) e um gerador produz a migração:
+
+```bash
+node curadoria/gerar-migracao.mjs termos/gaming.mjs V20 "novas girias de jogos"
+```
+
+Isso existe porque cada verbete precisa de duas chaves derivadas do termo, a
+forma normalizada e a forma com ênfase colapsada. Escrever isso à mão para
+centenas de termos erra, e o erro é silencioso: o verbete entra no banco e
+nunca é encontrado, porque a chave gravada não corresponde à que o cliente
+calcula na busca.
+
+O gerador recusa gerar quando encontra explicação curta demais, palavra que
+exige acento escrita sem acento, variação que normaliza para vazio ou termo
+duplicado. Cada uma dessas checagens existe por causa de um erro que
+aconteceu de verdade.
+
 ## Privacidade
 
 O produto lê texto da tela do usuário, o que pode incluir conversas privadas.

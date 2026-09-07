@@ -3,6 +3,7 @@ package br.com.tradugil.comum.erro;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +36,27 @@ public class TratadorGlobalDeErros {
                 .toList();
         return ResponseEntity.badRequest().body(ErroResposta.comCampos(
                 400, "DADOS_INVALIDOS", "Verifique os campos informados.", campos));
+    }
+
+    /**
+     * Corpo da requisição que o servidor não consegue ler.
+     *
+     * <p>Sem este tratamento a exceção caía no handler genérico e virava 500,
+     * o que é errado em dois sentidos: culpa o servidor por um erro do
+     * cliente, e enche o log de erro de aplicação com problema de quem
+     * chamou. Um JSON quebrado ou enviado em codificação errada é 400.</p>
+     *
+     * <p>A mensagem não repete o conteúdo recebido: ele pode ser o texto que
+     * o usuário mandou traduzir, e a seção 8 do documento proíbe que isso
+     * apareça em resposta ou em log.</p>
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErroResposta> corpoIlegivel(HttpMessageNotReadableException e) {
+        log.debug("Corpo de requisição ilegível: {}", e.getClass().getSimpleName());
+        return ResponseEntity.badRequest().body(ErroResposta.de(
+                400, "CORPO_INVALIDO",
+                "Não foi possível ler os dados enviados. "
+                        + "Verifique se o texto está em formato JSON e codificado em UTF-8."));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

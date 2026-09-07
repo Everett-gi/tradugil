@@ -72,7 +72,7 @@ export default [
       detalhada: "Segue o padrão de cortar o fim da palavra, comum na escrita rápida.",
       formal: "ontem" }]},
 
-  { termo: "amanha", idioma: "pt-BR", categorias: ["tempo"], variacoes: ["amnh", "amn"], sentidos: [
+  { termo: "amanhã", idioma: "pt-BR", categorias: ["tempo"], variacoes: ["amnh", "amn"], sentidos: [
     { simples: "Escrito \"amnh\", é a abreviação de amanhã.",
       detalhada: "A falta do til é característica da digitação rápida no celular, não erro de quem escreve.",
       formal: "amanhã" }]},
