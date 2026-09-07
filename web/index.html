@@ -3,12 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1b4965" />
+    <meta name="theme-color" content="#0e6b4c" />
     <meta
       name="description"
       content="Descubra o que significam as gírias e abreviações que aparecem nas suas conversas. Explicação em linguagem simples, com opção de ouvir."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      Duas famílias, e nenhuma escolhida por gosto.
+
+      Atkinson Hyperlegible foi desenhada pelo Braille Institute para quem tem
+      baixa visão: cada letra é deliberadamente diferente das que costumam ser
+      confundidas com ela, o que separa I de l de 1 e o zero da letra O. É a
+      face do texto inteiro porque o público deste produto é exatamente quem
+      tem dificuldade para ler.
+
+      Newsreader é a face dos verbetes. Serifa editorial, com a autoridade de
+      um dicionário impresso, e é ela que faz a palavra consultada parecer o
+      assunto da página em vez de mais um rótulo de formulário.
+
+      Carregar de fora tem um custo: sem internet, a fonte não vem. Daí a
+      pilha de reserva completa em cada declaração e o display=swap, que
+      manda o navegador mostrar o texto na hora com a fonte de reserva em vez
+      de deixar a tela em branco esperando.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&display=swap"
+    />
+
     <title>Tradugil: entenda as gírias da internet</title>
   </head>
   <body>

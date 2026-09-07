@@ -1,5 +1,6 @@
 import type { GiriaDetectada } from '@tradugil/core';
 import { falar, vozDisponivel } from '../voz.js';
+import { IconeAtencao, IconeSom } from './Icone.js';
 
 interface Props {
   giria: GiriaDetectada;
@@ -37,7 +38,7 @@ export function CartaoDaGiria({ giria }: Props) {
             onClick={() => falar(textoParaOuvir)}
             aria-label={`Ouvir a explicação de ${giria.termo}`}
           >
-            <span aria-hidden="true">🔊</span> Ouvir
+            <IconeSom /> Ouvir
           </button>
         )}
       </h3>
@@ -67,10 +68,12 @@ export function CartaoDaGiria({ giria }: Props) {
 
       {giria.riscoMenor && (
         <p className="aviso-risco">
-          <span aria-hidden="true">⚠️ </span>
-          Este termo costuma aparecer em conversas que merecem atenção. Se você
-          acompanha o uso de redes de um adolescente, pode valer uma conversa
-          sobre o assunto.
+          <IconeAtencao />
+          <span>
+            Este termo costuma aparecer em conversas que merecem atenção. Se
+            você acompanha o uso de redes de um adolescente, pode valer uma
+            conversa sobre o assunto.
+          </span>
         </p>
       )}
     </article>

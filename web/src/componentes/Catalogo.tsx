@@ -7,6 +7,7 @@ import type {
 } from '@tradugil/core';
 import { cliente } from '../api.js';
 import { falar, vozDisponivel } from '../voz.js';
+import { IconeAtencao, IconeSeta, IconeSom } from './Icone.js';
 
 /**
  * O catálogo: uma janela para folhear o dicionário por assunto.
@@ -147,7 +148,7 @@ export function Catalogo({ modoFamilia, nivel }: Props) {
   return (
     <>
       <button type="button" className="botao botao-catalogo" onClick={abrir}>
-        <span aria-hidden="true">📚</span> Ver o catálogo de gírias
+        Ver o catálogo de gírias
       </button>
 
       <dialog ref={janela} className="catalogo" aria-labelledby="titulo-do-catalogo">
@@ -159,7 +160,7 @@ export function Catalogo({ modoFamilia, nivel }: Props) {
             onClick={fechar}
             aria-label="Fechar o catálogo"
           >
-            <span aria-hidden="true">✕</span> Fechar
+            Fechar
           </button>
         </div>
 
@@ -316,12 +317,10 @@ function ItemDoCatalogo({ giria, nivel, expandido, aoAlternar }: PropsDoItem) {
       >
         <span className="catalogo-termo-texto">{giria.termo}</span>
         {giria.riscoMenor && (
-          <span className="etiqueta etiqueta-atencao">
-            <span aria-hidden="true">⚠️ </span>atenção
-          </span>
+          <span className="etiqueta etiqueta-atencao">atenção</span>
         )}
-        <span className="catalogo-seta" aria-hidden="true">
-          {expandido ? '▲' : '▼'}
+        <span className="catalogo-seta">
+          <IconeSeta aberta={expandido} />
         </span>
       </button>
 
@@ -358,10 +357,12 @@ function ItemDoCatalogo({ giria, nivel, expandido, aoAlternar }: PropsDoItem) {
 
           {giria.riscoMenor && (
             <p className="aviso-risco">
-              <span aria-hidden="true">⚠️ </span>
-              Este termo costuma aparecer em conversas que merecem atenção. Se
-              você acompanha o uso de redes de um adolescente, pode valer uma
-              conversa sobre o assunto.
+              <IconeAtencao />
+              <span>
+                Este termo costuma aparecer em conversas que merecem
+                atenção. Se você acompanha o uso de redes de um adolescente,
+                pode valer uma conversa sobre o assunto.
+              </span>
             </p>
           )}
 
@@ -372,7 +373,7 @@ function ItemDoCatalogo({ giria, nivel, expandido, aoAlternar }: PropsDoItem) {
               onClick={() => falar(textoParaOuvir)}
               aria-label={`Ouvir a explicação de ${giria.termo}`}
             >
-              <span aria-hidden="true">🔊</span> Ouvir
+              <IconeSom /> Ouvir
             </button>
           )}
         </div>

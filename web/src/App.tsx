@@ -5,6 +5,7 @@ import { usePreferencias } from './preferencias.js';
 import { BarraDeAcessibilidade } from './componentes/BarraDeAcessibilidade.js';
 import { CartaoDaGiria } from './componentes/CartaoDaGiria.js';
 import { Catalogo } from './componentes/Catalogo.js';
+import { IconeSemRede } from './componentes/Icone.js';
 import { TextoDestacado } from './componentes/TextoDestacado.js';
 
 type Estado =
@@ -82,9 +83,12 @@ export function App() {
 
       <div className="pagina">
         <header className="cabecalho">
-          <h1 className="marca">
-            <span aria-hidden="true">💬</span> Tradugil
-          </h1>
+          {/*
+            Sem emoji na marca. O ponto final que fecha o nome vem do CSS, e
+            e a marca de um verbete de dicionario terminando: e o detalhe que
+            faz o nome parecer um nome, e nao um rotulo de aplicativo.
+          */}
+          <h1 className="marca">Tradugil</h1>
           <BarraDeAcessibilidade
             preferencias={preferencias}
             aumentarFonte={aumentarFonte}
@@ -176,7 +180,7 @@ export function App() {
               <>
                 {estado.offline && (
                   <p className="aviso-offline">
-                    <span aria-hidden="true">📶 </span>
+                    <IconeSemRede />{' '}
                     {navigator.onLine
                       ? 'Não conseguimos falar com o servidor agora. Mostramos o que já estava salvo no seu aparelho.'
                       : 'Você está sem internet. Mostramos o que já estava salvo no seu aparelho.'}

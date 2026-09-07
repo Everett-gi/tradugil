@@ -16,8 +16,11 @@ export default defineConfig({
         lang: 'pt-BR',
         start_url: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#1b4965',
+        // Acompanham a paleta da folha de estilo. O background_color e o
+        // que o Android pinta na tela de abertura antes de o site carregar:
+        // deixar branco aqui daria um lampejo branco antes do papel verde.
+        background_color: '#eef1ec',
+        theme_color: '#0e6b4c',
         icons: [
           { src: 'icone-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icone-512.png', sizes: '512x512', type: 'image/png' },
