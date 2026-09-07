@@ -30,7 +30,14 @@ public class RespostaIa {
     @Column(name = "termo_normalizado", nullable = false, length = 80)
     private String termoNormalizado;
 
-    @Column(name = "hash_do_contexto", nullable = false, length = 64)
+    /**
+     * SHA-256 em hexadecimal: sempre exatamente 64 caracteres, por isso
+     * {@code CHAR} e não {@code VARCHAR}. O {@code columnDefinition} é
+     * necessário para o Hibernate reconhecer o tipo do Postgres — sem ele, a
+     * validação de esquema recusa subir a aplicação.
+     */
+    @Column(name = "hash_do_contexto", nullable = false, length = 64,
+            columnDefinition = "bpchar")
     private String hashDoContexto;
 
     @Column(name = "e_giria", nullable = false)

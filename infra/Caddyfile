@@ -1,0 +1,87 @@
+# Borda do TraduGiria.
+#
+# O Caddy resolve tres coisas de uma vez, e por isso substitui a dupla
+# nginx + certbot: TLS automatico com renovacao, proxy reverso e limite de
+# requisicao na borda -- antes de a requisicao custar CPU da aplicacao.
+#
+# Troque o dominio abaixo pelo real (ou por um DuckDNS enquanto nao houver).
+
+tradugiria.app, www.tradugiria.app {
+
+	encode gzip zstd
+
+	# Cabecalhos de seguranca. A aplicacao nao pode contar so com o que ela
+	# mesma envia: se um dia servir um arquivo estatico direto, e daqui que
+	# a protecao vem.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		# Remove a assinatura do servidor: nao ajuda ninguem legitimo.
+		-Server
+	}
+
+	# ------------------------------------------------------------------ API
+
+	handle /api/* {
+		# Limite por IP na borda. E a mitigacao de negacao de servico do
+		# threat model: o /traduzir e publico e, sem teto aqui, alguem
+		# automatiza consultas de termos inventados para gerar custo de IA.
+		# A cota diaria da aplicacao e a segunda linha, nao a primeira.
+		rate_limit {
+			zone consultas {
+				key {remote_host}
+				events 60
+				window 1m
+			}
+		}
+		reverse_proxy api:8080
+	}
+
+	handle /swagger-ui/* {
+		reverse_proxy api:8080
+	}
+
+	handle /v3/api-docs/* {
+		reverse_proxy api:8080
+	}
+
+	# --------------------------------------------------------------- Site
+
+	handle {
+		root * /srv/web
+		try_files {path} /index.html
+		file_server
+
+		# O service worker nunca pode ser cacheado: um sw.js velho preso no
+		# cache do navegador deixa o usuario em uma versao antiga do site
+		# indefinidamente, sem nenhuma forma de se atualizar sozinho.
+		@service_worker path /sw.js /registerSW.js
+		header @service_worker Cache-Control "no-cache, no-store, must-revalidate"
+
+		# O resto do bundle tem hash no nome: pode ser cacheado para sempre.
+		@com_hash path_regexp \.[0-9a-zA-Z_-]{8,}\.(js|css|woff2)$
+		header @com_hash Cache-Control "public, max-age=31536000, immutable"
+	}
+
+	# ----------------------------------------------------------- APK direto
+
+	# O aplicativo Android e distribuido pelo site, nao pela Play Store.
+	# O tipo MIME precisa ser este, senao o Android recusa a instalacao.
+	handle /baixar/tradugiria.apk {
+		root * /srv/apk
+		header Content-Type "application/vnd.android.package-archive"
+		header Content-Disposition "attachment; filename=tradugiria.apk"
+		rewrite * /tradugiria.apk
+		file_server
+	}
+
+	log {
+		output file /var/log/caddy/tradugiria.log
+		# Sem corpo de requisicao no log: o /traduzir recebe texto lido da
+		# tela do usuario, e registra-lo criaria exatamente o arquivo de
+		# conversas privadas que a secao 8 do documento proibe.
+		format json
+	}
+}

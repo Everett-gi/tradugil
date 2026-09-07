@@ -93,8 +93,9 @@ web/            React · Vite — site, PWA instalável e popup da extensão
 android/        Kotlin · Jetpack Compose
 packages/
   core-ts/      Normalização e tokenização compartilhadas com os clientes
-docs/           Especificação e decisões de arquitetura
-infra/          Caddy e scripts de implantação
+docs/
+  adr/          Registros de decisão de arquitetura
+infra/          Caddy: TLS, proxy, limite de requisição e entrega do APK
 ```
 
 ### Uma regra que atravessa três linguagens
