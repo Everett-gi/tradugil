@@ -18,7 +18,7 @@
  * A migracao gerada e imutavel depois de aplicada, como qualquer outra.
  * Termo novo entra em migracao nova, nunca editando uma que ja rodou.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -204,6 +204,53 @@ function avisarSemAcento(termos) {
   return suspeitos;
 }
 
+/* ------------------------------------------------ duplicata entre arquivos --- */
+
+/**
+ * Procura os termos deste arquivo nos outros arquivos de curadoria.
+ *
+ * POR QUE ISTO PRECISA FALHAR, E NAO SO AVISAR
+ *
+ * O INSERT de `giria` tem ON CONFLICT DO NOTHING e nao duplica o verbete. O
+ * INSERT de `definicao` nao tem guarda nenhuma, porque acrescentar um sentido
+ * novo a um termo que ja existe e justamente um caso legitimo. A consequencia
+ * e que repetir um termo inteiro num arquivo novo grava a MESMA explicacao
+ * duas vezes, e a tela mostra o verbete com o texto repetido.
+ *
+ * O erro e silencioso do jeito que mais custa: a migracao aplica sem
+ * reclamar, os testes passam, e o defeito so aparece para quem abrir aquele
+ * verbete especifico.
+ *
+ * Aconteceu ao escrever familia-casa.mjs: 11 dos 35 termos ja estavam em
+ * outros arquivos, porque "coroa" e "cara de pau" sao obvios em mais de uma
+ * categoria e ninguem lembra de 700 verbetes de cabeca.
+ *
+ * A comparacao e pela forma normalizada, e nao pela grafia: "véia" e "veia"
+ * sao o mesmo verbete para o banco, e seriam duas linhas aqui se comparadas
+ * como texto.
+ */
+async function procurarEmOutrosArquivos(termos, arquivoAtual) {
+  const pasta = join(AQUI, "termos");
+  const atual = resolve(AQUI, arquivoAtual);
+
+  const meus = new Map(termos.map((e) => [normalizar(e.termo) + "|" + e.idioma, e.termo]));
+  const achados = [];
+
+  for (const nome of readdirSync(pasta).filter((n) => n.endsWith(".mjs"))) {
+    const caminho = join(pasta, nome);
+    if (resolve(caminho) === atual) continue;
+
+    const outros = (await import("file://" + caminho)).default;
+    for (const e of outros) {
+      const chave = normalizar(e.termo) + "|" + e.idioma;
+      if (meus.has(chave)) {
+        achados.push(`${meus.get(chave)}  ja esta em termos/${nome}`);
+      }
+    }
+  }
+  return achados.sort();
+}
+
 /* ------------------------------------------------------------ geracao ---- */
 
 function gerar(termos, descricao) {
@@ -355,6 +402,27 @@ if (!arquivo || !versao) {
 }
 
 const termos = (await import("file://" + resolve(AQUI, arquivo))).default;
+
+const jaDefinidos = await procurarEmOutrosArquivos(termos, arquivo);
+if (jaDefinidos.length) {
+  console.error("");
+  console.error(`${jaDefinidos.length} termo(s) ja definidos em outro arquivo:`);
+  console.error("");
+  jaDefinidos.slice(0, 30).forEach((x) => console.error("  " + x));
+  if (jaDefinidos.length > 30) {
+    console.error(`  ... e mais ${jaDefinidos.length - 30}`);
+  }
+  console.error("");
+  console.error("  O INSERT de giria tem ON CONFLICT DO NOTHING e nao duplica o");
+  console.error("  verbete, mas o INSERT de definicao NAO TEM: o termo apareceria");
+  console.error("  na tela com a mesma explicacao escrita duas vezes.");
+  console.error("");
+  console.error("  Para acrescentar um sentido novo a um termo que ja existe,");
+  console.error("  edite o arquivo onde ele ja esta, e gere a migracao de la.");
+  console.error("");
+  process.exit(1);
+}
+
 const problemas = validar(termos);
 
 if (problemas.length) {
