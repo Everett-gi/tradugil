@@ -1,0 +1,30 @@
+# Java / Maven
+target/
+*.class
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Android
+.gradle/
+android/build/
+android/app/build/
+local.properties
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Segredos: nada de credencial versionada. Ver .env.exemplo.
+.env
+.env.local
+api/src/main/resources/application-local.yml
+
+# IDE / SO
+.idea/
+*.iml
+.vscode/
+Thumbs.db
+desktop.ini
