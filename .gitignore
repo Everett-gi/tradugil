@@ -37,3 +37,8 @@ android/.gradle/
 android/.idea/
 android/build/
 android/app/release/
+
+# JVM do daemon do Gradle: gerado pelo Android Studio e especifico da
+# maquina. Versionar obrigaria a CI a baixar um JDK 25 so para rodar o
+# daemon, quando o projeto compila com 17.
+android/gradle/gradle-daemon-jvm.properties

@@ -1,6 +1,7 @@
 plugins {
+    // A partir do AGP 9.0 o suporte a Kotlin e embutido: aplicar tambem o
+    // plugin org.jetbrains.kotlin.android faz o build falhar na configuracao.
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 

@@ -7,28 +7,32 @@ Google Play.
 
 | Parte | Situação |
 |-------|----------|
-| `Normalizador` e `Tokenizador` | **Verificados** — 13 testes passando |
-| Cliente da API, ViewModel, tela Compose | Escritos, **não compilados** ainda |
-| Compartilhar de outro app (RF20) | Declarado no manifesto, a validar |
+| `Normalizador` e `Tokenizador` | Verificados — 13 testes passando |
+| Cliente da API, ViewModel, tela Compose | **Compilam**; APK de depuração gerado |
+| Compartilhar de outro app (RF20) | Declarado no manifesto, a validar em aparelho |
 | Dicionário offline (Room) | Não iniciado |
 | Bolha flutuante, leitura de tela, OCR | Não iniciado |
 
-O domínio foi compilado e testado fora do Gradle, contra os arquivos reais
-deste módulo, então a lógica que atravessa as três plataformas está provada.
-O resto ainda não passou por um compilador — a primeira sincronização no
-Android Studio é o próximo passo de validação.
+O módulo compila e o APK de depuração é gerado. Falta validar em aparelho
+real o fluxo de compartilhamento, e implementar o dicionário offline e as
+funções de leitura de tela.
 
-## Abrindo pela primeira vez
+## Abrindo
 
-Não há `gradlew` versionado ainda: o `gradle-wrapper.jar` é um binário que
-precisa ser gerado, e não havia Gradle nesta máquina para gerá-lo. O Android
-Studio resolve isso sozinho.
+Abra **a pasta `android/`** no Android Studio — não a raiz do repositório.
+A raiz é um monorepo poliglota sem `settings.gradle.kts`, então o Studio a
+trata como pasta comum e nunca oferece sincronizar.
 
-1. Abra **a pasta `android/`** no Android Studio (não a raiz do repositório).
-2. O Studio lê `gradle/wrapper/gradle-wrapper.properties`, baixa o Gradle
-   9.7.1 e sincroniza.
-3. Quando pedir, aceite gerar o wrapper — aí `./gradlew` passa a funcionar
-   pela linha de comando.
+Pela linha de comando:
+
+```bash
+cd android && ./gradlew assembleDebug
+```
+
+O APK sai em `app/build/outputs/apk/debug/app-debug.apk`.
+
+Os erros encontrados na primeira compilação real estão em
+[`ARMADILHAS.md`](ARMADILHAS.md) — vale ler antes de mexer no build.
 
 ### Versões
 

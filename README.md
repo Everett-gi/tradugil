@@ -16,7 +16,7 @@ acompanha a velocidade com que a linguagem online muda.
 |------|---------|----------|
 | F0 | Monorepo, esquema, seed inicial, API de consulta | Código pronto; falta subir contra o banco |
 | F1 | PWA instalável, lógica compartilhada, cascata com IA | Pronta; falta subir contra o banco |
-| F2 | Android: bolha flutuante, OCR local, Modo Família | Domínio e tela prontos; falta o build |
+| F2 | Android: bolha flutuante, OCR local, Modo Família | App compila e gera APK; falta o offline e a leitura de tela |
 
 **Distribuição do Android:** APK baixável pelo site. A publicação na Google
 Play fica para quando houver orçamento — nada da arquitetura muda por isso,

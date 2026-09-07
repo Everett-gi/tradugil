@@ -116,6 +116,43 @@ jobs:
           path: web/dist/
           retention-days: 7
 
+  android:
+    name: Android (Kotlin)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: temurin
+
+      - name: Preparar SDK do Android
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platforms;android-37.0 build-tools;36.0.0"
+
+      - name: Cache do Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Testes de unidade
+        run: ./gradlew --no-daemon testDebugUnitTest
+        working-directory: android
+
+      # Compila o APK que sera distribuido pelo site. Nao assina: a chave de
+      # release fica fora do repositorio, e um APK assinado na CI exigiria o
+      # keystore aqui dentro.
+      - name: Montar APK de depuracao
+        run: ./gradlew --no-daemon assembleDebug
+        working-directory: android
+
+      - name: Publicar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-debug
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
   dependencias:
     name: Auditoria de dependencias
     runs-on: ubuntu-latest
