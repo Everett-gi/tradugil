@@ -62,6 +62,8 @@ public class ConfiguracaoDeSeguranca {
                         // Leitura do dicionário: pública, sem cadastro.
                         .requestMatchers(HttpMethod.GET, "/api/v1/girias/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/traduzir").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/girias/definicoes/*/votos").permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/dicionario/pacotes/**").permitAll()
 

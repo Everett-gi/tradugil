@@ -94,6 +94,12 @@ public final class GiriaDtos {
         }
     }
 
+    /**
+     * @param util true para "essa explicação me ajudou", false para o contrário
+     */
+    public record Voto(boolean util) {
+    }
+
     /** Envelope de página. Sem total: contar exigiria varrer o índice trigram. */
     public record Pagina<T>(List<T> itens, int pagina, int tamanho, boolean temMais) {
     }
