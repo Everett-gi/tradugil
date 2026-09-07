@@ -1,0 +1,25 @@
+# Perfil dos testes de integracao.
+#
+# As variaveis vem do ambiente e nao tem valor padrao de proposito: se o
+# banco de teste nao estiver configurado, os testes sao pulados por
+# @TestcomBanco, e nao apontados silenciosamente para outro banco -- rodar
+# migracao destrutiva no banco errado seria pior que nao testar.
+spring:
+  datasource:
+    url: ${TRADUGIRIA_TEST_DB_URL}
+    username: ${TRADUGIRIA_TEST_DB_USUARIO}
+    password: ${TRADUGIRIA_TEST_DB_SENHA}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    # Cada execucao parte de um banco limpo: teste que depende do que a
+    # execucao anterior deixou passa sozinho e falha em conjunto.
+    clean-disabled: false
+
+logging:
+  level:
+    org.flywaydb: INFO

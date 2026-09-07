@@ -40,6 +40,15 @@ public class Giria {
     @Column(name = "termo_normalizado", nullable = false, length = 80)
     private String termoNormalizado;
 
+    /**
+     * Chave de busca com a ênfase repetida colapsada ({@code kkkkkkk} vira
+     * {@code kk}). Existe como coluna, e não como cálculo na consulta, porque
+     * precisa de índice: sem ele, cada consulta com repetição varreria a
+     * tabela inteira.
+     */
+    @Column(name = "termo_colapsado", nullable = false, length = 80)
+    private String termoColapsado;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idioma_id", nullable = false)
     private Idioma idioma;
@@ -101,6 +110,10 @@ public class Giria {
 
     public String getTermoNormalizado() {
         return termoNormalizado;
+    }
+
+    public String getTermoColapsado() {
+        return termoColapsado;
     }
 
     public Idioma getIdioma() {

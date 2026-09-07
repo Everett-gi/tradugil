@@ -119,27 +119,33 @@ public class ServicoDeTraducao {
      */
     private Map<String, Giria> buscarNoDicionario(List<Trecho> candidatos) {
         Set<String> chaves = new LinkedHashSet<>();
+        Set<String> colapsadas = new LinkedHashSet<>();
         for (Trecho candidato : candidatos) {
             if (!PALAVRAS_IGNORADAS.contains(candidato.normalizado())) {
                 chaves.add(candidato.normalizado());
-                chaves.add(Normalizador.colapsarRepeticoes(candidato.normalizado()));
+                colapsadas.add(Normalizador.colapsarRepeticoes(candidato.normalizado()));
             }
         }
         if (chaves.isEmpty()) {
             return Map.of();
         }
 
+        // Indexado pelas três formas em que um verbete pode ser alcançado,
+        // para o laço de detecção encontrá-lo perguntando pela forma que ele
+        // tem em mãos — a normalizada do texto do usuário.
         Map<String, Giria> porChave = new HashMap<>();
-        for (Giria giria : repositorioDeGiria.buscarPorCandidatos(chaves)) {
+        for (Giria giria : repositorioDeGiria.buscarPorCandidatos(chaves, colapsadas)) {
             porChave.put(giria.getTermoNormalizado(), giria);
+            porChave.putIfAbsent(giria.getTermoColapsado(), giria);
             for (GiriaVariacao variacao : giria.getVariacoes()) {
-                porChave.put(variacao.getVariacaoNormalizada(), giria);
+                porChave.putIfAbsent(variacao.getVariacaoNormalizada(), giria);
+                porChave.putIfAbsent(variacao.getVariacaoColapsada(), giria);
             }
         }
 
-        // O candidato pode ter chegado ao verbete pela forma colapsada
-        // ("kkkkkk" -> "kk"); o mapa precisa responder pela forma original,
-        // que é a que o laço de detecção vai perguntar.
+        // O candidato pode ter chegado ao verbete só pela forma colapsada
+        // ("kkkkkkk" e "kkk" viram ambos "kk"); o mapa precisa responder
+        // também pela forma original, que é a que o laço vai perguntar.
         for (Trecho candidato : candidatos) {
             String original = candidato.normalizado();
             if (porChave.containsKey(original)) {

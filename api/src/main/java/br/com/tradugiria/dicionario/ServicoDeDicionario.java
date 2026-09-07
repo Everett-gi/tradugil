@@ -91,13 +91,15 @@ public class ServicoDeDicionario {
             return exata;
         }
 
-        String colapsado = Normalizador.colapsarRepeticoes(normalizado);
-        if (!colapsado.equals(normalizado)) {
-            java.util.Optional<Giria> porEnfase =
-                    repositorio.findByTermoNormalizado(colapsado).stream().findFirst();
-            if (porEnfase.isPresent()) {
-                return porEnfase;
-            }
+        // Colapsado contra colapsado: o usuário escreveu "kkkkkkk" e o
+        // verbete guardado é "kkk". Comparar a forma reduzida do usuário com
+        // a forma original do banco nunca casaria.
+        java.util.Optional<Giria> porEnfase = repositorio
+                .findByTermoColapsado(Normalizador.colapsarRepeticoes(normalizado))
+                .stream()
+                .findFirst();
+        if (porEnfase.isPresent()) {
+            return porEnfase;
         }
 
         return repositorio

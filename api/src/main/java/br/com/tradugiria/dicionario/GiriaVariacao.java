@@ -37,6 +37,10 @@ public class GiriaVariacao {
     @Column(name = "variacao_normalizada", nullable = false, length = 80)
     private String variacaoNormalizada;
 
+    /** Forma com a ênfase repetida colapsada. Ver {@code Giria.termoColapsado}. */
+    @Column(name = "variacao_colapsada", nullable = false, length = 80)
+    private String variacaoColapsada;
+
     protected GiriaVariacao() {
     }
 
@@ -54,5 +58,9 @@ public class GiriaVariacao {
 
     public String getVariacaoNormalizada() {
         return variacaoNormalizada;
+    }
+
+    public String getVariacaoColapsada() {
+        return variacaoColapsada;
     }
 }

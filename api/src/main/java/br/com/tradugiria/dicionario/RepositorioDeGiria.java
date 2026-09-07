@@ -23,16 +23,29 @@ public interface RepositorioDeGiria extends JpaRepository<Giria, Long> {
      * banco por requisição — em free tier, é o suficiente para estourar o
      * limite de conexões e derrubar o RNF01. Aqui vai tudo em um IN.</p>
      *
-     * <p>Casa tanto pelo termo canônico quanto pela variação, porque para
-     * quem consulta não há diferença entre "pog" e "pogchamp".</p>
+     * <p>Casa pelo termo canônico, pela variação e pela forma com ênfase
+     * colapsada. Os três caminhos existem porque, para quem consulta, não há
+     * diferença entre "pog", "pogchamp" e "kkkkkkk" — mas no banco são
+     * chaves distintas.</p>
+     *
+     * <p>A comparação por ênfase é colapsado contra colapsado, e não
+     * colapsado contra original: o verbete guardado é "kkk", o usuário
+     * escreveu "kkkkkkk", e só reduzir um dos lados nunca os faria
+     * encontrar-se.</p>
      */
     @Query("""
             SELECT DISTINCT g FROM Giria g
             LEFT JOIN g.variacoes v
             WHERE g.termoNormalizado IN :candidatos
+               OR g.termoColapsado IN :colapsados
                OR v.variacaoNormalizada IN :candidatos
+               OR v.variacaoColapsada IN :colapsados
             """)
-    List<Giria> buscarPorCandidatos(@Param("candidatos") Collection<String> candidatos);
+    List<Giria> buscarPorCandidatos(@Param("candidatos") Collection<String> candidatos,
+                                    @Param("colapsados") Collection<String> colapsados);
+
+    /** Busca só pela forma com ênfase colapsada. Usada na consulta de um termo. */
+    List<Giria> findByTermoColapsado(String termoColapsado);
 
     /**
      * Nível 2 da cascata: busca tolerante a erro de digitação.
