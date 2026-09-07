@@ -95,20 +95,39 @@ class PublicacaoDeContribuicaoIT {
          * Dois verbetes para a mesma palavra fazem a resposta depender da
          * ordem das linhas no banco. É o erro do "PogChamp", que a V28 teve
          * de desfazer, e ele poderia entrar de novo por aqui sem esta regra.
+         *
+         * O TERMO É CRIADO PELO PRÓPRIO TESTE, e isso não é detalhe.
+         *
+         * A primeira versão usava "cringe", que já existe no dicionário, e
+         * publicava um sentido nele. Passou sozinha e quebrou dois testes de
+         * outras classes que usam "cringe" como referência fixa:
+         * `encontraPorTermoExato` esperava ler "vergonha alheia" e leu o texto
+         * inventado aqui.
+         *
+         * Um teste que altera dado compartilhado deixa de testar o seu assunto
+         * e passa a decidir o resultado dos outros, na ordem em que o Surefire
+         * resolver rodá-los. Verbete que este teste publica é verbete que só
+         * este teste conhece.
          */
         Usuario autor = criar(Papel.USER);
         Usuario moderador = criar(Papel.MODERATOR);
+        String termo = "termodoissentidos" + System.nanoTime();
 
-        int sentidosAntes = dicionario.porTermo("cringe", "en").definicoes().size();
+        var primeira = servico.propor(autor.getId(),
+                new NovaContribuicao(termo, "pt-BR",
+                        "O primeiro sentido, escrito por quem contribuiu."));
+        servico.decidir(moderador.getId(), primeira.id(), new DecisaoDeModeracao(true, null));
 
-        ContribuicaoResposta proposta = servico.propor(autor.getId(),
-                new NovaContribuicao("cringe", "en",
-                        "Sentido novo escrito por alguém da comunidade, para teste."));
-        servico.decidir(moderador.getId(), proposta.id(), new DecisaoDeModeracao(true, null));
+        var segunda = servico.propor(autor.getId(),
+                new NovaContribuicao(termo, "pt-BR",
+                        "Um segundo sentido, bem diferente do primeiro."));
+        servico.decidir(moderador.getId(), segunda.id(), new DecisaoDeModeracao(true, null));
 
-        var verbete = dicionario.porTermo("cringe", "en");
-        assertThat(verbete.termo()).isEqualTo("cringe");
-        assertThat(verbete.definicoes()).hasSize(sentidosAntes + 1);
+        var verbete = dicionario.porTermo(termo, "pt-BR");
+        assertThat(verbete.termo()).isEqualTo(termo);
+        assertThat(verbete.definicoes())
+                .as("um verbete com dois sentidos, e não dois verbetes")
+                .hasSize(2);
     }
 
     @Test

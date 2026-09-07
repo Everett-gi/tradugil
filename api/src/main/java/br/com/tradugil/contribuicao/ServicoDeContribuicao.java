@@ -186,6 +186,19 @@ public class ServicoDeContribuicao {
      * por engano, o pior resultado possível é o verbete mostrar a mesma frase
      * duas vezes, que é exatamente o defeito que as migrações V29 e V33
      * limparam.</p>
+     *
+     * <h2>Limitação conhecida: o verbete nasce sem categoria</h2>
+     *
+     * <p>O formulário de contribuição pede termo, idioma e explicação, e mais
+     * nada. Sem categoria, o verbete <b>é encontrado pela busca e pelo
+     * {@code /traduzir}, mas nunca aparece no catálogo</b>, que é organizado
+     * por prateleira.</p>
+     *
+     * <p>Fica assim de propósito, por enquanto. Adivinhar a categoria a partir
+     * do texto seria classificar em nome de quem contribuiu, e categoria
+     * errada é pior que categoria nenhuma: manda a pessoa procurar na
+     * prateleira errada. O caminho certo é a moderação escolher a categoria na
+     * hora de aprovar, o que exige um campo a mais na tela de moderação.</p>
      */
     private void publicar(Contribuicao contribuicao) {
         Idioma idioma = contribuicao.getIdioma();
