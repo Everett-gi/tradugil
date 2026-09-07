@@ -45,7 +45,9 @@ public class ServicoDeTraducao {
             "a", "o", "as", "os", "um", "uma", "de", "da", "do", "das", "dos",
             "em", "no", "na", "nos", "nas", "por", "para", "com", "sem", "que",
             "e", "ou", "se", "ao", "aos", "eu", "ele", "ela", "eles", "elas",
-            "voce", "nos", "meu", "minha", "seu", "sua", "isso", "isto", "aquilo",
+            // "nos" já aparece acima: a contração "nos" e o pronome "nós"
+            // colapsam na mesma forma normalizada, e uma entrada cobre as duas.
+            "voce", "meu", "minha", "seu", "sua", "isso", "isto", "aquilo",
             "the", "of", "to", "in", "on", "at", "is", "are", "was", "were",
             "and", "or", "it", "he", "she", "they", "you", "we", "my", "your");
 
