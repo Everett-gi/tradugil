@@ -9,14 +9,20 @@ acompanha a velocidade com que a linguagem online muda.
 
 > Especificação técnica completa em
 > [`docs/Tradugil_Especificacao_Tecnica_v1.docx`](docs/Tradugil_Especificacao_Tecnica_v1.docx).
+>
+> O que falta fazer por fora (domínio, servidor, backup da chave) está em
+> [`PASSO-A-PASSO.md`](PASSO-A-PASSO.md).
 
 ## Estado atual
 
 | Fase | Entrega | Situação |
 |------|---------|----------|
-| F0 | Monorepo, esquema, seed inicial, API de consulta | Código pronto; falta subir contra o banco |
-| F1 | PWA instalável, lógica compartilhada, cascata com IA | Pronta; falta subir contra o banco |
+| F0 | Monorepo, esquema, API de consulta | Pronta, rodando contra o Neon com 752 verbetes |
+| F1 | PWA instalável, lógica compartilhada, cascata com IA, catálogo, extensão de navegador | Pronta; falta o nível 3 da cascata |
 | F2 | Android: bolha flutuante, OCR local, Modo Família | App compila com dicionário offline; falta a leitura de tela |
+
+Nada disso está no ar ainda: falta um servidor, que é o item 3 do
+[passo a passo](PASSO-A-PASSO.md).
 
 **Distribuição do Android:** APK baixável pelo site. A publicação na Google
 Play fica para quando houver orçamento: nada da arquitetura muda por isso,
@@ -34,7 +40,7 @@ Parar cedo é o que mantém a latência baixa e o custo de IA perto de zero:
 | 2 | PostgreSQL curado, com busca tolerante a erro de digitação | baixo | Pronto |
 | 3 | Fontes externas, sempre com rótulo de origem | baixo | Não iniciado |
 | 4 | IA generativa, rotulada como não verificada | pago | Pronto |
-| 5 | Fila de termos desconhecidos → curadoria |: | Pronto |
+| 5 | Fila de termos desconhecidos, que alimenta a curadoria | zero | Pronto |
 
 O nível 5 é o que impede o dicionário de envelhecer: todo termo que ninguém
 soube explicar vira item de uma fila anônima que alimenta a curadoria.
@@ -103,9 +109,9 @@ direto, o que o teste de integração confirma.
 
 ## O dicionário
 
-**754 verbetes curados**, com explicações escritas para quem está fora da
-cultura digital: uma ou duas frases, sem jargão, sem pressupor que a pessoa
-saiba o que é Twitch, chat ou emote.
+**752 verbetes curados** no banco, com explicações escritas para quem está
+fora da cultura digital: uma ou duas frases, sem jargão, sem pressupor que a
+pessoa saiba o que é Twitch, chat ou emote.
 
 Termos com mais de um sentido trazem todos. "Dropar" é soltar item no jogo e
 também lançar uma música; "bug" é erro de programa e também pessoa que
@@ -116,7 +122,7 @@ O conteúdo não é escrito direto em SQL. A fonte editável fica em
 [`curadoria/termos/`](curadoria/termos/) e um gerador produz a migração:
 
 ```bash
-node curadoria/gerar-migracao.mjs termos/gaming.mjs V20 "novas girias de jogos"
+node curadoria/gerar-migracao.mjs termos/gaming.mjs V21 "novas girias de jogos"
 ```
 
 Isso existe porque cada verbete precisa de duas chaves derivadas do termo, a
@@ -126,9 +132,10 @@ nunca é encontrado, porque a chave gravada não corresponde à que o cliente
 calcula na busca.
 
 O gerador recusa gerar quando encontra explicação curta demais, palavra que
-exige acento escrita sem acento, variação que normaliza para vazio ou termo
-duplicado. Cada uma dessas checagens existe por causa de um erro que
-aconteceu de verdade.
+exige acento escrita sem acento, variação que normaliza para vazio, termo
+duplicado ou equivalente formal que só repete o próprio termo. Cada uma
+dessas checagens existe por causa de um erro que aconteceu de verdade, e a
+última delas encontrou 41 casos de uma vez.
 
 ## Privacidade
 
@@ -146,8 +153,10 @@ Três decisões de arquitetura, não de texto jurídico, tratam disso:
 
 ```
 api/            Spring Boot 3.3 · Java 21 · PostgreSQL · Flyway
-web/            React · Vite: site, PWA instalável e popup da extensão
+web/            React · Vite: site e PWA instalável
 android/        Kotlin · Jetpack Compose
+extension/      Extensão de navegador: explica a gíria selecionada na página
+curadoria/      Fonte do dicionário e o gerador de migrações
 packages/
   core-ts/      Normalização e tokenização compartilhadas com os clientes
 docs/
@@ -224,6 +233,36 @@ Para gerar o site de produção, com service worker e manifesto do PWA:
 ```bash
 npm --prefix web run build
 ```
+
+### O catálogo
+
+O botão **Ver o catálogo de gírias** abre uma janela para folhear o
+dicionário por assunto: 21 prateleiras com a contagem de cada uma, e um
+toque na palavra abre o significado ali mesmo.
+
+Existe para um caso que a busca não atende. A tela principal parte de quem
+já viu a palavra e quer saber o que ela significa; quem só ouviu dizer que
+os filhos "falam outra língua" não tem palavra nenhuma para digitar, e
+diante de um campo em branco vai embora.
+
+O Modo Família vale aqui como no resto, e pesa mais: o catálogo é a única
+tela em que a pessoa esbarra num termo sem ter procurado por ele. Com ele
+ligado, a contagem anunciada é a dos verbetes que ela consegue abrir, e não
+o total.
+
+## Rodando a extensão de navegador
+
+```bash
+cd extension && npm install && npm run build
+```
+
+Depois, em `chrome://extensions`, ligue o Modo do desenvolvedor e use
+**Carregar sem compactação** apontando para `extension/dist`.
+
+Selecione uma gíria em qualquer página e aperte `Ctrl+Shift+E`. Detalhes,
+inclusive o que ela vê e o que envia, em
+[`extension/README.md`](extension/README.md) e
+[`extension/PRIVACIDADE.md`](extension/PRIVACIDADE.md).
 
 ## Rodando o Android
 
