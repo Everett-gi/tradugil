@@ -1,4 +1,4 @@
-# TraduGíria
+# Tradugil
 
 Tradutor de gírias e linguagem da internet, em português e inglês.
 
@@ -8,7 +8,7 @@ pais que acompanham o uso de redes pelos filhos e quem simplesmente não
 acompanha a velocidade com que a linguagem online muda.
 
 > Especificação técnica completa em
-> [`docs/TraduGiria_Especificacao_Tecnica_v1.docx`](docs/TraduGiria_Especificacao_Tecnica_v1.docx).
+> [`docs/Tradugil_Especificacao_Tecnica_v1.docx`](docs/Tradugil_Especificacao_Tecnica_v1.docx).
 
 ## Estado atual
 
@@ -46,7 +46,7 @@ foi lido da tela do usuário e é **dado não confiável por definição**: pode
 conter instruções escritas de propósito para o modelo, plantadas por quem
 escreveu a mensagem que a vítima está tentando entender. O atacante não
 precisa de acesso nenhum ao sistema — basta mandar uma mensagem para alguém
-que usa o TraduGíria.
+que usa o Tradugil.
 
 São quatro camadas de defesa, e nenhuma delas basta sozinha:
 

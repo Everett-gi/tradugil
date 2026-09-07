@@ -4,7 +4,7 @@
 
 ## Contexto
 
-O TraduGíria resolve consultas em dois lugares: no servidor, contra o
+O Tradugil resolve consultas em dois lugares: no servidor, contra o
 PostgreSQL, e no dispositivo, contra um dicionário offline (IndexedDB no
 navegador, Room no Android). Os dois precisam transformar o que o usuário
 escreveu na mesma chave de busca — "Ranço!", "RANÇO" e "ranco" têm que chegar

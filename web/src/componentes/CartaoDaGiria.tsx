@@ -1,4 +1,4 @@
-import type { GiriaDetectada } from '@tradugiria/core';
+import type { GiriaDetectada } from '@tradugil/core';
 import { falar, vozDisponivel } from '../voz.js';
 
 interface Props {

@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'TraduGíria — entenda as gírias da internet',
-        short_name: 'TraduGíria',
+        name: 'Tradugil — entenda as gírias da internet',
+        short_name: 'Tradugil',
         description:
           'Descubra o que significam as gírias e abreviações que aparecem nas suas conversas.',
         lang: 'pt-BR',

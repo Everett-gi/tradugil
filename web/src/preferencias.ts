@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { NivelDeExplicacao } from '@tradugiria/core';
+import type { NivelDeExplicacao } from '@tradugil/core';
 
 /**
  * Preferências do usuário. Ficam apenas no dispositivo — nunca sobem para o
@@ -17,7 +17,7 @@ export interface Preferencias {
   modoFamilia: boolean;
 }
 
-const CHAVE = 'tradugiria.preferencias';
+const CHAVE = 'tradugil.preferencias';
 
 export const ESCALA_MINIMA = 1;
 export const ESCALA_MAXIMA = 1.6;

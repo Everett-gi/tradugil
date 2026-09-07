@@ -1,4 +1,4 @@
-# Borda do TraduGiria.
+# Borda do Tradugil.
 #
 # O Caddy resolve tres coisas de uma vez, e por isso substitui a dupla
 # nginx + certbot: TLS automatico com renovacao, proxy reverso e limite de
@@ -6,7 +6,7 @@
 #
 # Troque o dominio abaixo pelo real (ou por um DuckDNS enquanto nao houver).
 
-tradugiria.app, www.tradugiria.app {
+tradugil.app, www.tradugil.app {
 
 	encode gzip zstd
 
@@ -69,16 +69,16 @@ tradugiria.app, www.tradugiria.app {
 
 	# O aplicativo Android e distribuido pelo site, nao pela Play Store.
 	# O tipo MIME precisa ser este, senao o Android recusa a instalacao.
-	handle /baixar/tradugiria.apk {
+	handle /baixar/tradugil.apk {
 		root * /srv/apk
 		header Content-Type "application/vnd.android.package-archive"
-		header Content-Disposition "attachment; filename=tradugiria.apk"
-		rewrite * /tradugiria.apk
+		header Content-Disposition "attachment; filename=tradugil.apk"
+		rewrite * /tradugil.apk
 		file_server
 	}
 
 	log {
-		output file /var/log/caddy/tradugiria.log
+		output file /var/log/caddy/tradugil.log
 		# Sem corpo de requisicao no log: o /traduzir recebe texto lido da
 		# tela do usuario, e registra-lo criaria exatamente o arquivo de
 		# conversas privadas que a secao 8 do documento proibe.

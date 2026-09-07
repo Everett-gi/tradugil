@@ -51,7 +51,7 @@ export interface OpcoesDoCliente {
 
 const TIMEOUT_PADRAO_MS = 8000;
 
-export class ClienteTraduGiria {
+export class ClienteTradugil {
   private readonly baseUrl: string;
   private readonly timeoutMs: number;
 

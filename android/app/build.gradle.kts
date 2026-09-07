@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "br.com.tradugiria.android"
+    namespace = "br.com.tradugil.android"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "br.com.tradugiria.android"
+        applicationId = "br.com.tradugil.android"
         // Android 8. O publico inclui pessoas com aparelhos antigos, e subir
         // o minimo por conveniencia excluiria exatamente quem o produto quer
         // atender. Nada do que o app faz exige API mais nova que isso.
@@ -31,7 +31,7 @@ android {
             buildConfigField("String", "URL_DA_API", "\"http://10.0.2.2:8080\"")
         }
         release {
-            buildConfigField("String", "URL_DA_API", "\"https://tradugiria.app\"")
+            buildConfigField("String", "URL_DA_API", "\"https://tradugil.app\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

@@ -53,7 +53,7 @@ sozinho quando você digita; ao escrever o arquivo por fora, tem que lembrar.
 
 ## 4. Abrir a pasta certa
 
-O Android Studio precisa abrir **`tradugiria/android`**, não `tradugiria`.
+O Android Studio precisa abrir **`tradugil/android`**, não `tradugil`.
 
 A raiz é um monorepo poliglota — Maven em `api/`, npm em `web/`, Gradle só em
 `android/` — e não tem `settings.gradle.kts`. Sem ele, o Studio trata a pasta

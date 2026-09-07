@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { RespostaDeTraducao } from '@tradugiria/core';
+import type { RespostaDeTraducao } from '@tradugil/core';
 import { traduzir } from './api.js';
 import { usePreferencias } from './preferencias.js';
 import { BarraDeAcessibilidade } from './componentes/BarraDeAcessibilidade.js';
@@ -82,7 +82,7 @@ export function App() {
       <div className="pagina">
         <header className="cabecalho">
           <h1 className="marca">
-            <span aria-hidden="true">💬</span> TraduGíria
+            <span aria-hidden="true">💬</span> Tradugil
           </h1>
           <BarraDeAcessibilidade
             preferencias={preferencias}
@@ -205,7 +205,7 @@ export function App() {
 
         <footer className="rodape">
           <p>
-            O TraduGíria não guarda o texto que você consulta. Nada do que
+            O Tradugil não guarda o texto que você consulta. Nada do que
             você escreve aqui fica salvo nos nossos servidores.
           </p>
         </footer>

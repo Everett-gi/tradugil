@@ -9,7 +9,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/nome_do_app"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TraduGiria">
+        android:theme="@style/Theme.Tradugil">
 
         <activity
             android:name=".MainActivity"
@@ -23,7 +23,7 @@
             </intent-filter>
 
             <!--
-                Faz o TraduGíria aparecer em "Compartilhar" de qualquer
+                Faz o Tradugil aparecer em "Compartilhar" de qualquer
                 aplicativo (RF20). É o caminho mais curto do produto: a pessoa
                 seleciona o texto no WhatsApp, toca em compartilhar e já vê a
                 explicação, sem trocar de app manualmente.

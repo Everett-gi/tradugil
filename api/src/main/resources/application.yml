@@ -1,11 +1,11 @@
 spring:
   application:
-    name: tradugiria-api
+    name: tradugil-api
 
   datasource:
-    url: ${TRADUGIRIA_DB_URL}
-    username: ${TRADUGIRIA_DB_USUARIO}
-    password: ${TRADUGIRIA_DB_SENHA}
+    url: ${TRADUGIL_DB_URL}
+    username: ${TRADUGIL_DB_USUARIO}
+    password: ${TRADUGIL_DB_SENHA}
     hikari:
       # O free tier do Neon corta conexoes ociosas e limita o total. Um pool
       # pequeno com vida curta evita o erro de "connection closed" que
@@ -63,7 +63,7 @@ springdoc:
     path: /swagger-ui.html
     operationsSorter: method
 
-tradugiria:
+tradugil:
   cors:
     origens: http://localhost:5173,http://localhost:4173
 
@@ -77,4 +77,4 @@ tradugiria:
 logging:
   level:
     root: INFO
-    br.com.tradugiria: INFO
+    br.com.tradugil: INFO

@@ -11,10 +11,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>br.com.tradugiria</groupId>
-    <artifactId>tradugiria-api</artifactId>
+    <groupId>br.com.tradugil</groupId>
+    <artifactId>tradugil-api</artifactId>
     <version>0.1.0</version>
-    <name>TraduGiria API</name>
+    <name>Tradugil API</name>
     <description>Nucleo do tradutor de girias: dicionario, cascata de resolucao e moderacao</description>
 
     <properties>

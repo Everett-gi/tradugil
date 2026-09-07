@@ -26,7 +26,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: tradugiria_teste
+          POSTGRES_DB: tradugil_teste
         ports:
           - 5432:5432
         options: >-
@@ -39,9 +39,9 @@ jobs:
       # A presenca desta variavel e o que liga os testes de integracao.
       # Sem ela (na maquina do desenvolvedor, sem Postgres), eles sao
       # pulados com aviso, e os testes de unidade continuam rodando.
-      TRADUGIRIA_TEST_DB_URL: jdbc:postgresql://localhost:5432/tradugiria_teste
-      TRADUGIRIA_TEST_DB_USUARIO: postgres
-      TRADUGIRIA_TEST_DB_SENHA: postgres
+      TRADUGIL_TEST_DB_URL: jdbc:postgresql://localhost:5432/tradugil_teste
+      TRADUGIL_TEST_DB_USUARIO: postgres
+      TRADUGIL_TEST_DB_SENHA: postgres
 
     steps:
       - uses: actions/checkout@v4

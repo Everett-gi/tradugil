@@ -18,7 +18,7 @@ INSERT INTO categoria (slug, nome) VALUES
 -- A origem de cada definicao e visivel ao usuario. Uma explicacao vinda da
 -- IA ou do Urban Dictionary nao pode se passar por verbete revisado.
 INSERT INTO fonte (tipo, descricao) VALUES
-    ('CURADORIA',  'Escrita e revisada pela curadoria do TraduGiria'),
+    ('CURADORIA',  'Escrita e revisada pela curadoria do Tradugil'),
     ('COMUNIDADE', 'Enviada por usuario e aprovada na moderacao'),
     ('EXTERNA',    'Importada de fonte externa, exibida com rotulo de origem'),
     ('IA',         'Gerada por IA, ainda nao verificada por pessoa');

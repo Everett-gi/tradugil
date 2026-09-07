@@ -6,7 +6,7 @@ import {
   tokenizar,
   type GiriaDetectada,
   type RespostaDeTraducao,
-} from '@tradugiria/core';
+} from '@tradugil/core';
 
 /**
  * Nível 0 da cascata: o dicionário que vive no dispositivo.
@@ -34,7 +34,7 @@ interface VerbeteLocal {
   variacoes: string[];
 }
 
-const bancoLocal = new Dexie('tradugiria') as Dexie & {
+const bancoLocal = new Dexie('tradugil') as Dexie & {
   verbetes: EntityTable<VerbeteLocal, 'termoNormalizado'>;
 };
 

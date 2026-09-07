@@ -1,10 +1,10 @@
 import {
-  ClienteTraduGiria,
+  ClienteTradugil,
   ErroDeApi,
   ErroDeRede,
   type PedidoDeTraducao,
   type RespostaDeTraducao,
-} from '@tradugiria/core';
+} from '@tradugil/core';
 import { memorizar, traduzirLocalmente } from './dicionarioLocal.js';
 
 /**
@@ -12,7 +12,7 @@ import { memorizar, traduzirLocalmente } from './dicionarioLocal.js';
  * produção o Caddy serve as duas coisas na mesma origem. Assim não existe
  * URL de servidor embutida no bundle que precise mudar por ambiente.
  */
-const cliente = new ClienteTraduGiria({ baseUrl: '' });
+const cliente = new ClienteTradugil({ baseUrl: '' });
 
 export interface ResultadoDeTraducao {
   resposta: RespostaDeTraducao;

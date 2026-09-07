@@ -26,5 +26,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TraduGiria"
+rootProject.name = "Tradugil"
 include(":app")

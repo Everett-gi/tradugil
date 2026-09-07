@@ -6,9 +6,9 @@
 # migracao destrutiva no banco errado seria pior que nao testar.
 spring:
   datasource:
-    url: ${TRADUGIRIA_TEST_DB_URL}
-    username: ${TRADUGIRIA_TEST_DB_USUARIO}
-    password: ${TRADUGIRIA_TEST_DB_SENHA}
+    url: ${TRADUGIL_TEST_DB_URL}
+    username: ${TRADUGIL_TEST_DB_USUARIO}
+    password: ${TRADUGIL_TEST_DB_SENHA}
 
   jpa:
     hibernate:
