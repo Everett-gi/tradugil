@@ -73,6 +73,34 @@ chave de API.
 atende normalmente pelos níveis 0 a 2.** Isso não é um modo degradado a
 evitar: é o comportamento correto em desenvolvimento e se a verba acabar.
 
+## Contas e moderação
+
+Conta existe **apenas para contribuir e moderar**. Consultar o dicionário
+nunca exige cadastro — exigir login para entender uma mensagem afastaria
+exatamente o público que o produto quer atender.
+
+**Sessão:** access token JWT de 15 minutos e refresh token opaco de 30 dias.
+A divisão importa: um JWT não pode ser revogado — uma vez emitido, vale até
+expirar mesmo que a conta seja banida no minuto seguinte. A revogação de
+verdade acontece no refresh token, que fica no banco; os 15 minutos são o
+quanto de dano um access token vazado consegue causar.
+
+Cada renovação troca o refresh token e marca o antigo como substituído. Se um
+token já usado reaparece, ou o cliente legítimo repetiu ou alguém roubou —
+como não dá para distinguir, a sessão inteira é derrubada.
+
+**Nada chega ao dicionário sem passar por uma pessoa.** Sem moderação
+obrigatória, o campo de contribuição vira um canal aberto para definições
+ofensivas e desinformação, exibidas com a autoridade de um verbete para um
+público que inclui pessoas idosas e famílias.
+
+**A trilha de auditoria é append-only, garantida pelo banco.** A coluna
+`moderador_id` guarda o estado atual, e estado atual pode ser sobrescrito:
+um moderador que aprova algo impróprio e depois rejeita para encobrir faz a
+aprovação desaparecer. A tabela `auditoria_de_moderacao` registra o que
+aconteceu, e um gatilho recusa `UPDATE` e `DELETE` — inclusive por SQL
+direto, o que o teste de integração confirma.
+
 ## Privacidade
 
 O produto lê texto da tela do usuário, o que pode incluir conversas privadas.
