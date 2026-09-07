@@ -26,6 +26,13 @@ let raiz: ShadowRoot | null = null;
 /*
  * Escrito aqui e nao num arquivo separado porque vai para dentro do Shadow
  * DOM, que nao enxerga folhas de estilo da pagina nem da extensao.
+ *
+ * As cores sao as mesmas do site. A fonte NAO e: o site carrega Atkinson
+ * Hyperlegible do Google, e aqui isso significaria o balao buscar um recurso
+ * de terceiros dentro da pagina que a pessoa esta visitando, visivel no
+ * monitor de rede dela e registrado por quem serve a fonte. Uma extensao que
+ * promete nao observar navegacao nao pode abrir essa conexao. Fica a pilha do
+ * sistema, que ja e legivel e nao custa requisicao nenhuma.
  */
 const ESTILO = `
   :host { all: initial; }
@@ -35,11 +42,16 @@ const ESTILO = `
     z-index: 2147483647;
     max-width: 22rem;
     background: #ffffff;
-    color: #16202a;
-    border: 2px solid #1b4965;
-    border-radius: 10px;
-    box-shadow: 0 6px 24px rgba(16, 33, 43, 0.22);
-    padding: 0.85rem 1rem;
+    color: #17282c;
+    /* Filete da marca na esquerda em vez de moldura inteira, como nos
+       cartoes do site. O balao ja se separa da pagina pela sombra. */
+    border: 1px solid #e2d6c8;
+    border-left: 5px solid #0a5560;
+    border-radius: 14px;
+    box-shadow:
+      0 2px 4px rgba(23, 40, 44, 0.08),
+      0 16px 40px rgba(23, 40, 44, 0.18);
+    padding: 0.95rem 1.1rem;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 15px;
     line-height: 1.55;
@@ -47,9 +59,11 @@ const ESTILO = `
 
   @media (prefers-color-scheme: dark) {
     .balao {
-      background: #142530;
-      color: #e8eff4;
-      border-color: #8dc0dd;
+      background: #18272b;
+      color: #e9f1f2;
+      border-color: #2b3d41;
+      border-left-color: #6fd0dd;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     }
   }
 
@@ -72,7 +86,7 @@ const ESTILO = `
     border-radius: 4px;
   }
   .fechar:hover { background: rgba(127, 127, 127, 0.18); }
-  .fechar:focus-visible { outline: 2px solid #1b4965; }
+  .fechar:focus-visible { outline: 2px solid #0a5560; }
 
   .explicacao { margin: 0 0 0.4rem; }
 
@@ -84,9 +98,9 @@ const ESTILO = `
     border-radius: 6px;
     font-size: 14px;
     font-weight: 600;
-    background: #fdecea;
-    border: 1px solid #a4262c;
-    color: #7a1c21;
+    background: #fdece8;
+    border: 1px solid #a3231c;
+    color: #7a1a15;
   }
 
   .rotulo-ia {
@@ -95,8 +109,8 @@ const ESTILO = `
     padding: 0.15rem 0.45rem;
     border-radius: 999px;
     border: 1px solid #5b3a8e;
-    background: #f0ebf8;
-    color: #3b2560;
+    background: #f0eaf9;
+    color: #422a68;
     font-size: 12px;
     font-weight: 700;
   }

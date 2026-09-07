@@ -26,6 +26,7 @@ import br.com.tradugil.android.dados.RepositorioDeTraducao
 import br.com.tradugil.android.dados.local.BancoLocal
 import br.com.tradugil.android.ui.PrincipalViewModel
 import br.com.tradugil.android.ui.TelaPrincipal
+import br.com.tradugil.android.ui.TemaDoTradugil
 
 class MainActivity : ComponentActivity() {
 
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MaterialTheme {
+            TemaDoTradugil {
                 val modelo: PrincipalViewModel = viewModel(factory = fabrica())
                 val estado by modelo.estado.collectAsState()
 

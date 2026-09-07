@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -186,6 +185,14 @@ fun TelaPrincipal(
  */
 @Composable
 private fun TextoComDestaques(texto: String, girias: List<GiriaDetectada>) {
+    // Lidas antes do buildAnnotatedString: os acessores de CoresDoConteudo
+    // são @Composable e o bloco de construção do texto não é escopo
+    // composable.
+    val marcador = CoresDoConteudo.marcador
+    val marcadorTexto = CoresDoConteudo.marcadorTexto
+    val riscoFundo = CoresDoConteudo.riscoFundo
+    val riscoTexto = CoresDoConteudo.riscoTexto
+
     val anotado = buildAnnotatedString {
         var cursor = 0
         girias.sortedBy { it.inicio }.forEach { giria ->
@@ -200,12 +207,11 @@ private fun TextoComDestaques(texto: String, girias: List<GiriaDetectada>) {
                     // Negrito e sublinhado além do fundo: quem não distingue
                     // cores precisa enxergar que a palavra está marcada.
                     textDecoration = TextDecoration.Underline,
-                    background = if (giria.riscoMenor) {
-                        Color(0xFFFDECEA)
-                    } else {
-                        Color(0xFFFFF3C4)
-                    },
-                    color = Color(0xFF16202A),
+                    // Vindas de CoresDoConteudo, nao escritas aqui: sao as
+                    // mesmas do marcador do site, e cor com significado
+                    // precisa de um lugar so onde mudar.
+                    background = if (giria.riscoMenor) riscoFundo else marcador,
+                    color = if (giria.riscoMenor) riscoTexto else marcadorTexto,
                 ),
             ) {
                 append(texto.substring(giria.inicio, giria.fim))

@@ -1,26 +1,26 @@
 /* Estilo do popup da extensao. Segue a mesma paleta do site. */
 
 :root {
-  --tinta: #16202a;
+  --tinta: #17282c;
   --papel: #ffffff;
-  --marca: #1b4965;
-  --marca-clara: #e7f0f6;
-  --borda: #cbd8e1;
-  --apagado: #5b6b78;
-  --alerta: #a4262c;
-  --alerta-fundo: #fdecea;
+  --marca: #0a5560;
+  --marca-clara: #dcedf0;
+  --borda: #75898d;
+  --apagado: #4d666b;
+  --alerta: #a3231c;
+  --alerta-fundo: #fdece8;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --tinta: #e8eff4;
-    --papel: #142530;
-    --marca: #8dc0dd;
-    --marca-clara: #1c3646;
-    --borda: #33505f;
-    --apagado: #a7bcc9;
-    --alerta: #f4a9a4;
-    --alerta-fundo: #3a1e1f;
+    --tinta: #e9f1f2;
+    --papel: #18272b;
+    --marca: #6fd0dd;
+    --marca-clara: #14343a;
+    --borda: #6f8a8f;
+    --apagado: #a4bcc0;
+    --alerta: #f2a99f;
+    --alerta-fundo: #3a1613;
   }
 }
 
@@ -78,18 +78,20 @@ input[type="search"],
 input[type="url"] {
   flex: 1;
   min-width: 0;
-  padding: 0.45rem 0.55rem;
+  padding: 0.5rem 0.7rem;
   border: 1px solid var(--borda);
-  border-radius: 6px;
+  border-radius: 10px;
   background: var(--papel);
   color: inherit;
   font: inherit;
 }
 
 button[type="submit"] {
-  padding: 0.45rem 0.8rem;
+  padding: 0.45rem 1rem;
   border: 1px solid var(--marca);
-  border-radius: 6px;
+  /* Pilula, como no site: e o detalhe que faz as duas superficies
+     parecerem o mesmo produto. */
+  border-radius: 999px;
   background: var(--marca);
   color: var(--papel);
   font: inherit;
@@ -115,9 +117,11 @@ button[type="submit"]:hover {
 }
 
 .verbete {
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--borda);
-  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  /* Filete da marca na esquerda, e nao moldura: o mesmo gesto dos cartoes
+     do site e do balao. */
+  border-left: 4px solid var(--marca);
+  border-radius: 0 12px 12px 0;
   background: var(--marca-clara);
 }
 
