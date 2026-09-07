@@ -73,6 +73,21 @@ senha de propósito.
 errada. Se a senha certa passasse enquanto as erradas travam, bastaria
 observar qual tentativa se comporta diferente.
 
+O contador é gravado em **transação própria**
+(`RegistradorDeFalhaDeLogin`, com `REQUIRES_NEW`), e isso não é detalhe de
+implementação. Registrar a falha e recusar a requisição são duas coisas;
+feitas na mesma transação, a segunda desfaz a primeira, porque a exceção é
+`RuntimeException` e o Spring faz rollback. Escrito errado na primeira
+versão, e a CI pegou: o contador ficava em zero depois de cinco tentativas,
+e o travamento existia no código, com coluna no banco e tudo, **sem nunca
+contar nada**.
+
+É a segunda vez que este projeto comete esse erro. A primeira foi na
+revogação de família de token, e o efeito foi igualmente silencioso: o
+sistema registrava a detecção no log, devolvia erro, e deixava a sessão
+roubada funcionando. Nas duas vezes a defesa parecia implementada e não
+existia.
+
 ## Não revelar quem tem conta
 
 E-mail inexistente, senha errada e conta travada devolvem **a mesma frase**.

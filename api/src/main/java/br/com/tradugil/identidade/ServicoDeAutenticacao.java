@@ -61,6 +61,7 @@ public class ServicoDeAutenticacao {
     private final PasswordEncoder codificador;
     private final EmissorDeJwt emissor;
     private final RevogadorDeSessao revogador;
+    private final RegistradorDeFalhaDeLogin registrador;
     private final SecureRandom aleatorio = new SecureRandom();
 
     /**
@@ -82,12 +83,14 @@ public class ServicoDeAutenticacao {
                                  RepositorioDeToken repositorioDeToken,
                                  PasswordEncoder codificador,
                                  EmissorDeJwt emissor,
-                                 RevogadorDeSessao revogador) {
+                                 RevogadorDeSessao revogador,
+                                 RegistradorDeFalhaDeLogin registrador) {
         this.repositorioDeUsuario = repositorioDeUsuario;
         this.repositorioDeToken = repositorioDeToken;
         this.codificador = codificador;
         this.emissor = emissor;
         this.revogador = revogador;
+        this.registrador = registrador;
 
         byte[] semente = new byte[32];
         new SecureRandom().nextBytes(semente);
@@ -146,16 +149,23 @@ public class ServicoDeAutenticacao {
         Usuario usuario = encontrado.get();
 
         if (!senhaConfere) {
-            OffsetDateTime travadoAte = usuario.registrarFalha(
-                    agora, TENTATIVAS_ATE_TRAVAR, ESPERA_BASE, ESPERA_MAXIMA);
-            if (travadoAte != null) {
-                log.warn("Conta {} travada até {} após {} tentativas erradas.",
-                        usuario.getId(), travadoAte, usuario.getTentativasFalhas());
-            }
+            /*
+             * Em transação própria. Registrar a falha e recusar a requisição
+             * são duas coisas, e feitas na mesma transação a segunda desfaz a
+             * primeira: a exceção logo abaixo é RuntimeException, o Spring faz
+             * rollback e o contador que acabou de subir volta a zero.
+             *
+             * Escrito errado da primeira vez, exatamente como já tinha
+             * acontecido na revogação de família de token. A CI pegou: o
+             * contador ficava em zero depois de cinco tentativas, e o
+             * travamento existia no código sem nunca contar nada.
+             */
+            registrador.registrar(usuario.getId(), TENTATIVAS_ATE_TRAVAR,
+                    ESPERA_BASE, ESPERA_MAXIMA);
             throw credenciaisInvalidas();
         }
 
-        usuario.registrarAcerto();
+        registrador.limpar(usuario.getId());
 
         /*
          * Regrava o hash quando ele está num formato antigo. É o que permite
