@@ -26,6 +26,17 @@
  * portugues), streamscheme, knowyourmeme e o ranking de uso da StreamElements.
  * Nao inventei nenhum: emote com significado errado e pior que emote
  * ausente, porque a pessoa acha que entendeu.
+ *
+ * POR QUE "POGCHAMP" NAO ESTA AQUI
+ *
+ * Estava, e colidia. "pogchamp" ja era VARIACAO do verbete "pog", cadastrada
+ * no seed inicial, e as duas formas normalizam para a mesma chave: a partir
+ * da V25 a mesma palavra apontava para dois verbetes. O teste
+ * variacaoApontaParaOVerbete pegou, e a V28 desfez, movendo a explicacao
+ * para um segundo sentido de "pog", que e onde ela deveria estar.
+ *
+ * A checagem de duplicata do gerador nao pega este caso: ela compara termo
+ * com termo, e aqui a colisao era entre termo novo e variacao antiga.
  */
 export default [
   /* ------------------------------------------------------------- riso --- */
@@ -70,10 +81,6 @@ export default [
       detalhada: "Mostra uma pessoa com a cabeça baixa e a mão na testa. Aparece quando tudo estava indo bem e desandou no fim." }]},
 
   /* ---------------------------------------------------------- empolgacao --- */
-
-  { termo: "PogChamp", idioma: "en", categorias: ["streaming", "gaming"], variacoes: ["pogchamp", "pog champ", "pogu", "PogU"], sentidos: [
-    { simples: "Espanto e empolgação com uma jogada incrível.",
-      detalhada: "Foi o emote de rosto surpreso mais famoso da Twitch. Deu origem a \"pog\" e \"poggers\". A imagem original foi retirada pela plataforma em 2021 e substituída várias vezes; \"PogU\" é uma das versões que o chat passou a usar no lugar." }]},
 
   { termo: "HYPERS", idioma: "en", categorias: ["streaming"], variacoes: ["hypers", "hyper s"], sentidos: [
     { simples: "Empolgação máxima, hype puro.",
