@@ -14,7 +14,7 @@ import java.time.Duration;
  * disponível.
  *
  * <p>O tamanho máximo é o que impede o cache de virar um vazamento de
- * memória lento — sem teto, um bot varrendo o dicionário encheria a heap até
+ * memória lento: sem teto, um bot varrendo o dicionário encheria a heap até
  * o processo morrer.</p>
  */
 @Configuration

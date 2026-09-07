@@ -1,4 +1,4 @@
-# ADR 0001 — A mesma normalização em Java, TypeScript e Kotlin
+# ADR 0001: A mesma normalização em Java, TypeScript e Kotlin
 
 **Data:** 2026-09-06 · **Situação:** aceita
 
@@ -7,7 +7,7 @@
 O Tradugil resolve consultas em dois lugares: no servidor, contra o
 PostgreSQL, e no dispositivo, contra um dicionário offline (IndexedDB no
 navegador, Room no Android). Os dois precisam transformar o que o usuário
-escreveu na mesma chave de busca — "Ranço!", "RANÇO" e "ranco" têm que chegar
+escreveu na mesma chave de busca: "Ranço!", "RANÇO" e "ranco" têm que chegar
 todos a `ranco`.
 
 O caminho óbvio seria normalizar no banco, com `unaccent()` e `lower()` do
@@ -27,7 +27,7 @@ Diferenças de plataforma que precisaram de atenção explícita:
   (`Locale.ROOT`), senão o servidor e o celular gerariam chaves diferentes
   para o mesmo termo.
 - Java tem `\p{InCombiningDiacriticalMarks}`; o JavaScript não. O porte usa
-  o intervalo `̀-ͯ`, que é exatamente o mesmo conjunto — e não
+  o intervalo `̀-ͯ`, que é exatamente o mesmo conjunto, e não
   `\p{Diacritic}`, que cobre mais coisas e divergiria.
 - O `range.last` do Kotlin é inclusivo; os outros dois são exclusivos. O
   porte soma 1 para manter a mesma convenção semiaberta.
@@ -36,7 +36,7 @@ Diferenças de plataforma que precisaram de atenção explícita:
 
 **Bom:** o mesmo termo resolve igual online e offline. Se as regras
 divergissem em um único caractere, o usuário veria o aplicativo esquecer uma
-gíria que ele já tinha usado — um bug que aparece só sem internet, no
+gíria que ele já tinha usado: um bug que aparece só sem internet, no
 dispositivo dele, e é quase impossível de reproduzir.
 
 **Ruim:** três cópias da mesma lógica. Mudar uma regra exige mudar as três e

@@ -27,7 +27,7 @@ import java.util.Set;
  *
  * <p>Cobre os níveis 1 e 2 (cache do servidor e banco curado), alimenta o
  * nível 5 (fila de desconhecidos) e delega o nível 4 a {@code ServicoDeIa}.
- * O nível 3 — fontes externas — ainda não existe; quando entrar, será atrás
+ * O nível 3 (fontes externas) ainda não existe; quando entrar, será atrás
  * desta mesma estrutura, para que os clientes continuem sem precisar saber de
  * onde a explicação veio além do campo {@code origem}.</p>
  *
@@ -43,7 +43,7 @@ public class ServicoDeTraducao {
      *
      * <p>Sem esta lista, colar uma conversa inteira dispara centenas de
      * candidatos por requisição e enche a fila de curadoria de artigos e
-     * preposições — que jamais virarão verbete e afogariam os termos que
+     * preposições: que jamais virarão verbete e afogariam os termos que
      * realmente importam.</p>
      */
     private static final Set<String> PALAVRAS_IGNORADAS = Set.of(
@@ -69,7 +69,7 @@ public class ServicoDeTraducao {
      * Quantos termos desconhecidos de uma mesma requisição podem ir à IA.
      *
      * <p>Colar uma conversa inteira produz dezenas de palavras que o
-     * dicionário não conhece — nomes próprios, erros de digitação, ruído de
+     * dicionário não conhece: nomes próprios, erros de digitação, ruído de
      * OCR. Sem teto, uma única requisição viraria dezenas de chamadas pagas
      * para explicar coisas que não são gíria. Os poucos primeiros cobrem o
      * caso real; o resto vai para a fila de curadoria, que é de graça.</p>
@@ -140,7 +140,7 @@ public class ServicoDeTraducao {
      * Última camada da cascata.
      *
      * <p>Devolve se alguma explicação veio da IA, para a resposta poder
-     * marcar {@code geradoPorIa} — a interface é obrigada a rotular o que não
+     * marcar {@code geradoPorIa}: a interface é obrigada a rotular o que não
      * foi verificado por pessoa (seção 7.1).</p>
      */
     private boolean resolverComIa(PedidoDeTraducao pedido,
@@ -216,7 +216,7 @@ public class ServicoDeTraducao {
 
         // Indexado pelas três formas em que um verbete pode ser alcançado,
         // para o laço de detecção encontrá-lo perguntando pela forma que ele
-        // tem em mãos — a normalizada do texto do usuário.
+        // tem em mãos: a normalizada do texto do usuário.
         Map<String, Giria> porChave = new HashMap<>();
         for (Giria giria : repositorioDeGiria.buscarPorCandidatos(chaves, colapsadas)) {
             porChave.put(giria.getTermoNormalizado(), giria);

@@ -47,7 +47,7 @@ public class AutenticacaoController {
             summary = "Renova o par de tokens",
             description = """
                     Cada uso troca o token por um novo. Apresentar um token já
-                    usado encerra a sessão inteira por segurança — é o sinal de
+                    usado encerra a sessão inteira por segurança: é o sinal de
                     que ele pode ter sido roubado.""")
     @PostMapping("/refresh")
     public ResponseEntity<ParDeTokens> renovar(@Valid @RequestBody PedidoDeRenovacao pedido) {

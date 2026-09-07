@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
  * Conta de usuário.
  *
  * <p>Existe apenas para contribuir e moderar. <b>Consultar o dicionário nunca
- * exige cadastro</b> — exigir login para entender uma mensagem afastaria
+ * exige cadastro</b>: exigir login para entender uma mensagem afastaria
  * exatamente o público que o produto quer atender, e criaria um banco de
  * dados pessoais que a arquitetura não precisa ter.</p>
  */

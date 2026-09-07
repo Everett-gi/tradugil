@@ -9,7 +9,7 @@ import br.com.tradugil.android.dominio.RespostaDeTraducao
  *
  * <p><b>A ordem é servidor primeiro, e não cache primeiro.</b> O dicionário
  * do aparelho pode estar desatualizado, e uma explicação corrigida pela
- * curadoria — especialmente de um termo de risco — precisa chegar. O local é
+ * curadoria (especialmente de um termo de risco) precisa chegar. O local é
  * a rede de segurança, não o caminho preferencial.</p>
  */
 class RepositorioDeTraducao(

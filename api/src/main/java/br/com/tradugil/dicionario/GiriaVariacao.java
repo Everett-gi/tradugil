@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
  * Apelido ou grafia alternativa que aponta para o mesmo verbete.
  *
  * <p>Existe para que "pogchamp" e "pog" não sejam dois verbetes com a mesma
- * explicação escrita duas vezes — a curadoria corrigiria um e esqueceria o
+ * explicação escrita duas vezes: a curadoria corrigiria um e esqueceria o
  * outro. Repetições de ênfase ilimitadas ("kkkkkkkk") não entram aqui: são
  * resolvidas por {@code Normalizador.colapsarRepeticoes}, porque a lista
  * seria infinita.</p>

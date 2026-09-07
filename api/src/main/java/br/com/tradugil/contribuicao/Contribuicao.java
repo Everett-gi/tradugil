@@ -23,7 +23,7 @@ import java.time.OffsetDateTime;
  * <p>Nada aqui chega ao dicionário sem passar por uma pessoa. É a mitigação
  * de Tampering do threat model: sem moderação obrigatória, o campo de
  * contribuição vira um canal aberto para definições ofensivas, golpes e
- * desinformação — exibidos com a autoridade de um verbete, para um público
+ * desinformação: exibidos com a autoridade de um verbete, para um público
  * que inclui pessoas idosas e famílias.</p>
  */
 @Entity

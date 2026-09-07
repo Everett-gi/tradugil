@@ -11,7 +11,7 @@ import {
 /**
  * Nível 0 da cascata: o dicionário que vive no dispositivo.
  *
- * É o que faz o RNF07 valer — a consulta funciona sem conexão, e a Marlene
+ * É o que faz o RNF07 valer: a consulta funciona sem conexão, e a Marlene
  * não gasta o plano de dados para entender uma mensagem. Também é o caminho
  * mais rápido: resolver aqui evita a ida à rede por completo.
  *
@@ -70,7 +70,7 @@ async function procurar(chave: string): Promise<VerbeteLocal | undefined> {
  * Traduz usando apenas o que está no dispositivo.
  *
  * Reproduz o casamento guloso do servidor: candidatos mais longos primeiro,
- * e nenhum caractere reclamado duas vezes — sem isso, "dar ruim" viria
+ * e nenhum caractere reclamado duas vezes: sem isso, "dar ruim" viria
  * acompanhado de "ruim" sozinho e a tela desenharia destaques sobrepostos.
  */
 export async function traduzirLocalmente(

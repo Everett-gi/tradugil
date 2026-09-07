@@ -1,4 +1,4 @@
-# Tradugil — Android
+# Tradugil: Android
 
 Aplicativo nativo. Distribuído como **APK baixável pelo site**, não pela
 Google Play.
@@ -7,7 +7,7 @@ Google Play.
 
 | Parte | Situação |
 |-------|----------|
-| `Normalizador` e `Tokenizador` | Verificados — 13 testes passando |
+| `Normalizador` e `Tokenizador` | Verificados: 13 testes passando |
 | Cliente da API, ViewModel, tela Compose | **Compilam**; APK de depuração gerado |
 | Compartilhar de outro app (RF20) | Declarado no manifesto, a validar em aparelho |
 | Dicionário offline (Room) | Pronto; falta o pacote de sincronização |
@@ -19,7 +19,7 @@ funções de leitura de tela.
 
 ## Abrindo
 
-Abra **a pasta `android/`** no Android Studio — não a raiz do repositório.
+Abra **a pasta `android/`** no Android Studio: não a raiz do repositório.
 A raiz é um monorepo poliglota sem `settings.gradle.kts`, então o Studio a
 trata como pasta comum e nunca oferece sincronizar.
 
@@ -32,7 +32,7 @@ cd android && ./gradlew assembleDebug
 O APK sai em `app/build/outputs/apk/debug/app-debug.apk`.
 
 Os erros encontrados na primeira compilação real estão em
-[`ARMADILHAS.md`](ARMADILHAS.md) — vale ler antes de mexer no build.
+[`ARMADILHAS.md`](ARMADILHAS.md): vale ler antes de mexer no build.
 
 ### Versões
 
@@ -66,7 +66,7 @@ Estão em `app/build.gradle.kts`.
 ## Assinatura do APK
 
 Como a distribuição é por APK direto, a assinatura é responsabilidade do
-projeto — não há Play App Signing para guardar a chave.
+projeto: não há Play App Signing para guardar a chave.
 
 O Android **recusa atualizar** um app instalado se o APK novo vier assinado
 com outra chave: o usuário teria que desinstalar, perdendo o que estava
@@ -86,7 +86,7 @@ Decisão de setembro de 2026: não há orçamento para a taxa de US$ 25 nem para
 a verificação de conta. A publicação fica para quando houver.
 
 Isso tem um efeito colateral bom: fora da loja não há análise de política, e
-o `AccessibilityService` — que a especificação apontava como o maior risco de
-rejeição — pode entrar na v1 sem esse obstáculo.
+o `AccessibilityService` (que a especificação apontava como o maior risco de
+rejeição) pode entrar na v1 sem esse obstáculo.
 
 Nada da arquitetura muda quando a publicação acontecer; só o canal de entrega.

@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
  * <p>A chave é o termo mais o <b>hash</b> do contexto. O contexto em si nunca
  * é gravado: ele é um trecho lido da tela do usuário e pode ser um pedaço de
  * conversa privada. Guardá-lo para poder reusar a resposta transformaria o
- * cache num arquivo de conversas alheias — o hash cumpre a única função de
+ * cache num arquivo de conversas alheias: o hash cumpre a única função de
  * que o cache precisa, que é saber se a pergunta é a mesma.</p>
  */
 @Entity
@@ -33,7 +33,7 @@ public class RespostaIa {
     /**
      * SHA-256 em hexadecimal: sempre exatamente 64 caracteres, por isso
      * {@code CHAR} e não {@code VARCHAR}. O {@code columnDefinition} é
-     * necessário para o Hibernate reconhecer o tipo do Postgres — sem ele, a
+     * necessário para o Hibernate reconhecer o tipo do Postgres: sem ele, a
      * validação de esquema recusa subir a aplicação.
      */
     @Column(name = "hash_do_contexto", nullable = false, length = 64,

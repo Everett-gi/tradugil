@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
  * <p><b>Esquema válido não é conteúdo confiável.</b> Uma instrução injetada
  * no texto do usuário pode, no pior caso, produzir uma resposta perfeitamente
  * conforme ao esquema e com conteúdo escolhido pelo atacante. Por isso
- * {@link #ehUtilizavel()} confere o que o esquema não confere — tamanho,
- * faixa de confiança, coerência entre campos — e a interface sempre exibe o
+ * {@link #ehUtilizavel()} confere o que o esquema não confere (tamanho,
+ * faixa de confiança, coerência entre campos) e a interface sempre exibe o
  * resultado com rótulo de não verificado.</p>
  *
  * @param eGiria             se o termo é gíria no contexto dado
@@ -24,12 +24,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
  * @param riscoMenor         associado a comportamento de risco para menores
  * @param confianca          0.0 a 1.0
  */
-public record ExplicacaoDaIa(
-        @JsonPropertyDescription("true se o termo for gíria no contexto dado")
+public record ExplicacaoDaIa(        @JsonPropertyDescription("true se o termo for gíria no contexto dado")
         boolean eGiria,
 
-        @JsonPropertyDescription(
-                "Explicação em uma ou duas frases curtas, sem jargão, "
+        @JsonPropertyDescription(                "Explicação em uma ou duas frases curtas, sem jargão, "
                         + "compreensível por uma pessoa idosa sem familiaridade com internet")
         String explicacaoSimples,
 
@@ -42,8 +40,7 @@ public record ExplicacaoDaIa(
         @JsonPropertyDescription("true se o termo for de conteúdo impróprio")
         boolean nsfw,
 
-        @JsonPropertyDescription(
-                "true se o termo estiver associado a comportamento de risco para adolescentes")
+        @JsonPropertyDescription(                "true se o termo estiver associado a comportamento de risco para adolescentes")
         boolean riscoMenor,
 
         @JsonPropertyDescription("Confiança na resposta, de 0.0 a 1.0")
@@ -73,7 +70,7 @@ public record ExplicacaoDaIa(
      * <p>Uma resposta reprovada aqui é descartada em silêncio e o termo segue
      * para a fila de desconhecidos, como se a IA não tivesse sido chamada. Do
      * ponto de vista do usuário, não há diferença entre "a IA não soube" e "a
-     * IA respondeu algo que não passou na validação" — e é melhor assim: a
+     * IA respondeu algo que não passou na validação", e é melhor assim: a
      * alternativa seria exibir o que não passou.</p>
      */
     public boolean ehUtilizavel() {

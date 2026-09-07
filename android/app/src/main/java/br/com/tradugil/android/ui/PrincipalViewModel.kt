@@ -17,8 +17,7 @@ data class EstadoDaTela(
     val consultando: Boolean = false,
     val nivel: NivelDeExplicacao = NivelDeExplicacao.SIMPLES,
     /**
-     * Ligado por padrão. A escolha protege o caso em que errar custa caro —
-     * uma criança recebendo conteúdo impróprio — em vez do caso em que errar
+     * Ligado por padrão. A escolha protege o caso em que errar custa caro (* uma criança recebendo conteúdo impróprio) em vez do caso em que errar
      * apenas incomoda.
      */
     val modoFamilia: Boolean = true,

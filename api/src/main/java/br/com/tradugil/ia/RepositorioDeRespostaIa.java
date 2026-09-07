@@ -20,7 +20,7 @@ public interface RepositorioDeRespostaIa extends JpaRepository<RespostaIa, Long>
      * <p>É UPSERT, e não {@code save()}, por causa da corrida: duas
      * requisições simultâneas pelo mesmo termo desconhecido violariam a chave
      * única, e essa falha marcaria a transação da consulta como
-     * inconsistente — derrubando com erro 500 uma tradução que já tinha
+     * inconsistente: derrubando com erro 500 uma tradução que já tinha
      * resposta útil para dar.</p>
      *
      * <p>{@code DO NOTHING} e não {@code DO UPDATE}: se a outra requisição já

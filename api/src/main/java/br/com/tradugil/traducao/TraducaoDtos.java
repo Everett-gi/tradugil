@@ -40,8 +40,8 @@ public final class TraducaoDtos {
     ) {
         /**
          * O Modo Família liga por padrão. A escolha protege o caso em que
-         * errar custa caro — uma criança ou a Marlene recebendo conteúdo
-         * impróprio — em vez do caso em que errar só incomoda.
+         * errar custa caro (uma criança ou a Marlene recebendo conteúdo
+         * impróprio) em vez do caso em que errar só incomoda.
          */
         public boolean familiaLigado() {
             return modoFamilia == null || modoFamilia;

@@ -40,7 +40,7 @@ class ServicoDePacoteIT {
     void chavesBatemComOCliente() {
         // O cliente offline vai procurar pela forma que ele mesmo normaliza.
         // Se o pacote trouxesse outra chave, o termo entraria no aparelho e
-        // nunca seria encontrado — sem erro nenhum que denunciasse.
+        // nunca seria encontrado: sem erro nenhum que denunciasse.
         assertThat(servico.pacoteCompleto().verbetes()).allSatisfy(v -> {
             assertThat(v.termoNormalizado()).isEqualTo(Normalizador.normalizar(v.termo()));
             assertThat(v.termoColapsado())

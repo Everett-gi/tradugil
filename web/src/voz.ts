@@ -1,5 +1,5 @@
 /**
- * Leitura em voz alta (RF16). Usa a Web Speech API, que é do navegador — o
+ * Leitura em voz alta (RF16). Usa a Web Speech API, que é do navegador: o
  * texto não sai do dispositivo para ser sintetizado.
  *
  * Para a Marlene, ouvir costuma ser mais fácil que ler, então a função é

@@ -16,7 +16,7 @@ public class ServicoDeDicionario {
 
     /**
      * Semelhança mínima para um termo entrar no resultado. Abaixo de 0,3 o
-     * pg_trgm começa a casar palavras que só compartilham um trigrama — "pog"
+     * pg_trgm começa a casar palavras que só compartilham um trigrama: "pog"
      * traria "pogo" e "pogba". Acima de 0,45 ele deixa de perdoar o erro de
      * digitação de uma letra, que é justamente o caso que o nível 2 existe
      * para resolver.

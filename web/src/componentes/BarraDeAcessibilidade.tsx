@@ -11,7 +11,7 @@ interface Props {
  * Controles de acessibilidade sempre visíveis, no topo.
  *
  * Ficam fora de menu de propósito: escondê-los atrás de "Configurações"
- * deixaria a função inalcançável justamente para quem mais precisa dela —
+ * deixaria a função inalcançável justamente para quem mais precisa dela:
  * quem não enxerga bem o suficiente para achar o menu.
  */
 export function BarraDeAcessibilidade({

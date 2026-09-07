@@ -67,7 +67,7 @@ class ServicoDeVotosIT {
 
         // É o caso que justifica o UPDATE atômico existir. Com "ler, somar,
         // gravar" em Java, as threads leriam o mesmo valor e gravariam o
-        // mesmo resultado — e a maioria dos votos sumiria sem erro nenhum.
+        // mesmo resultado, e a maioria dos votos sumiria sem erro nenhum.
         int votantes = 20;
         ExecutorService piscina = Executors.newFixedThreadPool(8);
         CountDownLatch largada = new CountDownLatch(1);

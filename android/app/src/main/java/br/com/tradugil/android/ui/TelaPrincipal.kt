@@ -181,7 +181,7 @@ fun TelaPrincipal(
  * Reconstrói o texto original com as gírias em destaque.
  *
  * Recorta por `inicio`/`fim` direto, sem ajuste, porque o servidor devolve
- * intervalo semiaberto — a mesma convenção de `substring`. Os testes do
+ * intervalo semiaberto: a mesma convenção de `substring`. Os testes do
  * tokenizador nas três plataformas garantem que isso continue verdade.
  */
 @Composable
@@ -248,7 +248,7 @@ private fun CartaoDaGiria(giria: GiriaDetectada) {
             // passaria por verbete revisado por pessoa.
             if (giria.origem == OrigemDaResposta.IA) {
                 Text(
-                    text = "Explicação gerada por inteligência artificial — " +
+                    text = "Explicação gerada por inteligência artificial: " +
                         "ainda não conferida por uma pessoa.",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.tertiary,

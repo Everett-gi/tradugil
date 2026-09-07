@@ -42,7 +42,7 @@ public class ServicoDeIa {
     /**
      * Explica um termo desconhecido, do cache ou do modelo.
      *
-     * @param contexto trecho ao redor do termo. <b>Não é persistido</b> — só
+     * @param contexto trecho ao redor do termo. <b>Não é persistido</b>: só
      *                 o seu hash entra na chave do cache
      */
     @Transactional

@@ -9,7 +9,7 @@ enum class OrigemDaResposta { DICIONARIO, EXTERNA, IA }
 
 data class GiriaDetectada(
     val termo: String,
-    /** Início inclusivo, fim exclusivo — pronto para `substring`. */
+    /** Início inclusivo, fim exclusivo: pronto para `substring`. */
     val inicio: Int,
     val fim: Int,
     val explicacao: String?,

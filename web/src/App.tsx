@@ -35,7 +35,7 @@ export function App() {
     if (compartilhado) {
       setTexto(compartilhado);
       // Limpa a URL para o texto compartilhado não ficar no histórico do
-      // navegador — pode ser trecho de uma conversa privada.
+      // navegador: pode ser trecho de uma conversa privada.
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
@@ -177,7 +177,7 @@ export function App() {
                 {estado.resposta.girias.length === 0 ? (
                   <p className="mensagem">
                     Não encontramos nenhuma gíria conhecida neste texto. Pode
-                    ser que as palavras sejam comuns — ou que ainda não tenhamos
+                    ser que as palavras sejam comuns, ou que ainda não tenhamos
                     esse termo no dicionário.
                   </p>
                 ) : (

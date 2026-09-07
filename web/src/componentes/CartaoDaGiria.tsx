@@ -45,7 +45,7 @@ export function CartaoDaGiria({ giria }: Props) {
       {giria.origem === 'IA' && (
         <p>
           <span className="etiqueta etiqueta-ia">
-            Explicação gerada por inteligência artificial — ainda não conferida
+            Explicação gerada por inteligência artificial: ainda não conferida
             por uma pessoa
           </span>
         </p>

@@ -1,20 +1,20 @@
-# ADR 0004 — Colapso de ênfase repetida em coluna indexada
+# ADR 0004: Colapso de ênfase repetida em coluna indexada
 
 **Data:** 2026-09-06 · **Situação:** aceita
 
 ## Contexto
 
 Em conversa brasileira, risada se escreve com quantas letras a pessoa quiser:
-`kkk`, `kkkk`, `kkkkkkkkkkkk`. O mesmo vale para ênfase em geral — `mdsss`,
+`kkk`, `kkkk`, `kkkkkkkkkkkk`. O mesmo vale para ênfase em geral: `mdsss`,
 `nossaaaa`. Nenhuma tabela de variações consegue listar todas: são infinitas.
 
 A primeira solução foi colapsar runs de 3 ou mais caracteres iguais para 2
 antes de buscar: `kkkkkkk` → `kk`. O corte é em dois, e não em um, para não
-destruir dígrafos legítimos do português — `carro` não pode virar `caro`.
+destruir dígrafos legítimos do português: `carro` não pode virar `caro`.
 
 O furo apareceu ao escrever o teste de integração: o verbete guardado é
 `kkk`, e `kkkkkkk` colapsado vira `kk`. **Os dois nunca se encontravam.**
-Colapsar só o lado do usuário não adianta — é preciso comparar forma
+Colapsar só o lado do usuário não adianta: é preciso comparar forma
 colapsada com forma colapsada.
 
 Isso não era caso de borda. Era o termo mais frequente que o produto precisa
@@ -45,13 +45,13 @@ pelo SQL é exatamente o que o Java calcularia. Se as duas regras divergirem,
 a CI quebra no mesmo dia.
 
 Sem esse teste, o modo de falha seria: alguém ajusta o Java, esquece o SQL, e
-meses depois um punhado de verbetes para de ser encontrado — sem erro em
+meses depois um punhado de verbetes para de ser encontrado: sem erro em
 lugar nenhum, sem log, sem exceção. Só um usuário que não acha uma palavra.
 
 ## Consequências
 
 **Bom:** `kkkkkkkkk` encontra `kkk`. Duas colunas e dois índices a mais num
-dicionário que cabe inteiro em memória — custo desprezível.
+dicionário que cabe inteiro em memória: custo desprezível.
 
 **Ruim:** uma regra em dois lugares, para sempre. Mudar o colapso exige mudar
 Java, TypeScript, Kotlin e a expressão SQL.

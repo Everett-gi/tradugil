@@ -36,7 +36,7 @@ public final class Tokenizador {
      * Um trecho do texto original e sua forma de busca.
      *
      * @param inicio índice do primeiro caractere, inclusivo
-     * @param fim    índice logo após o último caractere, exclusivo — mesma
+     * @param fim    índice logo após o último caractere, exclusivo: mesma
      *               convenção de {@code String.substring}, para o cliente
      *               poder destacar o trecho sem ajustar nada
      */

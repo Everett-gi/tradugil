@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 /**
  * Nível 0 da cascata: o dicionário que vive no aparelho.
  *
- * <p>É o que faz o RNF07 valer — a consulta funciona sem conexão, e a
+ * <p>É o que faz o RNF07 valer: a consulta funciona sem conexão, e a
  * Marlene não gasta o plano de dados para entender uma mensagem. Também é o
  * caminho mais rápido de todos: resolver aqui evita a ida à rede por
  * completo.</p>

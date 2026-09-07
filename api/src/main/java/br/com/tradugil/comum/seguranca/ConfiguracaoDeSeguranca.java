@@ -22,7 +22,7 @@ import java.util.List;
  *
  * <p>A leitura do dicionário é pública de propósito: exigir cadastro para
  * entender uma mensagem afastaria exatamente o público que o produto quer
- * atender. O que exige conta é contribuir e moderar — onde a identidade
+ * atender. O que exige conta é contribuir e moderar: onde a identidade
  * importa para a trilha de auditoria.</p>
  *
  * <p>A regra final é {@code anyRequest().denyAll()}, e não

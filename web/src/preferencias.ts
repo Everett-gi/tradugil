@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { NivelDeExplicacao } from '@tradugil/core';
 
 /**
- * Preferências do usuário. Ficam apenas no dispositivo — nunca sobem para o
+ * Preferências do usuário. Ficam apenas no dispositivo: nunca sobem para o
  * servidor. Segundo o mapeamento LGPD da seção 8.2, acessibilidade e Modo
  * Família não têm base legal de tratamento porque simplesmente não são
  * tratados: são configuração local, sob controle de quem usa.
@@ -27,8 +27,7 @@ const PADRAO: Preferencias = {
   escala: 1,
   contraste: 'normal',
   nivel: 'SIMPLES',
-  // Ligado por padrão: a escolha protege o caso em que errar custa caro —
-  // uma criança ou a Marlene recebendo conteúdo impróprio — em vez do caso
+  // Ligado por padrão: a escolha protege o caso em que errar custa caro (// uma criança ou a Marlene recebendo conteúdo impróprio) em vez do caso
   // em que errar apenas incomoda.
   modoFamilia: true,
 };
@@ -46,7 +45,7 @@ function carregar(): Preferencias {
     };
   } catch {
     // Modo privativo, armazenamento bloqueado ou JSON corrompido. A tela
-    // precisa abrir de qualquer jeito — perder a preferência é um incômodo,
+    // precisa abrir de qualquer jeito: perder a preferência é um incômodo,
     // não abrir é uma falha.
     return PADRAO;
   }

@@ -13,7 +13,7 @@ import java.util.UUID;
  * <p>Existe por causa de um bug real, encontrado pelo teste de reuso de
  * token. A detecção de reuso precisa fazer duas coisas: revogar a família e
  * recusar a requisição. Feitas no mesmo método transacional, a segunda
- * desfaz a primeira — {@code RegraDeNegocioException} é
+ * desfaz a primeira: {@code RegraDeNegocioException} é
  * {@code RuntimeException}, o Spring faz rollback, e a revogação vai embora
  * junto com ela.</p>
  *
@@ -23,7 +23,7 @@ import java.util.UUID;
  *
  * <p>{@code REQUIRES_NEW} num bean separado, e não uma anotação no mesmo
  * serviço: o proxy do Spring não intercepta chamadas que um objeto faz a si
- * mesmo, então a anotação ali seria decorativa — o mesmo bug com aparência
+ * mesmo, então a anotação ali seria decorativa: o mesmo bug com aparência
  * de correção.</p>
  */
 @Component

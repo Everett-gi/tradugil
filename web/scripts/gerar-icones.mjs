@@ -4,7 +4,7 @@
  * Os ícones são desenhados por código, e não commitados como binário opaco,
  * para que a identidade visual possa ser ajustada com um `npm run icones` em
  * vez de exigir um editor gráfico. O PNG é escrito na mão porque o projeto
- * não tem dependência de imagem — só o zlib do próprio Node.
+ * não tem dependência de imagem: só o zlib do próprio Node.
  *
  *   node scripts/gerar-icones.mjs
  */

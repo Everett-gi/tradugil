@@ -13,14 +13,14 @@ import java.time.OffsetDateTime;
  * Nível 5 da cascata: o termo que ninguém soube explicar.
  *
  * <p>É a única telemetria persistida do produto, e o que impede o dicionário
- * de envelhecer — a fila ordenada por ocorrências diz à curadoria quais
+ * de envelhecer: a fila ordenada por ocorrências diz à curadoria quais
  * gírias novas as pessoas estão realmente encontrando esta semana.</p>
  *
  * <p><b>O que esta tabela deliberadamente não guarda:</b> a frase em que o
  * termo apareceu, o IP, o identificador do usuário e o horário exato de cada
  * consulta. Guardar qualquer um deles transformaria a fila de curadoria em um
  * registro de conversas privadas lidas da tela alheia. Só sobrevivem o termo
- * e um contador — nada aqui remete a uma pessoa.</p>
+ * e um contador: nada aqui remete a uma pessoa.</p>
  */
 @Entity
 @Table(name = "termo_desconhecido")

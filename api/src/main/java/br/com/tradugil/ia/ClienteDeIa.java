@@ -16,7 +16,7 @@ public interface ClienteDeIa {
     /**
      * @param termo    forma normalizada do termo desconhecido
      * @param contexto trecho ao redor, ou {@code null}. <b>Dado não
-     *                 confiável</b> — ver {@code PromptDeLexicografo}
+     *                 confiável</b>: ver {@code PromptDeLexicografo}
      * @return vazio quando a IA está desligada, indisponível, sem cota, ou
      *         quando a resposta não passou na validação
      */

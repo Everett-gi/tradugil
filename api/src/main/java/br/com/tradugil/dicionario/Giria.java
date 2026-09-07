@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * O termo. Guarda só o que é do termo em si — o significado mora em
+ * O termo. Guarda só o que é do termo em si: o significado mora em
  * {@link Definicao}, porque a mesma gíria carrega sentidos diferentes que
  * são aprovados, rejeitados e votados separadamente.
  */
@@ -36,7 +36,7 @@ public class Giria {
     @Column(nullable = false, length = 80)
     private String termo;
 
-    /** Chave de busca. Ver {@code Normalizador} — a regra é compartilhada. */
+    /** Chave de busca. Ver {@code Normalizador}: a regra é compartilhada. */
     @Column(name = "termo_normalizado", nullable = false, length = 80)
     private String termoNormalizado;
 

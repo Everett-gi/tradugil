@@ -14,7 +14,7 @@ interface Props {
  * entendeu, sem precisar consultar termo por termo.
  *
  * O recorte usa `posicao` direto, sem ajuste, porque o servidor devolve
- * intervalo semiaberto — a mesma convenção de `slice`. Os testes do
+ * intervalo semiaberto: a mesma convenção de `slice`. Os testes do
  * tokenizador nos dois lados garantem que isso continue verdade.
  */
 export function TextoDestacado({ texto, girias, selecionada, aoSelecionar }: Props) {
@@ -45,8 +45,8 @@ export function TextoDestacado({ texto, girias, selecionada, aoSelecionar }: Pro
       >
         {texto.slice(inicio, fim)}
         <span className="apenas-leitor">
-          {' '}
-          — gíria{giria.riscoMenor ? ', termo de atenção' : ''}. Toque para ver
+          {' '}:
+          gíria{giria.riscoMenor ? ', termo de atenção' : ''}. Toque para ver
           o significado.
         </span>
       </button>,

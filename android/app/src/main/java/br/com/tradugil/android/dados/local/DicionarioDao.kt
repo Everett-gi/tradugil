@@ -15,12 +15,12 @@ interface DicionarioDao {
      * Resolve o texto inteiro numa consulta só.
      *
      * <p>Colar uma conversa produz dezenas de candidatos. Perguntar um por
-     * vez seriam dezenas de idas ao SQLite dentro do laço de detecção — no
+     * vez seriam dezenas de idas ao SQLite dentro do laço de detecção: no
      * aparelho de quem o produto atende, isso aparece como travamento.</p>
      *
      * <p>Casa pelas quatro formas em que um verbete pode ser alcançado:
      * termo, termo colapsado, variação e variação colapsada. A comparação
-     * por ênfase é colapsado contra colapsado — o verbete guardado é "kkk",
+     * por ênfase é colapsado contra colapsado: o verbete guardado é "kkk",
      * o usuário escreveu "kkkkkkk", e reduzir só um dos lados nunca os faria
      * encontrar-se.</p>
      */

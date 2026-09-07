@@ -118,7 +118,7 @@ class ServicoDeAutenticacaoIT {
      *
      * <p>A detecção de reuso revogava a família e, logo depois, lançava a
      * exceção que recusa a requisição. Como {@code RegraDeNegocioException} é
-     * {@code RuntimeException}, o Spring fazia rollback da transação — e
+     * {@code RuntimeException}, o Spring fazia rollback da transação, e
      * levava a revogação junto. O sistema registrava no log que havia
      * detectado o reuso, devolvia erro ao cliente, e deixava a sessão roubada
      * funcionando normalmente.</p>

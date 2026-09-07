@@ -16,7 +16,7 @@ import java.net.URL
  *
  * Usa `HttpURLConnection` e `org.json`, ambos da própria plataforma, em vez
  * de OkHttp e um serializador. O app precisa ser leve e o JSON trocado aqui
- * é pequeno e estável — trazer duas bibliotecas para isso aumentaria o APK
+ * é pequeno e estável: trazer duas bibliotecas para isso aumentaria o APK
  * que o usuário baixa do site sem resolver problema nenhum.
  */
 class ClienteDaApi(private val baseUrl: String) {
@@ -46,7 +46,7 @@ class ClienteDaApi(private val baseUrl: String) {
                 if (codigo !in 200..299) {
                     // 5xx é servidor fora do ar: vale tentar o dicionário
                     // local. 4xx é pedido inválido, e o local não resolveria
-                    // melhor — por isso os dois viram exceções diferentes.
+                    // melhor, por isso os dois viram exceções diferentes.
                     if (codigo >= 500) throw ErroDeRede(null)
                     throw IllegalStateException("Resposta $codigo do servidor")
                 }

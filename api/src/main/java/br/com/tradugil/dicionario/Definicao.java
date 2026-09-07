@@ -41,7 +41,7 @@ public class Definicao {
     @Column(name = "explicacao_simples", nullable = false, columnDefinition = "text")
     private String explicacaoSimples;
 
-    /** Nível 2: origem e nuance. Opcional — nem todo termo tem história. */
+    /** Nível 2: origem e nuance. Opcional, nem todo termo tem história. */
     @Column(name = "explicacao_detalhada", columnDefinition = "text")
     private String explicacaoDetalhada;
 

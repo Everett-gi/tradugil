@@ -1,7 +1,7 @@
 # Registros de decisão de arquitetura
 
-Decisões que custaram discussão e que alguém — inclusive o próprio autor daqui
-a seis meses — vai querer entender antes de mudar.
+Decisões que custaram discussão e que alguém (inclusive o próprio autor daqui
+a seis meses) vai querer entender antes de mudar.
 
 Cada registro tem contexto, decisão e **consequências, incluindo as ruins**.
 Um ADR que só lista vantagens não é um registro de decisão: é propaganda.

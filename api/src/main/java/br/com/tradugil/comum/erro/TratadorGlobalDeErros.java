@@ -47,7 +47,7 @@ public class TratadorGlobalDeErros {
      * Rede de segurança da privacidade: o texto que o usuário mandou traduzir
      * pode ser uma conversa privada lida da tela dele. Se ele aparecesse na
      * mensagem de uma exceção qualquer, seria devolvido ao cliente e gravado
-     * no log — exatamente o que a seção 8 do documento proíbe. Por isso a
+     * no log: exatamente o que a seção 8 do documento proíbe. Por isso a
      * mensagem interna morre aqui, e o cliente recebe um texto genérico.
      */
     @ExceptionHandler(Exception.class)

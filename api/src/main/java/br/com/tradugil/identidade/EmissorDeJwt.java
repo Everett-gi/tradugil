@@ -13,7 +13,7 @@ import java.time.Instant;
 /**
  * Emite o access token.
  *
- * <p>Vida curta de propósito: 15 minutos. Um JWT não pode ser revogado — uma
+ * <p>Vida curta de propósito: 15 minutos. Um JWT não pode ser revogado: uma
  * vez emitido, vale até expirar, mesmo que a conta seja banida no minuto
  * seguinte. A revogação de verdade acontece no refresh token, que é opaco e
  * fica no banco; a janela de 15 minutos é o quanto de dano um token vazado
@@ -43,7 +43,7 @@ public class EmissorDeJwt {
                 // O papel viaja no token para a autorização não precisar de
                 // uma ida ao banco por requisição. O preço é que a promoção
                 // ou o rebaixamento de alguém só valem no próximo access
-                // token — no máximo 15 minutos de atraso, aceitável para o
+                // token: no máximo 15 minutos de atraso, aceitável para o
                 // que este produto faz.
                 .claim("papel", usuario.getPapel().name())
                 .claim("email", usuario.getEmail())

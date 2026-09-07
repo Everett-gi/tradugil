@@ -1,6 +1,6 @@
 /**
  * Formatos trocados com a API. Espelham `TraducaoDtos` e `GiriaDtos` no
- * servidor — mudar um lado sem o outro quebra dicionários já sincronizados
+ * servidor: mudar um lado sem o outro quebra dicionários já sincronizados
  * nos dispositivos.
  */
 

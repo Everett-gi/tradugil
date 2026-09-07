@@ -26,7 +26,7 @@ object Tokenizador {
     /**
      * Um trecho do texto original e sua forma de busca.
      *
-     * [fim] é exclusivo — mesma convenção de `substring`, para a interface
+     * [fim] é exclusivo: mesma convenção de `substring`, para a interface
      * marcar o trecho sem ajustar nada.
      */
     data class Trecho(

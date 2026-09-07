@@ -18,7 +18,7 @@ import java.util.List;
  *
  * <p>É o que faz o aplicativo <b>nascer útil</b> em vez de precisar aprender.
  * Sem isso, o dicionário do aparelho só cresce a partir das consultas que já
- * deram certo — ou seja, só funciona offline depois de já ter funcionado
+ * deram certo, ou seja, só funciona offline depois de já ter funcionado
  * online, que é exatamente ao contrário do que a Marlene precisa.</p>
  */
 @Service
@@ -34,7 +34,7 @@ public class ServicoDePacote {
      * Metadados, para o cliente decidir se vale baixar.
      *
      * <p>Uma requisição de poucos bytes que evita um download de centenas de
-     * kilobytes quando nada mudou — a diferença importa para quem tem plano
+     * kilobytes quando nada mudou: a diferença importa para quem tem plano
      * de dados limitado, que é parte do público.</p>
      */
     @Transactional(readOnly = true)

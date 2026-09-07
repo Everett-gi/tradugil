@@ -24,7 +24,7 @@ import java.util.List;
  *
  * <p>HMAC com chave simétrica, e não par de chaves: a API é a única que emite
  * e a única que verifica. Um par assimétrico só teria valor se outro serviço
- * precisasse validar o token sem poder emiti-lo — o que não é o caso, e
+ * precisasse validar o token sem poder emiti-lo: o que não é o caso, e
  * traria gestão de chaves para um projeto que roda em uma instância só.</p>
  */
 @Configuration
@@ -41,7 +41,7 @@ public class ConfiguracaoDeJwt {
         if (segredo == null || segredo.isBlank()) {
             // Chave aleatória a cada inicialização. Em desenvolvimento é o
             // que se quer; em produção significa que toda reinicialização
-            // desloga todo mundo — daí o aviso alto, e não silêncio.
+            // desloga todo mundo: daí o aviso alto, e não silêncio.
             byte[] gerada = new byte[BYTES_MINIMOS_DA_CHAVE];
             new SecureRandom().nextBytes(gerada);
             this.chave = gerada;

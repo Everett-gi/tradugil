@@ -4,7 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
- * Corpo padrão de erro da API. Um formato só, para todos os erros — cada
+ * Corpo padrão de erro da API. Um formato só, para todos os erros: cada
  * cliente (web, extensão, Android) trata em um lugar apenas.
  *
  * @param status   código HTTP

@@ -9,7 +9,7 @@ import type {
 
 /**
  * Cliente da API. Um só para o site, o PWA, o popup da extensão e a
- * interface do desktop — os quatro falam com o mesmo servidor e não deveriam
+ * interface do desktop: os quatro falam com o mesmo servidor e não deveriam
  * manter quatro versões do mesmo `fetch`.
  */
 
@@ -43,7 +43,7 @@ export interface OpcoesDoCliente {
   baseUrl: string;
   /**
    * Teto de espera. Sem ele, uma rede ruim deixa a interface presa em
-   * "carregando" para sempre — e o público do produto não sabe que pode
+   * "carregando" para sempre, e o público do produto não sabe que pode
    * desistir e tentar de novo.
    */
   timeoutMs?: number;
@@ -114,7 +114,7 @@ export class ClienteTradugil {
       const corpo = (await resposta.json()) as ErroDaApi;
       return new ErroDeApi(resposta.status, corpo.erro, corpo.mensagem);
     } catch {
-      // Corpo não era o JSON esperado — um proxy no meio do caminho, por
+      // Corpo não era o JSON esperado: um proxy no meio do caminho, por
       // exemplo. O status ainda diz o suficiente para a interface reagir.
       return new ErroDeApi(
         resposta.status,

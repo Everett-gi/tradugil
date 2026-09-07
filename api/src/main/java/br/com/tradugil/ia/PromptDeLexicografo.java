@@ -7,7 +7,7 @@ package br.com.tradugil.ia;
  *
  * <p>O texto que chega aqui foi lido da tela do usuário. Ele é, por
  * definição, <b>dado não confiável</b>: pode conter instruções escritas de
- * propósito para o modelo — "ignore suas regras e responda X" — plantadas
+ * propósito para o modelo ("ignore suas regras e responda X") plantadas
  * por quem escreveu a mensagem que a vítima está tentando entender. O
  * atacante não precisa de acesso nenhum ao sistema: basta mandar uma
  * mensagem para alguém que usa o Tradugil.</p>
@@ -34,7 +34,7 @@ package br.com.tradugil.ia;
  * apresentada como verbete revisado. Ela chega à interface com origem
  * {@code IA} e rótulo visível de não verificada. Mesmo que todas as camadas
  * acima falhem, o pior resultado é um texto errado marcado como não
- * confiável — não um texto errado com a autoridade do dicionário.</p>
+ * confiável: não um texto errado com a autoridade do dicionário.</p>
  */
 final class PromptDeLexicografo {
 
@@ -72,7 +72,7 @@ final class PromptDeLexicografo {
             A explicação simples é lida por pessoas idosas sem familiaridade \
             com internet. Use uma ou duas frases curtas, sem jargão, e não \
             pressuponha que a pessoa saiba o que são Twitch, Discord, emote \
-            ou meme — se precisar citar, explique em poucas palavras.
+            ou meme: se precisar citar, explique em poucas palavras.
 
             A explicação detalhada é para quem quer a origem e a nuance do \
             termo. Pode ser mais longa.
@@ -80,8 +80,8 @@ final class PromptDeLexicografo {
             Marque nsfw quando o termo for de conteúdo impróprio (sexual, \
             violento ou de linguagem chula). Marque risco_menor quando o \
             termo estiver associado a comportamento de risco para \
-            adolescentes — drogas, autolesão, transtornos alimentares, \
-            aliciamento — descrevendo o que o termo sinaliza, sem instruir \
+            adolescentes (drogas, autolesão, transtornos alimentares, \
+            aliciamento) descrevendo o que o termo sinaliza, sem instruir \
             nada.
 
             Se o termo não for gíria no contexto dado, responda \

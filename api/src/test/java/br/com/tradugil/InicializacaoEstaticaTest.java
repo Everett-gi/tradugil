@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  * termo "nos" repetido, e {@code Set.of} rejeita duplicatas com
  * {@code IllegalArgumentException} no carregamento da classe. Como nenhum
  * teste de unidade tocava nessa classe, o erro só apareceu quando a CI subiu
- * o contexto do Spring — e, em produção, teria impedido a aplicação inteira
+ * o contexto do Spring, e, em produção, teria impedido a aplicação inteira
  * de iniciar por causa de uma palavra digitada duas vezes.</p>
  *
  * <p>Este teste roda em milissegundos e não precisa de banco: erro de

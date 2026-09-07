@@ -10,7 +10,7 @@ import java.util.Locale
  * `packages/core-ts/src/normalizador.ts`. As três implementações precisam
  * devolver exatamente o mesmo resultado para toda entrada: o servidor resolve
  * pelo Postgres e o aplicativo resolve pelo banco local, e uma divergência de
- * um caractere faz o mesmo termo funcionar online e sumir offline — o usuário
+ * um caractere faz o mesmo termo funcionar online e sumir offline: o usuário
  * vê o aplicativo esquecer uma gíria que já sabia.
  *
  * `NormalizadorTest` repete os mesmos casos das outras duas plataformas. Ao
@@ -44,7 +44,7 @@ object Normalizador {
         val semAcento = ACENTOS.replace(Normalizer.normalize(bruto, Normalizer.Form.NFD), "")
         // Locale.ROOT, e não o do aparelho: em turco, "I".lowercase() devolve
         // "ı" sem ponto. O servidor rodaria com um locale e o celular com
-        // outro, e o mesmo termo geraria chaves diferentes — exatamente a
+        // outro, e o mesmo termo geraria chaves diferentes: exatamente a
         // divergência que esta classe existe para impedir.
         val limpo = RUIDO.replace(semAcento.lowercase(Locale.ROOT), " ")
         return ESPACOS.replace(limpo, " ").trim()
@@ -55,7 +55,7 @@ object Normalizador {
      *
      * Vive separada de [normalizar] porque é uma tentativa, não a chave. O
      * usuário escreve a ênfase com qualquer número de letras, e a tabela de
-     * variações não consegue listar todas — mas aplicar o colapso à chave
+     * variações não consegue listar todas, mas aplicar o colapso à chave
      * principal quebraria termos legítimos com letra dobrada.
      *
      * O corte é em duas letras, e não em uma, para não destruir dígrafos do

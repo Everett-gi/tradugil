@@ -42,7 +42,7 @@ public class TokenDeAtualizacao {
 
     /**
      * A cadeia de tokens nascida de um mesmo login. Revogar a família derruba
-     * a sessão inteira, e não apenas o elo apresentado — é o que torna a
+     * a sessão inteira, e não apenas o elo apresentado: é o que torna a
      * detecção de reuso útil.
      */
     @Column(nullable = false)

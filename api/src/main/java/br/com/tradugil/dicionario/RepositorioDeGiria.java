@@ -20,12 +20,12 @@ public interface RepositorioDeGiria extends JpaRepository<Giria, Long> {
      *
      * <p>O {@code /traduzir} recebe uma conversa colada e precisa checar
      * dezenas de candidatos. Consultar um por vez seriam dezenas de idas ao
-     * banco por requisição — em free tier, é o suficiente para estourar o
+     * banco por requisição: em free tier, é o suficiente para estourar o
      * limite de conexões e derrubar o RNF01. Aqui vai tudo em um IN.</p>
      *
      * <p>Casa pelo termo canônico, pela variação e pela forma com ênfase
      * colapsada. Os três caminhos existem porque, para quem consulta, não há
-     * diferença entre "pog", "pogchamp" e "kkkkkkk" — mas no banco são
+     * diferença entre "pog", "pogchamp" e "kkkkkkk", mas no banco são
      * chaves distintas.</p>
      *
      * <p>A comparação por ênfase é colapsado contra colapsado, e não

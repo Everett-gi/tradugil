@@ -15,13 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <h2>Por que não há proteção contra voto repetido</h2>
  *
- * <p>O endpoint é público — exigir conta para dizer "essa explicação me
+ * <p>O endpoint é público: exigir conta para dizer "essa explicação me
  * ajudou" afastaria justamente a Marlene, que é quem mais teria o que dizer.
  * E identificar quem votou exigiria guardar alguma marca da pessoa, o que a
  * seção 8 do documento não permite para quem só está consultando.</p>
  *
  * <p>A consequência é assumida: um bot determinado consegue inflar um
- * contador. O dano é limitado de propósito — o voto <b>só reordena</b>
+ * contador. O dano é limitado de propósito: o voto <b>só reordena</b>
  * definições que já foram aprovadas por uma pessoa. Ele nunca publica,
  * nunca oculta e nunca altera texto. O pior resultado possível é um sentido
  * legítimo aparecer antes de outro sentido legítimo.</p>
@@ -45,7 +45,7 @@ public class ServicoDeVotos {
         int afetadas = repositorio.registrarVoto(definicaoId, util ? 1 : 0, util ? 0 : 1);
 
         if (afetadas == 0) {
-            // Zero linhas cobre dois casos — não existe, ou não está
+            // Zero linhas cobre dois casos: não existe, ou não está
             // aprovada. Os dois viram "não encontrado" para quem consulta:
             // dizer "existe mas está pendente" revelaria a fila de moderação
             // a qualquer pessoa.
@@ -53,7 +53,7 @@ public class ServicoDeVotos {
         }
 
         // O verbete em cache carrega a ordem antiga das definições. Sem
-        // limpar, o voto só apareceria quando o cache expirasse — e a pessoa
+        // limpar, o voto só apareceria quando o cache expirasse, e a pessoa
         // veria o próprio clique não fazer efeito nenhum.
         var cache = gerenciadorDeCache.getCache("verbetes");
         if (cache != null) {

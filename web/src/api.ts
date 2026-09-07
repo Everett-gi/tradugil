@@ -24,7 +24,7 @@ export interface ResultadoDeTraducao {
  * Decide se vale tentar o dicionário local em vez de mostrar erro.
  *
  * Falha de rede é o caso óbvio. O 5xx não é: quando a API cai, o navegador
- * recebe um 502 do Caddy — uma resposta HTTP perfeitamente válida, não um
+ * recebe um 502 do Caddy: uma resposta HTTP perfeitamente válida, não um
  * erro de rede. Sem esta segunda condição, o aplicativo diria "erro
  * inesperado" a um usuário que tem o termo salvo no aparelho e poderia ser
  * atendido na hora.
@@ -43,7 +43,7 @@ function valeTentarLocalmente(erro: unknown): boolean {
  *
  * A ordem é servidor primeiro, e não cache primeiro, de propósito: o
  * dicionário local pode estar desatualizado, e uma explicação corrigida pela
- * curadoria — especialmente de um termo de risco — precisa chegar. O local é
+ * curadoria (especialmente de um termo de risco) precisa chegar. O local é
  * a rede de segurança, não o caminho preferencial.
  */
 export async function traduzir(pedido: PedidoDeTraducao): Promise<ResultadoDeTraducao> {

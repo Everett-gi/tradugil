@@ -98,7 +98,7 @@ public class ServicoDeContribuicao {
      * <p>A decisão e a trilha de auditoria são gravadas na mesma transação, e
      * isso não é detalhe: sair daqui com a contribuição aprovada e o registro
      * de auditoria ausente produziria exatamente o estado que a mitigação de
-     * Repudiation existe para impedir — conteúdo publicado sem ninguém
+     * Repudiation existe para impedir: conteúdo publicado sem ninguém
      * respondendo por ele.</p>
      */
     @Transactional

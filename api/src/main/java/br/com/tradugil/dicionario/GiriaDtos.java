@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Formatos de saída do dicionário. Nenhum deles expõe entidade JPA
  * diretamente: os clientes offline gravam esse JSON no dispositivo, então
- * mudar a forma quebra dicionários já sincronizados — e isso precisa ser uma
+ * mudar a forma quebra dicionários já sincronizados, e isso precisa ser uma
  * decisão consciente, não o efeito colateral de renomear um campo.
  */
 public final class GiriaDtos {

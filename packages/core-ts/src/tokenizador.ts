@@ -26,7 +26,7 @@ export const MAXIMO_DE_PALAVRAS = 3;
 /**
  * Um trecho do texto original e sua forma de busca.
  *
- * `fim` é exclusivo — mesma convenção de `String.prototype.slice`, para o
+ * `fim` é exclusivo: mesma convenção de `String.prototype.slice`, para o
  * cliente marcar o trecho com `texto.slice(inicio, fim)` sem ajustar nada.
  */
 export interface Trecho {

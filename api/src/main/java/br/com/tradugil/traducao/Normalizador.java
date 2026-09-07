@@ -10,14 +10,14 @@ import java.util.regex.Pattern;
  * <p><b>Esta classe tem gêmeas.</b> A mesma lógica roda no dicionário offline
  * do Android (Room) e do navegador (IndexedDB), onde não existe Postgres para
  * normalizar. Se as três implementações divergirem em um único caractere, o
- * mesmo termo passa a resolver online e falhar offline — e o usuário vê o
+ * mesmo termo passa a resolver online e falhar offline, e o usuário vê o
  * aplicativo "esquecer" uma gíria que já sabia. Por isso a normalização é
  * feita aqui, em Java puro, e não por {@code unaccent()} do Postgres: o banco
  * não estaria disponível para os clientes replicarem o comportamento.</p>
  *
  * <p>Qualquer alteração de regra aqui exige alteração igual em
  * {@code packages/core-ts} e no módulo Android, e a regeneração do pacote
- * offline — os termos já gravados foram normalizados pelas regras antigas.</p>
+ * offline: os termos já gravados foram normalizados pelas regras antigas.</p>
  */
 public final class Normalizador {
 
@@ -62,7 +62,7 @@ public final class Normalizador {
      *
      * <p>Vive separada de {@link #normalizar} porque é uma <i>tentativa</i>,
      * não a chave. O usuário pode digitar a ênfase com qualquer número de
-     * letras, e a tabela de variações não consegue listar todas — mas aplicar
+     * letras, e a tabela de variações não consegue listar todas, mas aplicar
      * o colapso à chave principal quebraria termos legítimos com letra dobrada.
      * Então a busca tenta primeiro a forma exata e só depois esta.</p>
      *

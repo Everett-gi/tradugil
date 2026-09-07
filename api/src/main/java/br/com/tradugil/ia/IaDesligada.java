@@ -10,8 +10,8 @@ import java.util.Optional;
  *
  * <p>Não é um caso degradado a ser evitado: é o modo normal de operação em
  * desenvolvimento e o comportamento correto se a verba da IA acabar. Os
- * níveis 0 a 2 seguem atendendo — que, pela meta da seção 7.3, são mais de
- * 85% das consultas — e apenas os termos realmente novos deixam de ser
+ * níveis 0 a 2 seguem atendendo (que, pela meta da seção 7.3, são mais de
+ * 85% das consultas) e apenas os termos realmente novos deixam de ser
  * resolvidos, indo para a fila de curadoria como sempre.</p>
  */
 public class IaDesligada implements ClienteDeIa {

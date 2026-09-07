@@ -10,7 +10,7 @@ import java.util.List;
  *
  * <p>A seção 4.2 previa gerar um arquivo SQLite versionado e servir a URL de
  * download. Isso exige armazenamento de arquivo e um processo que regenere o
- * pacote a cada mudança da curadoria — infraestrutura que o free tier não
+ * pacote a cada mudança da curadoria: infraestrutura que o free tier não
  * tem.</p>
  *
  * <p>Na escala real do dicionário, JSON com compressão resolve o mesmo
@@ -21,7 +21,7 @@ import java.util.List;
  * <p>O ponto em que essa escolha deixa de servir é conhecido: quando o
  * dicionário passar de umas dezenas de milhares de verbetes, ou quando o
  * download completo a cada mudança ficar caro para quem tem plano limitado.
- * Aí vale o pacote binário com sincronização incremental — mas isso é uma
+ * Aí vale o pacote binário com sincronização incremental, mas isso é uma
  * troca a fazer com dados de uso, não antes deles.</p>
  */
 public final class PacoteDtos {
@@ -50,7 +50,7 @@ public final class PacoteDtos {
      * origem: o cliente aplica o Modo Família na hora da consulta, do mesmo
      * jeito que o servidor faz. Filtrar aqui pareceria mais seguro, mas
      * obrigaria a rebaixar o dicionário inteiro toda vez que alguém
-     * desligasse o modo — e o aparelho ficaria com um dicionário diferente
+     * desligasse o modo, e o aparelho ficaria com um dicionário diferente
      * conforme a configuração de quem baixou.</p>
      */
     public record VerbeteDoPacote(

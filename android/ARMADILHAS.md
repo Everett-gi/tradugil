@@ -20,7 +20,7 @@ includeGroupByRegex("com\.android.*")    // erro de compilação
 
 O erro entrou porque o arquivo foi criado por um heredoc de shell, que
 consumiu uma das barras. Ao gerar arquivos Kotlin ou Java por script, confira
-o resultado — o escape acontece duas vezes e é fácil perder uma camada.
+o resultado: o escape acontece duas vezes e é fácil perder uma camada.
 
 ## 2. O plugin do Kotlin não existe mais no AGP 9
 
@@ -30,7 +30,7 @@ support since AGP 9.0.
 ```
 
 Desde o Android Gradle Plugin 9.0, o suporte a Kotlin é embutido. Aplicar
-`org.jetbrains.kotlin.android` junto **faz o build falhar na configuração** —
+`org.jetbrains.kotlin.android` junto **faz o build falhar na configuração**:
 não é aviso, é erro.
 
 O que continua sendo necessário é `org.jetbrains.kotlin.plugin.compose`, para
@@ -47,7 +47,7 @@ e: TelaPrincipal.kt:179:13 Unresolved reference 'withStyle'.
 ```
 
 `withStyle` é função de extensão de `AnnotatedString.Builder` e mora em
-`androidx.compose.ui.text.withStyle` — não vem junto com
+`androidx.compose.ui.text.withStyle`: não vem junto com
 `buildAnnotatedString`, que está no mesmo pacote. O Android Studio importa
 sozinho quando você digita; ao escrever o arquivo por fora, tem que lembrar.
 
@@ -55,8 +55,8 @@ sozinho quando você digita; ao escrever o arquivo por fora, tem que lembrar.
 
 O Android Studio precisa abrir **`tradugil/android`**, não `tradugil`.
 
-A raiz é um monorepo poliglota — Maven em `api/`, npm em `web/`, Gradle só em
-`android/` — e não tem `settings.gradle.kts`. Sem ele, o Studio trata a pasta
+A raiz é um monorepo poliglota (Maven em `api/`, npm em `web/`, Gradle só em
+`android/`) e não tem `settings.gradle.kts`. Sem ele, o Studio trata a pasta
 como projeto genérico e **nunca oferece sincronizar**. Não aparece erro
 nenhum: simplesmente não acontece nada, que é o mais confuso.
 

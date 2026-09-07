@@ -46,7 +46,7 @@ class NormalizadorTest {
     @DisplayName("trata acento pré-composto e decomposto como o mesmo termo")
     void tratamAcentoComposto() {
         // "ç" chega como um caractere só (U+00E7) ou como "c" mais cedilha
-        // combinante (U+0327), dependendo do teclado e do sistema — texto
+        // combinante (U+0327), dependendo do teclado e do sistema: texto
         // vindo de OCR ou do iOS costuma chegar decomposto. São a mesma
         // palavra para quem digitou, e precisam gerar a mesma chave.
         String preComposto = "ranço";

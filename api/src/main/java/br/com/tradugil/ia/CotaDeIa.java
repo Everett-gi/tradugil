@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>O contador vive em memória, e não no banco, porque a infraestrutura
  * alvo é uma instância só no Always Free. Com mais de uma instância, cada
  * uma teria seu próprio teto e o gasto real seria o teto vezes o número de
- * instâncias — nesse dia isto precisa virar um contador compartilhado.</p>
+ * instâncias: nesse dia isto precisa virar um contador compartilhado.</p>
  *
  * <p>A virada do dia é em UTC, não no fuso local: a única coisa que importa
  * é que a janela seja consistente, e depender do fuso do servidor faria a

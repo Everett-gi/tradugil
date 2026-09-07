@@ -18,7 +18,7 @@ import br.com.tradugil.android.dominio.Tokenizador
  * viria acompanhado de "ruim" sozinho e a tela desenharia dois destaques
  * sobrepostos.</p>
  *
- * <p>Usa `Tokenizador` e `Normalizador` do domínio — as mesmas funções que o
+ * <p>Usa `Tokenizador` e `Normalizador` do domínio: as mesmas funções que o
  * servidor usa em Java e o site em TypeScript. É o que garante que o texto
  * seja quebrado nas mesmas posições com ou sem internet: se esta classe
  * tivesse a própria lógica, o mesmo texto produziria destaques em lugares

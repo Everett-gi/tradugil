@@ -101,7 +101,7 @@ public class ServicoDeAutenticacao {
      *
      * <p>Aqui mora a detecção de reuso: um token já trocado que reaparece
      * significa que ou o cliente legítimo repetiu, ou alguém roubou. Como não
-     * dá para distinguir, revoga-se a família inteira — o usuário legítimo
+     * dá para distinguir, revoga-se a família inteira: o usuário legítimo
      * refaz o login e o ladrão perde o acesso.</p>
      */
     @Transactional

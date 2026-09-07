@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  *
  * <p>H2 não serve: a busca tolerante a erro de digitação depende de
  * {@code pg_trgm}, que só existe no PostgreSQL. Um teste verde em H2 não
- * provaria nada sobre o nível 2 da cascata — que é justamente o que precisa
+ * provaria nada sobre o nível 2 da cascata: que é justamente o que precisa
  * ser provado.</p>
  *
  * <p>A anotação liga os testes apenas quando {@code TRADUGIL_TEST_DB_URL}

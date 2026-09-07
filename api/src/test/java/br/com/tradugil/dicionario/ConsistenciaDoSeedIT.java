@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>A migração V4 preenche {@code termo_colapsado} com uma expressão SQL que
  * repete, em outra linguagem, a regra de
- * {@link Normalizador#colapsarRepeticoes}. Repetir é inevitável — o seed é
- * SQL e precisa preencher a coluna — mas repetir sem verificação é como as
+ * {@link Normalizador#colapsarRepeticoes}. Repetir é inevitável (o seed é
+ * SQL e precisa preencher a coluna) mas repetir sem verificação é como as
  * duas regras divergem em silêncio: alguém ajusta o Java, esquece o SQL, e
  * meses depois um punhado de verbetes simplesmente para de ser encontrado,
  * sem erro nenhum em lugar nenhum.</p>
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /*
  * @Transactional aqui é necessidade do teste, não sinal de problema no
  * código. Ele percorre o dicionário inteiro tocando as coleções lazy de cada
- * verbete — algo que nenhum caminho de produção faz. Com
+ * verbete: algo que nenhum caminho de produção faz. Com
  * `open-in-view: false` (que é a configuração certa: sem ela, consultas
  * disparariam durante a renderização da resposta, longe do serviço que
  * deveria controlá-las), não há sessão fora da transação, e é o teste que
@@ -93,7 +93,7 @@ class ConsistenciaDoSeedIT {
     @Test
     @DisplayName("todo verbete tem ao menos uma definição aprovada")
     void todoVerbeteTemDefinicao() {
-        // Verbete sem definição aparece na busca e não explica nada — pior
+        // Verbete sem definição aparece na busca e não explica nada: pior
         // que não existir, porque o usuário acha que encontrou.
         var mudos = repositorioDeGiria.findAll().stream()
                 .filter(g -> g.definicoesAprovadas().isEmpty())
