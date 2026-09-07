@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Os dois balões do ícone: o branco é a mensagem que a pessoa não entendeu,
+    o amarelo é a explicação que chega em resposta. Desenhados em vetor para
+    não carregar cinco tamanhos de PNG no APK que o usuário baixa do site.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,30h38a8,8 0 0 1 8,8v20a8,8 0 0 1 -8,8h-22l-16,12v-12a8,8 0 0 1 -8,-8v-20a8,8 0 0 1 8,-8z" />
+    <path
+        android:fillColor="#FFD166"
+        android:pathData="M52,54h26a6,6 0 0 1 6,6v14a6,6 0 0 1 -6,6h-10l-8,8v-8h-8a6,6 0 0 1 -6,-6v-14a6,6 0 0 1 6,-6z" />
+</vector>

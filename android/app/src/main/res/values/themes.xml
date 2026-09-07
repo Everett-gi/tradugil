@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Tema mínimo: a aparência é toda do Compose (MaterialTheme). Este
+        arquivo existe só para a janela do sistema não piscar branco antes
+        do Compose desenhar.
+    -->
+    <style name="Theme.TraduGiria" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

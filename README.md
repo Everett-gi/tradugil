@@ -14,9 +14,9 @@ acompanha a velocidade com que a linguagem online muda.
 
 | Fase | Entrega | Situação |
 |------|---------|----------|
-| F0 | Monorepo, esquema, seed inicial, API de consulta | Em andamento |
-| F1 | Cascata completa com IA, PWA instalável, extensão | Não iniciada |
-| F2 | Android: bolha flutuante, OCR local, Modo Família | Não iniciada |
+| F0 | Monorepo, esquema, seed inicial, API de consulta | Código pronto; falta subir contra o banco |
+| F1 | PWA instalável com offline, lógica compartilhada | PWA pronto; falta a camada de IA |
+| F2 | Android: bolha flutuante, OCR local, Modo Família | Domínio e tela prontos; falta o build |
 
 **Distribuição do Android:** APK baixável pelo site. A publicação na Google
 Play fica para quando houver orçamento — nada da arquitetura muda por isso,
@@ -29,7 +29,7 @@ Parar cedo é o que mantém a latência baixa e o custo de IA perto de zero:
 
 | Nível | Onde | Custo | Situação |
 |-------|------|-------|----------|
-| 0 | Dicionário local no dispositivo | zero, offline | Não iniciado |
+| 0 | Dicionário local no dispositivo | zero, offline | Pronto na web; falta no Android |
 | 1 | Cache em memória da API (Caffeine) | zero | Pronto |
 | 2 | PostgreSQL curado, com busca tolerante a erro de digitação | baixo | Pronto |
 | 3 | Fontes externas, sempre com rótulo de origem | baixo | Não iniciado |
@@ -105,11 +105,38 @@ curl -s -X POST http://localhost:8080/api/v1/traduzir -H "Content-Type: applicat
 A primeira consulta demonstra a tolerância a erro de digitação: `crinje`
 encontra `cringe`.
 
+## Rodando o site
+
+```bash
+npm --prefix web run dev
+```
+
+Abre em `http://localhost:5173`, com proxy para a API em `:8080`. Sem a API
+no ar, o site cai no dicionário local do navegador e avisa disso na tela.
+
+Para gerar o site de produção, com service worker e manifesto do PWA:
+
+```bash
+npm --prefix web run build
+```
+
+## Rodando o Android
+
+Abra a pasta `android/` no Android Studio. As instruções completas — versões,
+assinatura do APK e o que ainda falta — estão em
+[`android/README.md`](android/README.md).
+
 ## Testes
 
 ```bash
 cd api && mvn test
 ```
+
+```bash
+npm --prefix packages/core-ts test
+```
+
+Os testes Kotlin do domínio rodam junto com o módulo Android, pelo Gradle.
 
 Os testes de banco rodam contra PostgreSQL real, nunca H2: a busca do nível 2
 depende de `pg_trgm`, que não existe no H2 — um teste verde ali não provaria

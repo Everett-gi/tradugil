@@ -31,3 +31,9 @@ desktop.ini
 
 # Artefatos do Vite / PWA gerados no build
 web/dev-dist/
+
+# Android
+android/.gradle/
+android/.idea/
+android/build/
+android/app/release/

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/nome_do_app"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TraduGiria">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/nome_do_app"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+                Faz o TraduGíria aparecer em "Compartilhar" de qualquer
+                aplicativo (RF20). É o caminho mais curto do produto: a pessoa
+                seleciona o texto no WhatsApp, toca em compartilhar e já vê a
+                explicação, sem trocar de app manualmente.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <!--
+                Também aparece no menu que surge ao selecionar texto na tela,
+                junto de "Copiar" e "Compartilhar".
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
