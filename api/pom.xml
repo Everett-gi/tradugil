@@ -41,6 +41,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!--
+          JWT via Nimbus, que ja vem no ecossistema do Spring Security. Evita
+          uma biblioteca de terceiros so para assinar e verificar token, num
+          projeto onde autenticacao e justamente o que precisa de menos
+          superficie possivel.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
