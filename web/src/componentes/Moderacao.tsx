@@ -87,7 +87,21 @@ export function Moderacao() {
 
   return (
     <section className="moderacao">
-      <h2>Fila de moderação</h2>
+      <div className="moderacao-cabeca">
+        <h2>Fila de moderação</h2>
+        {/*
+          A fila só carregava ao abrir a tela. Quem modera fica nela por
+          muito tempo, e proposta nova chegando não aparecia: a pessoa
+          continuaria vendo uma fila vazia enquanto a fila enche.
+
+          Um botão, e não recarga automática: a lista some sob o cursor
+          quando se atualiza sozinha, e aqui cada linha tem um campo de
+          motivo que pode estar meio escrito.
+        */}
+        <button type="button" className="botao" onClick={() => void carregar()}>
+          Atualizar
+        </button>
+      </div>
       <p className="dica">
         Toda decisão fica registrada com o seu nome, e o registro não pode ser
         apagado nem alterado depois.

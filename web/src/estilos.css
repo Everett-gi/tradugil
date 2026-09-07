@@ -1073,8 +1073,14 @@ body {
 }
 
 .contribuir-subtitulo {
-  margin: 2rem 0 0.75rem;
+  margin: 0;
   font-size: 1.05rem;
+}
+
+/* O cabecalho com botao serve as duas listas, e por isso carrega a margem
+   que antes era do subtitulo. */
+.contribuir .moderacao-cabeca {
+  margin: 2rem 0 0.75rem;
 }
 
 .lista-contribuicoes {
@@ -1178,4 +1184,22 @@ body {
   background: var(--risco-borda);
   border-color: var(--risco-borda);
   color: var(--folha);
+}
+
+.moderacao-cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.moderacao-cabeca h2 {
+  margin: 0;
+}
+
+.moderacao-cabeca .botao {
+  min-height: 2.75rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
 }

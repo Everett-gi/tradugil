@@ -154,7 +154,19 @@ export function Contribuir() {
 
       {minhas && minhas.length > 0 && (
         <>
-          <h3 className="contribuir-subtitulo">Suas sugestões</h3>
+          <div className="moderacao-cabeca">
+            <h3 className="contribuir-subtitulo">Suas sugestões</h3>
+            {/*
+              A lista só carregava ao abrir a tela, então uma decisão tomada
+              enquanto a pessoa estava nela não aparecia: a sugestão ficava
+              "em análise" para sempre, mesmo já revisada, e o motivo da
+              recusa (que o servidor exige justamente para ela ler) não
+              chegava nunca.
+            */}
+            <button type="button" className="botao" onClick={() => void carregar()}>
+              Atualizar
+            </button>
+          </div>
           <ul className="lista-contribuicoes">
             {minhas.map((c) => (
               <li key={c.id} className="contribuicao">
