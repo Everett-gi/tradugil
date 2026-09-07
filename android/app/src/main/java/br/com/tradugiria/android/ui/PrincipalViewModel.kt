@@ -2,8 +2,7 @@ package br.com.tradugiria.android.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.tradugiria.android.dados.ClienteDaApi
-import br.com.tradugiria.android.dominio.ErroDeRede
+import br.com.tradugiria.android.dados.RepositorioDeTraducao
 import br.com.tradugiria.android.dominio.NivelDeExplicacao
 import br.com.tradugiria.android.dominio.PedidoDeTraducao
 import br.com.tradugiria.android.dominio.RespostaDeTraducao
@@ -30,7 +29,7 @@ data class EstadoDaTela(
     val semServidor: Boolean = false,
 )
 
-class PrincipalViewModel(private val api: ClienteDaApi) : ViewModel() {
+class PrincipalViewModel(private val repositorio: RepositorioDeTraducao) : ViewModel() {
 
     private val _estado = MutableStateFlow(EstadoDaTela())
     val estado: StateFlow<EstadoDaTela> = _estado.asStateFlow()
@@ -55,7 +54,7 @@ class PrincipalViewModel(private val api: ClienteDaApi) : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val resposta = api.traduzir(
+                val resultado = repositorio.traduzir(
                     PedidoDeTraducao(
                         texto = consulta,
                         nivel = _estado.value.nivel,
@@ -65,19 +64,9 @@ class PrincipalViewModel(private val api: ClienteDaApi) : ViewModel() {
                 _estado.update {
                     it.copy(
                         consultando = false,
-                        resultado = resposta,
+                        resultado = resultado.resposta,
                         textoAnalisado = consulta,
-                    )
-                }
-            } catch (e: ErroDeRede) {
-                // O dicionário local (Room) entra aqui na próxima etapa. Até
-                // lá, a mensagem diz a verdade em vez de fingir que tentou.
-                _estado.update {
-                    it.copy(
-                        consultando = false,
-                        semServidor = true,
-                        erro = "Não conseguimos falar com o servidor. " +
-                            "Verifique sua conexão e tente de novo.",
+                        semServidor = resultado.offline,
                     )
                 }
             } catch (e: Exception) {

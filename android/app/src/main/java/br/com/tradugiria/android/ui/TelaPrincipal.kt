@@ -137,6 +137,23 @@ fun TelaPrincipal(
             }
         }
 
+        // O aviso vem antes do resultado: quem le precisa saber de onde a
+        // explicacao veio antes de acreditar nela.
+        if (estado.semServidor && estado.resultado != null) {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                ),
+            ) {
+                Text(
+                    text = "Nao conseguimos falar com o servidor. Mostramos o que ja " +
+                        "estava salvo no seu aparelho.",
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                )
+            }
+        }
+
         estado.resultado?.let { resultado ->
             Spacer(Modifier.height(4.dp))
             if (resultado.girias.isEmpty()) {

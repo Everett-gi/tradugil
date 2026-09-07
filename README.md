@@ -16,7 +16,7 @@ acompanha a velocidade com que a linguagem online muda.
 |------|---------|----------|
 | F0 | Monorepo, esquema, seed inicial, API de consulta | Código pronto; falta subir contra o banco |
 | F1 | PWA instalável, lógica compartilhada, cascata com IA | Pronta; falta subir contra o banco |
-| F2 | Android: bolha flutuante, OCR local, Modo Família | App compila e gera APK; falta o offline e a leitura de tela |
+| F2 | Android: bolha flutuante, OCR local, Modo Família | App compila com dicionário offline; falta a leitura de tela |
 
 **Distribuição do Android:** APK baixável pelo site. A publicação na Google
 Play fica para quando houver orçamento — nada da arquitetura muda por isso,
@@ -29,7 +29,7 @@ Parar cedo é o que mantém a latência baixa e o custo de IA perto de zero:
 
 | Nível | Onde | Custo | Situação |
 |-------|------|-------|----------|
-| 0 | Dicionário local no dispositivo | zero, offline | Pronto na web; falta no Android |
+| 0 | Dicionário local no dispositivo | zero, offline | Pronto na web e no Android |
 | 1 | Cache em memória da API (Caffeine) | zero | Pronto |
 | 2 | PostgreSQL curado, com busca tolerante a erro de digitação | baixo | Pronto |
 | 3 | Fontes externas, sempre com rótulo de origem | baixo | Não iniciado |

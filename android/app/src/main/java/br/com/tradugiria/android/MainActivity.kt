@@ -19,7 +19,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.compose.runtime.collectAsState
+import androidx.room.Room
 import br.com.tradugiria.android.dados.ClienteDaApi
+import br.com.tradugiria.android.dados.DicionarioLocal
+import br.com.tradugiria.android.dados.RepositorioDeTraducao
+import br.com.tradugiria.android.dados.local.BancoLocal
 import br.com.tradugiria.android.ui.PrincipalViewModel
 import br.com.tradugiria.android.ui.TelaPrincipal
 
@@ -70,7 +74,18 @@ class MainActivity : ComponentActivity() {
 
     private fun fabrica(): ViewModelProvider.Factory = viewModelFactory {
         initializer {
-            PrincipalViewModel(ClienteDaApi(BuildConfig.URL_DA_API))
+            val banco = Room.databaseBuilder(
+                applicationContext,
+                BancoLocal::class.java,
+                "tradugiria",
+            ).build()
+
+            PrincipalViewModel(
+                RepositorioDeTraducao(
+                    api = ClienteDaApi(BuildConfig.URL_DA_API),
+                    local = DicionarioLocal(banco.dicionario()),
+                ),
+            )
         }
     }
 }

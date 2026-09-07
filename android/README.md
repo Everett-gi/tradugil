@@ -10,7 +10,7 @@ Google Play.
 | `Normalizador` e `Tokenizador` | Verificados — 13 testes passando |
 | Cliente da API, ViewModel, tela Compose | **Compilam**; APK de depuração gerado |
 | Compartilhar de outro app (RF20) | Declarado no manifesto, a validar em aparelho |
-| Dicionário offline (Room) | Não iniciado |
+| Dicionário offline (Room) | Pronto; falta o pacote de sincronização |
 | Bolha flutuante, leitura de tela, OCR | Não iniciado |
 
 O módulo compila e o APK de depuração é gerado. Falta validar em aparelho
