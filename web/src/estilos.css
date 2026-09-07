@@ -1,112 +1,141 @@
 /*
  * ===========================================================================
- * A DIREÇÃO: verbete, não painel
+ * A DIREÇÃO: um lugar acolhedor para perguntar o que não se entendeu
  * ===========================================================================
  *
- * O Tradugil é um dicionário. A versão anterior desta folha não parecia um:
- * era uma pilha de cartões arredondados iguais, com emoji marcando seção e
- * uma cor de marca segura. Funcionava e não dizia nada sobre o assunto.
+ * A versão anterior levava o dicionário ao pé da letra: papel plano, filetes
+ * finos, tudo em ângulo reto. Era correta e era árida. Quem chega aqui está
+ * admitindo que não entendeu alguma coisa, e uma tela severa cobra isso.
  *
- * Aqui a página é montada como uma entrada de dicionário. A palavra
- * consultada é o maior elemento da tela, em serifa; os sentidos são
- * numerados porque os verbetes realmente têm mais de um; o equivalente
- * formal aparece como glosa, precedido de "≈", que é a convenção
- * lexicográfica para "o mesmo que". A numeração não é enfeite: ela existe
- * onde há de fato uma sequência a comunicar.
- *
- * ---------------------------------------------------------------------------
- * O QUE ACESSIBILIDADE MUDA AQUI, E NÃO É POUCO
- * ---------------------------------------------------------------------------
- *
- * O público principal tem 68 anos e pouca familiaridade com tecnologia. Isso
- * não é uma restrição imposta ao design; é a maior informação que o design
- * tem sobre o que está fazendo.
- *
- * - A base já é grande (18px) e de alto contraste. Os controles aumentam a
- *   partir de um padrão confortável, em vez de consertarem um padrão ruim
- *   que ninguém sabe que dá para ajustar.
- * - Alvos de toque de 48px, contraste acima de 4,5:1 em todo texto e nenhuma
- *   informação transmitida só por cor (WCAG 2.1 AA, RNF05).
- * - Tudo é dimensionado em rem, e a raiz é multiplicada por --escala. Uma
- *   medida em px em qualquer lugar do meio quebraria o botão de aumentar
- *   letra sem que nada acusasse.
+ * Esta versão busca o contrário. A página é uma folha clara e macia flutuando
+ * sobre um fundo quente, com um brilho difuso atrás do título. As respostas
+ * chegam em cartões arredondados com relevo próprio, como bilhetes colocados
+ * sobre a mesa. Nada disso é enfeite gratuito: profundidade e curva são o que
+ * fazem uma interface parecer receptiva em vez de burocrática.
  *
  * ---------------------------------------------------------------------------
- * A PALETA
+ * A PALETA, E POR QUE ESTA
  * ---------------------------------------------------------------------------
  *
- * O papel é um verde-acinzentado claro, de caderno reciclado, e não branco
- * nem creme. O branco puro fica para as superfícies que precisam se destacar
- * dele, o que dá profundidade sem sombra nenhuma.
+ * Areia quente no fundo, folha branca por cima, tinta verde-azulada profunda.
+ * O verde-azulado é a marca: escuro o bastante para carregar texto branco com
+ * folga, e frio o bastante para não brigar com o fundo quente. O contraste
+ * entre um fundo morno e uma tinta fria é o que dá vida à tela sem precisar
+ * de nenhuma cor gritante.
  *
- * A tinta é um quase-preto puxado para o verde. Um cinza neutro de meio-tom
- * lê como não escolhido; um neutro levemente enviesado para o acento lê como
- * decidido.
+ * O amarelo de marca-texto continua reservado a uma coisa só: marcar a gíria
+ * dentro da frase do usuário. É a cor mais saturada da interface e a única
+ * com função. Vermelho e violeta não são acentos, são semânticos (termo que
+ * pede atenção e resposta de IA), e por isso nunca aparecem decorando nada.
  *
- * O verde profundo é o acento único. O amarelo de marca-texto aparece em um
- * lugar só, marcando a gíria dentro da frase do usuário, e é literalmente um
- * marcador: é a cor mais saturada da tela e a única com função.
+ * ---------------------------------------------------------------------------
+ * O QUE A ACESSIBILIDADE IMPÕE, E QUE NÃO SE NEGOCIA POR BELEZA
+ * ---------------------------------------------------------------------------
  *
- * Vermelho e violeta não são acentos: são semânticos. Vermelho é termo que
- * pede atenção; violeta é resposta de IA não verificada. Nenhum dos dois
- * aparece em lugar decorativo, para que apareçam com peso quando aparecem.
+ * O público principal tem 68 anos e pouca familiaridade com tecnologia.
+ *
+ * - Base de 18px e contraste acima de 4,5:1 em todo texto (WCAG 2.1 AA,
+ *   RNF05), conferido no navegador nos três modos.
+ * - Alvos de toque de 48px. Sombra e curva podem crescer; alvo não encolhe.
+ * - Tudo em rem sobre uma raiz multiplicada por --escala. Uma medida em px no
+ *   meio do caminho quebraria o botão de aumentar letra sem nada acusar.
+ * - Nenhuma informação só por cor: o termo de risco tem borda tracejada além
+ *   do vermelho, e o botão ligado é preenchido, não apenas colorido.
+ * - Todo movimento morre sob prefers-reduced-motion.
  */
 
 :root {
   /* Ajustada pela barra de acessibilidade e persistida no dispositivo. */
   --escala: 1;
 
-  --papel: #eef1ec;
-  --superficie: #ffffff;
-  --texto: #152019;
-  --texto-suave: #4c5c53;
-  --borda: #cdd6cf;
-  --borda-forte: #9aa89f;
+  --areia: #fbf6f0;
+  --areia-funda: #f2e7db;
+  --folha: #ffffff;
 
-  --primaria: #0e6b4c;
-  --primaria-clara: #dcebe2;
-  --primaria-texto: #ffffff;
+  --tinta: #17282c;
+  --tinta-suave: #4d666b;
+
+  /* Fio decorativo: divisórias e arestas de cartão. Não delimita controle. */
+  --borda: #e2d6c8;
+  --borda-forte: #a8b6b8;
+
+  /*
+   * A borda de quem se pode clicar ou digitar, e é um token separado por uma
+   * razão medida.
+   *
+   * O botão tem o mesmo fundo da folha em que está apoiado, então a única
+   * coisa que diz onde ele começa e termina é a borda. A WCAG 1.4.11 pede
+   * 3:1 para a fronteira de um controle, e a --borda decorativa dava 1,43:1
+   * no claro e 1,35:1 no escuro: os botões eram delimitados por um fio que
+   * quase ninguém enxerga, e a sombra não conta como fronteira mensurável.
+   *
+   * Este valor dá 3,67:1 contra a folha branca e 3,42:1 contra a areia.
+   */
+  --borda-controle: #75898d;
+
+  --marca: #0a5560;
+  --marca-viva: #0d6d7b;
+  --marca-tenue: #dcedf0;
+  --marca-texto: #ffffff;
 
   /* O marcador. Único lugar saturado da interface, e com função. */
-  --marcador: #f2d14e;
-  --marcador-borda: #8a6d00;
+  --marcador: #ffd84d;
+  --marcador-borda: #8a6a00;
 
-  --risco-fundo: #fbeae5;
-  --risco-borda: #a02f1b;
-  --risco-texto: #7a2213;
+  --risco-fundo: #fdece8;
+  --risco-borda: #a3231c;
+  --risco-texto: #7a1a15;
 
-  --ia-fundo: #efe9f7;
-  --ia-borda: #5a3b8c;
+  --ia-fundo: #f0eaf9;
+  --ia-borda: #5b3a8e;
   --ia-texto: #422a68;
 
-  --serifa: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Palatino,
-    Georgia, 'Times New Roman', serif;
-  --legivel: 'Atkinson Hyperlegible', 'Verdana', 'Segoe UI', system-ui,
+  --display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Palatino,
+    Georgia, serif;
+  --legivel: 'Atkinson Hyperlegible', Verdana, 'Segoe UI', system-ui,
     -apple-system, sans-serif;
 
-  --raio: 10px;
+  --curva: 18px;
+  --curva-p: 12px;
   --alvo-minimo: 48px;
-  --coluna: 40rem;
+  --coluna: 42rem;
+
+  /*
+   * Sombras em camadas, e não uma só. Uma sombra grande e difusa sozinha
+   * parece borrão; duas, uma curta e fechada e outra longa e aberta, imitam
+   * como a luz se comporta de verdade e é isso que dá a sensação de relevo.
+   * A cor tem matiz da tinta, nunca preto puro: preto sobre fundo quente
+   * suja em vez de sombrear.
+   */
+  --relevo-1: 0 1px 2px rgba(23, 40, 44, 0.06),
+    0 4px 12px rgba(23, 40, 44, 0.05);
+  --relevo-2: 0 2px 4px rgba(23, 40, 44, 0.07),
+    0 12px 28px rgba(23, 40, 44, 0.08);
+  --relevo-3: 0 4px 8px rgba(23, 40, 44, 0.08),
+    0 24px 48px rgba(23, 40, 44, 0.12);
 
   font-size: calc(18px * var(--escala));
   color-scheme: light;
 }
 
 /*
- * Alto contraste: preto sobre branco puro, bordas mais grossas, e o acento
- * trocado por um azul escuro que passa folgado em qualquer combinação. O
- * verde da marca é bonito e não sobrevive a este modo, e a legibilidade
- * ganha da identidade sempre que os dois brigam.
+ * Alto contraste: preto sobre branco, bordas grossas, nenhuma sombra e
+ * nenhum brilho. A identidade cede inteira aqui. Quem liga este modo não
+ * está pedindo uma versão mais sóbria do desenho; está dizendo que não
+ * enxerga o desenho.
  */
 :root[data-contraste='alto'] {
-  --papel: #ffffff;
-  --superficie: #ffffff;
-  --texto: #000000;
-  --texto-suave: #000000;
+  --areia: #ffffff;
+  --areia-funda: #ffffff;
+  --folha: #ffffff;
+  --tinta: #000000;
+  --tinta-suave: #000000;
   --borda: #000000;
   --borda-forte: #000000;
-  --primaria: #00308f;
-  --primaria-clara: #ffffff;
+  --borda-controle: #000000;
+  --marca: #00308f;
+  --marca-viva: #00308f;
+  --marca-tenue: #ffffff;
   --marcador: #ffe600;
   --marcador-borda: #000000;
   --risco-fundo: #ffffff;
@@ -115,31 +144,48 @@
   --ia-fundo: #ffffff;
   --ia-borda: #000000;
   --ia-texto: #000000;
+  --relevo-1: none;
+  --relevo-2: none;
+  --relevo-3: none;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-contraste='alto']) {
-    --papel: #121a16;
-    --superficie: #1a2620;
-    --texto: #e8efe9;
-    --texto-suave: #a9bcb0;
-    --borda: #33453b;
-    --borda-forte: #5d7568;
+    --areia: #0e1719;
+    --areia-funda: #142226;
+    --folha: #18272b;
 
-    --primaria: #7fd4ab;
-    --primaria-clara: #1b3529;
-    --primaria-texto: #0a1710;
+    --tinta: #e9f1f2;
+    --tinta-suave: #a4bcc0;
 
-    --marcador: #c9a417;
-    --marcador-borda: #f0d574;
+    --borda: #2b3d41;
+    --borda-forte: #5a7378;
+    /* 4,18:1 contra a folha escura. */
+    --borda-controle: #6f8a8f;
 
-    --risco-fundo: #3a1a14;
-    --risco-borda: #f0a292;
-    --risco-texto: #ffd9d0;
+    --marca: #6fd0dd;
+    --marca-viva: #8fe0ea;
+    --marca-tenue: #14343a;
+    --marca-texto: #04191d;
 
-    --ia-fundo: #251b38;
-    --ia-borda: #c0a8e8;
-    --ia-texto: #e2d6f5;
+    --marcador: #d9ab12;
+    --marcador-borda: #f5d873;
+
+    --risco-fundo: #3a1613;
+    --risco-borda: #f2a99f;
+    --risco-texto: #ffdcd6;
+
+    --ia-fundo: #241a37;
+    --ia-borda: #c3abe9;
+    --ia-texto: #e4d9f6;
+
+    /* No escuro a sombra some; o relevo vem do próprio degrau de cor entre
+       o fundo e a folha, mais um fio claro na borda de cima. */
+    --relevo-1: 0 1px 0 rgba(255, 255, 255, 0.04);
+    --relevo-2: 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 12px 28px rgba(0, 0, 0, 0.35);
+    --relevo-3: 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 24px 48px rgba(0, 0, 0, 0.45);
 
     color-scheme: dark;
   }
@@ -149,16 +195,41 @@
   box-sizing: border-box;
 }
 
+/*
+ * O brilho atrás do topo.
+ *
+ * Dois gradientes radiais fixos, presos ao body, um na cor da marca e outro
+ * quente. Ficam em opacidade baixíssima: o efeito não é para ser notado, é
+ * para o fundo não ser chapado. Um fundo de cor única é o que faz uma tela
+ * parecer um formulário.
+ */
 body {
   margin: 0;
-  background: var(--papel);
-  color: var(--texto);
+  min-height: 100vh;
+  background-color: var(--areia);
+  background-image:
+    radial-gradient(
+      ellipse 70rem 32rem at 50% -14rem,
+      color-mix(in srgb, var(--marca) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50rem 28rem at 85% 8rem,
+      var(--areia-funda),
+      transparent 65%
+    );
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--tinta);
   font-family: var(--legivel);
   font-size: 1rem;
   line-height: 1.65;
-  /* O texto do produto é português brasileiro, e o hífen automático em
-     palavras longas evita rios de espaço em tela estreita. */
   -webkit-text-size-adjust: 100%;
+}
+
+/* Sem brilho no alto contraste: fundo é branco liso e ponto final. */
+:root[data-contraste='alto'] body {
+  background-image: none;
 }
 
 /* --------------------------------------------------------- apoio geral --- */
@@ -180,30 +251,34 @@ body {
   left: -9999px;
   top: 0;
   z-index: 100;
-  padding: 0.75rem 1.25rem;
-  background: var(--primaria);
-  color: var(--primaria-texto);
+  padding: 0.85rem 1.35rem;
+  background: var(--marca);
+  color: var(--marca-texto);
   font-weight: 700;
   text-decoration: none;
-  border-radius: 0 0 var(--raio) 0;
+  border-radius: 0 0 var(--curva) 0;
 }
 
 .pular-para-conteudo:focus {
   left: 0;
 }
 
+/*
+ * Foco visível e generoso. É o único indicador de posição de quem navega por
+ * teclado, e um anel fino sobre fundo claro é fácil de perder.
+ */
 :focus-visible {
-  outline: 3px solid var(--primaria);
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 3px solid var(--marca-viva);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -212,54 +287,67 @@ body {
 .pagina {
   max-width: var(--coluna);
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 4rem;
+  padding: 2.5rem 1.25rem 4rem;
 }
 
 .cabecalho {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 1rem;
-  /* Fio duplo, como o filete de uma página de dicionário. */
-  border-bottom: 3px double var(--borda-forte);
-  margin-bottom: 1.75rem;
+  gap: 1rem 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .marca {
   margin: 0;
-  font-family: var(--serifa);
-  font-size: 2.1rem;
+  font-family: var(--display);
+  font-size: 2.6rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: var(--texto);
+  font-variation-settings: 'SOFT' 60, 'opsz' 120;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  color: var(--tinta);
 }
 
 /*
- * A marca leva um ponto final. É a marca de um verbete de dicionário
- * terminando, e é o tipo de detalhe que faz o nome parecer um nome em vez de
- * um rótulo de aplicativo.
+ * O ponto final da marca. Detalhe pequeno e deliberado: fecha o nome como
+ * uma palavra escrita, em vez de deixá-lo pairando como um rótulo.
  */
 .marca::after {
   content: '.';
-  color: var(--primaria);
+  color: var(--marca-viva);
 }
 
 .subtitulo {
-  max-width: 34rem;
+  max-width: 32rem;
   margin: 0 0 2rem;
-  font-size: 1.05rem;
-  color: var(--texto-suave);
+  font-size: 1.12rem;
+  line-height: 1.6;
+  color: var(--tinta-suave);
+}
+
+/*
+ * A folha. É o gesto central do desenho: o conteúdo vive sobre uma superfície
+ * clara e elevada, e não solto no fundo.
+ */
+#conteudo {
+  padding: 2rem 1.85rem 2.25rem;
+  border-radius: var(--curva);
+  background: var(--folha);
+  box-shadow: var(--relevo-2);
+}
+
+:root[data-contraste='alto'] #conteudo {
+  border: 3px solid var(--borda);
 }
 
 .rodape {
-  margin-top: 4rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--borda);
-  color: var(--texto-suave);
-  font-size: 0.9rem;
+  margin-top: 2.5rem;
+  padding: 0 0.5rem;
+  color: var(--tinta-suave);
+  font-size: 0.92rem;
+  text-align: center;
 }
 
 /* ------------------------------------------------------ acessibilidade --- */
@@ -271,8 +359,8 @@ body {
 }
 
 .barra-acessibilidade .botao {
-  min-height: 2.6rem;
-  padding: 0.35rem 0.7rem;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.85rem;
   font-size: 0.9rem;
 }
 
@@ -281,45 +369,49 @@ body {
 .rotulo,
 .rotulo-do-grupo {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.82rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  /* Versalete espaçado: o rótulo se afasta do conteúdo pela forma, e não por
-     mais uma cor ou mais um peso. */
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--texto-suave);
+  letter-spacing: 0.1em;
+  color: var(--tinta-suave);
 }
 
 .campo {
   display: block;
   width: 100%;
-  min-height: 7rem;
-  padding: 0.9rem 1rem;
-  border: 2px solid var(--borda-forte);
-  border-radius: var(--raio);
-  background: var(--superficie);
-  color: var(--texto);
+  min-height: 7.5rem;
+  padding: 1rem 1.15rem;
+  border: 2px solid var(--borda-controle);
+  border-radius: var(--curva-p);
+  background: var(--areia);
+  color: var(--tinta);
   font-family: var(--legivel);
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   line-height: 1.6;
   resize: vertical;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .campo::placeholder {
-  color: var(--texto-suave);
-  opacity: 0.75;
+  color: var(--tinta-suave);
+  opacity: 0.8;
+}
+
+.campo:hover {
+  border-color: var(--borda-forte);
 }
 
 .campo:focus-visible {
-  border-color: var(--primaria);
-  outline-offset: 0;
+  border-color: var(--marca-viva);
+  background: var(--folha);
+  outline-offset: 1px;
 }
 
 .dica {
-  margin: 0.5rem 0 1.5rem;
-  font-size: 0.88rem;
-  color: var(--texto-suave);
+  margin: 0.6rem 0 1.75rem;
+  font-size: 0.9rem;
+  color: var(--tinta-suave);
 }
 
 .grupo-de-opcoes {
@@ -327,12 +419,12 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .rotulo-do-grupo {
   width: 100%;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.2rem;
 }
 
 /* -------------------------------------------------------------- botões --- */
@@ -341,83 +433,106 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   min-height: var(--alvo-minimo);
-  padding: 0.6rem 1.1rem;
-  border: 2px solid var(--borda-forte);
-  border-radius: var(--raio);
-  background: var(--superficie);
-  color: var(--texto);
+  padding: 0.65rem 1.25rem;
+  border: 2px solid var(--borda-controle);
+  /* Pílula: a curva total é o que mais separa esta interface de um
+     formulário administrativo, e é lida como convite. */
+  border-radius: 999px;
+  background: var(--folha);
+  color: var(--tinta);
   font-family: var(--legivel);
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.2;
   cursor: pointer;
-  transition: background-color 0.12s ease, border-color 0.12s ease;
+  box-shadow: var(--relevo-1);
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .botao:hover:not(:disabled) {
-  border-color: var(--primaria);
-  background: var(--primaria-clara);
+  border-color: var(--marca-viva);
+  background: var(--marca-tenue);
+  /* Sobe um fio de nada. Suficiente para responder ao ponteiro, curto
+     demais para distrair quem só passou por cima. */
+  transform: translateY(-1px);
+  box-shadow: var(--relevo-2);
+}
+
+.botao:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--relevo-1);
 }
 
 /*
- * Estado ligado marcado por cor CHEIA e não por borda: quem não distingue
- * bem as cores precisa perceber a diferença pelo peso visual, e o
- * preenchimento resolve isso sem depender do matiz.
+ * Estado ligado por cor CHEIA, e não por borda: quem não distingue bem as
+ * cores precisa perceber a diferença pelo peso visual, e o preenchimento
+ * resolve isso sem depender do matiz.
  */
 .botao[aria-pressed='true'] {
-  background: var(--primaria);
-  border-color: var(--primaria);
-  color: var(--primaria-texto);
+  background: var(--marca);
+  border-color: var(--marca);
+  color: var(--marca-texto);
+}
+
+.botao[aria-pressed='true']:hover:not(:disabled) {
+  background: var(--marca-viva);
+  border-color: var(--marca-viva);
 }
 
 /*
- * Desabilitado por cor neutra, e não por opacidade.
- *
- * `opacity: 0.45` é o jeito habitual e é ruim aqui: ele lava o texto junto
- * com o fundo, e "Explicar" em branco sobre verde a 45% fica quase ilegível.
- * Um botão indisponível ainda precisa ser lido, porque é lendo que a pessoa
- * entende que falta preencher alguma coisa. Fundo neutro com texto escuro
- * comunica "não dá para clicar agora" sem sacrificar a leitura.
+ * Desabilitado por cor neutra, e não por opacidade. `opacity` lava o texto
+ * junto com o fundo, e um botão indisponível ainda precisa ser lido: é
+ * lendo que a pessoa entende que falta preencher alguma coisa.
  */
 .botao:disabled {
-  background: var(--papel);
-  border-color: var(--borda);
-  color: var(--texto-suave);
+  background: var(--areia-funda);
+  border-color: var(--borda-controle);
+  color: var(--tinta-suave);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .botao-principal {
   width: 100%;
-  min-height: 3.4rem;
-  background: var(--primaria);
-  border-color: var(--primaria);
-  color: var(--primaria-texto);
-  font-size: 1.1rem;
+  min-height: 3.6rem;
+  background: var(--marca);
+  border-color: var(--marca);
+  color: var(--marca-texto);
+  font-size: 1.15rem;
+  box-shadow: var(--relevo-2);
 }
 
 .botao-principal:hover:not(:disabled) {
-  background: var(--primaria);
-  filter: brightness(1.12);
+  background: var(--marca-viva);
+  border-color: var(--marca-viva);
+  box-shadow: var(--relevo-3);
 }
 
 .botao-catalogo {
   width: 100%;
-  margin-top: 0.75rem;
-  border-style: dashed;
+  margin-top: 0.85rem;
   background: transparent;
+  border-color: var(--borda-controle);
+  border-style: dashed;
+  box-shadow: none;
   font-size: 1rem;
+}
+
+.botao-catalogo:hover:not(:disabled) {
+  border-style: solid;
 }
 
 /* --------------------------------------------------------- mensagens --- */
 
 .mensagem {
-  margin: 1.5rem 0;
-  padding: 1rem 1.15rem;
+  margin: 1.75rem 0;
+  padding: 1.15rem 1.3rem;
   border: 1px solid var(--borda);
-  border-radius: var(--raio);
-  background: var(--superficie);
+  border-radius: var(--curva-p);
+  background: var(--areia);
 }
 
 .mensagem-erro {
@@ -429,14 +544,14 @@ body {
 .aviso-offline {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  margin-bottom: 1.25rem;
-  padding: 0.85rem 1.1rem;
-  /* Barra na lateral em vez de fundo colorido inteiro: avisa sem competir
-     com a resposta, que é o que a pessoa veio ler. */
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+  padding: 0.95rem 1.2rem;
+  /* Barra na lateral em vez de fundo cheio: avisa sem competir com a
+     resposta, que é o que a pessoa veio ler. */
   border-left: 6px solid var(--marcador-borda);
-  border-radius: 0 var(--raio) var(--raio) 0;
-  background: var(--superficie);
+  border-radius: 0 var(--curva-p) var(--curva-p) 0;
+  background: var(--areia-funda);
   font-weight: 700;
 }
 
@@ -444,124 +559,149 @@ body {
   margin-top: 0.2em;
 }
 
-.catalogo-seta {
-  display: inline-flex;
-  align-items: center;
-}
-
 /* ------------------------------------------------- texto com marcações --- */
 
+[role='status'] h2 {
+  margin: 2rem 0 1rem;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variation-settings: 'SOFT' 60, 'opsz' 40;
+  letter-spacing: -0.015em;
+}
+
 .texto-analisado {
-  margin: 1.25rem 0 2rem;
-  padding: 1.15rem 1.25rem;
-  border: 1px solid var(--borda);
-  border-radius: var(--raio);
-  background: var(--superficie);
-  font-size: 1.05rem;
-  line-height: 2;
+  margin: 0 0 2rem;
+  padding: 1.35rem 1.4rem;
+  border-radius: var(--curva-p);
+  background: var(--areia);
+  font-size: 1.08rem;
+  /* Entrelinha alta: as marcações têm altura própria e sem folga elas
+     encostariam umas nas outras entre as linhas. */
+  line-height: 2.1;
   /* Preserva as quebras da conversa colada: um print de conversa perde o
      sentido quando vira um parágrafo corrido. */
   white-space: pre-wrap;
   overflow-wrap: break-word;
 }
 
+:root[data-contraste='alto'] .texto-analisado {
+  border: 2px solid var(--borda);
+}
+
 /*
  * A gíria marcada dentro da frase.
  *
- * É um marca-texto de verdade: fundo amarelo e um traço embaixo, como quem
- * passou a caneta. Não é um botão com cara de botão porque o texto precisa
- * continuar sendo lido como texto; o que ele precisa mostrar é que aquilo
- * ali é clicável.
+ * Marca-texto de verdade: fundo amarelo com um traço embaixo, como quem
+ * passou a caneta. Continua sendo texto, porque o parágrafo precisa continuar
+ * legível como parágrafo; o que ele precisa mostrar é que ali dá para tocar.
  */
 .giria-marcada {
-  padding: 0.1em 0.2em;
+  padding: 0.12em 0.3em;
   border: 0;
   border-bottom: 3px solid var(--marcador-borda);
-  border-radius: 3px 3px 0 0;
+  border-radius: 5px 5px 2px 2px;
   background: var(--marcador);
   color: #1a1400;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+  transition: filter 0.12s ease;
+}
+
+.giria-marcada:hover {
+  filter: brightness(1.06);
 }
 
 /*
- * Termo de atenção: além do amarelo, ganha um contorno vermelho tracejado.
- * A diferença NÃO pode ser só a cor. Quem não distingue vermelho de amarelo
- * precisa ver a diferença pela textura da borda, e é ela que carrega o
- * aviso que o Roberto precisa perceber.
+ * Termo de atenção: além do amarelo, contorno vermelho tracejado. A
+ * diferença NÃO pode ser só a cor. Quem não distingue vermelho de amarelo
+ * precisa vê-la pela textura da borda, e é ela que carrega o aviso que o
+ * Roberto precisa perceber.
  */
 .giria-marcada[data-risco='true'] {
   border: 2px dashed var(--risco-borda);
   border-bottom-width: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .giria-marcada[aria-expanded='true'] {
-  outline: 3px solid var(--primaria);
-  outline-offset: 1px;
+  outline: 3px solid var(--marca-viva);
+  outline-offset: 2px;
 }
 
 /* --------------------------------------------------------- o verbete --- */
 
 /*
- * O cartão de uma gíria. É a peça central da tela e a que mais se afasta do
- * cartão genérico: sem sombra, sem borda em volta inteira, e com um filete
- * grosso na esquerda que funciona como a margem de um verbete impresso.
+ * O cartão de uma gíria. É a peça central da tela: bilhete arredondado com
+ * relevo próprio e um filete da marca na esquerda, que é o que amarra o
+ * cartão ao resto do desenho sem precisar de moldura em volta inteira.
  */
 .cartao {
-  margin: 0 0 1.5rem;
-  padding: 0.25rem 0 0.25rem 1.15rem;
-  border-left: 4px solid var(--primaria);
+  position: relative;
+  margin: 0 0 1.15rem;
+  padding: 1.25rem 1.4rem 1.35rem;
+  border-radius: var(--curva);
+  background: var(--folha);
+  box-shadow: var(--relevo-1);
+  border-left: 5px solid var(--marca);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.cartao:hover {
+  box-shadow: var(--relevo-2);
+}
+
+:root[data-contraste='alto'] .cartao {
+  border: 3px solid var(--borda);
+  border-left-width: 8px;
 }
 
 .cartao-titulo {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin: 0 0 0.5rem;
-  font-family: var(--serifa);
-  font-size: 1.7rem;
+  margin: 0 0 0.65rem;
+  font-family: var(--display);
+  font-size: 1.85rem;
   font-weight: 600;
+  font-variation-settings: 'SOFT' 60, 'opsz' 60;
   line-height: 1.15;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
 .cartao-titulo .botao {
-  min-height: 2.4rem;
-  padding: 0.3rem 0.7rem;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.85rem;
   font-family: var(--legivel);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
 
 .explicacao {
-  margin: 0 0 0.6rem;
-  font-size: 1.05rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.08rem;
 }
 
 /*
  * O equivalente formal, como glosa.
  *
- * A primeira versão trazia um "≈" antes, que é a convenção lexicográfica
- * para "o mesmo que". Ficou redundante na tela: lia-se "≈ Em outras
- * palavras: cara". Entre o símbolo e a frase em português, fica a frase: o
- * público deste produto é quem tem dificuldade com texto, e um símbolo a
- * decifrar é o oposto do que ele veio buscar.
- *
- * A textura de dicionário fica por conta do recuo e do filete, que
- * estruturam sem pedir nada de quem lê.
+ * Chegou a levar um "≈" antes, que é a convenção lexicográfica para "o mesmo
+ * que". Ficou redundante: lia-se "≈ Em outras palavras: cara". Entre o
+ * símbolo e a frase em português, fica a frase. O público deste produto é
+ * quem tem dificuldade com texto, e um símbolo a decifrar é o oposto do que
+ * ele veio buscar. A estrutura fica por conta do recuo e do filete.
  */
 .equivalente {
-  margin: 0 0 0.5rem;
-  padding-left: 0.85rem;
-  border-left: 3px solid var(--primaria-clara);
-  color: var(--texto-suave);
+  margin: 0;
+  padding: 0.35rem 0 0.35rem 0.9rem;
+  border-left: 3px solid var(--marca-tenue);
+  color: var(--tinta-suave);
 }
 
 .equivalente strong {
-  color: var(--texto);
+  color: var(--tinta);
   font-weight: 700;
 }
 
@@ -569,16 +709,14 @@ body {
 
 .etiqueta {
   display: inline-block;
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.7rem;
   border: 2px solid var(--borda-forte);
   border-radius: 999px;
-  background: var(--superficie);
-  color: var(--texto);
+  background: var(--areia);
+  color: var(--tinta);
   font-size: 0.78rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .etiqueta-risco,
@@ -586,35 +724,34 @@ body {
   background: var(--risco-fundo);
   border-color: var(--risco-borda);
   color: var(--risco-texto);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .etiqueta-ia {
   background: var(--ia-fundo);
   border-color: var(--ia-borda);
   color: var(--ia-texto);
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 /*
  * O aviso de termo de atenção. É a informação mais importante que esta tela
  * dá, e por isso é a única caixa com fundo cheio e borda em volta inteira.
- * Todo o resto do design cede espaço para ela poder gritar quando aparece.
+ * Todo o resto do desenho cede espaço para ela poder gritar quando aparece.
  */
 .aviso-risco {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  margin: 0.9rem 0 0;
-  padding: 0.85rem 1.1rem;
+  gap: 0.7rem;
+  margin: 1rem 0 0;
+  padding: 0.95rem 1.2rem;
   background: var(--risco-fundo);
   border: 2px solid var(--risco-borda);
-  border-radius: var(--raio);
+  border-radius: var(--curva-p);
   color: var(--risco-texto);
   font-weight: 700;
 }
 
-/* O ícone alinha com a primeira linha do texto, não com o centro do bloco. */
 .aviso-risco svg {
   margin-top: 0.2em;
 }
@@ -626,17 +763,23 @@ body {
   /* Teto com rolagem por dentro: num telefone deitado a janela cresceria
      além da tela e o botão de fechar sairia de alcance. */
   max-height: 88vh;
-  padding: 1.25rem;
-  border: 2px solid var(--borda-forte);
-  border-radius: var(--raio);
-  background: var(--papel);
-  color: var(--texto);
+  padding: 1.5rem;
+  border: none;
+  border-radius: var(--curva);
+  background: var(--folha);
+  color: var(--tinta);
+  box-shadow: var(--relevo-3);
   overflow-y: auto;
   overscroll-behavior: contain;
 }
 
+:root[data-contraste='alto'] .catalogo {
+  border: 3px solid var(--borda);
+}
+
 .catalogo::backdrop {
-  background: rgba(10, 22, 16, 0.68);
+  background: rgba(10, 24, 27, 0.55);
+  backdrop-filter: blur(3px);
 }
 
 .catalogo-cabecalho {
@@ -644,42 +787,50 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  /* Continua visível ao rolar a lista: a saída não pode depender de rolar
-     de volta até o topo. */
+  /* Continua visível ao rolar: a saída não pode depender de rolar de volta
+     até o topo. */
   position: sticky;
-  top: -1.25rem;
-  margin: -1.25rem -1.25rem 0;
-  padding: 1.25rem;
-  background: var(--papel);
-  border-bottom: 3px double var(--borda-forte);
+  top: -1.5rem;
+  margin: -1.5rem -1.5rem 0;
+  padding: 1.5rem;
+  background: var(--folha);
+  border-bottom: 1px solid var(--borda);
+  z-index: 1;
 }
 
 .catalogo-cabecalho h2 {
   margin: 0;
-  font-family: var(--serifa);
-  font-size: 1.5rem;
+  font-family: var(--display);
+  font-size: 1.6rem;
   font-weight: 600;
+  font-variation-settings: 'SOFT' 60, 'opsz' 60;
+  letter-spacing: -0.015em;
 }
 
 .catalogo-explicacao {
-  margin: 1rem 0;
-  color: var(--texto-suave);
+  margin: 1.15rem 0;
+  color: var(--tinta-suave);
 }
 
 .catalogo-assuntos {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .chip {
-  min-height: 2.75rem;
-  padding: 0.45rem 0.8rem;
+  min-height: 2.8rem;
+  padding: 0.5rem 0.9rem;
   border-width: 1px;
-  border-radius: 999px;
-  font-size: 0.9rem;
+  background: var(--areia);
+  box-shadow: none;
+  font-size: 0.92rem;
   font-weight: 400;
+}
+
+.chip:hover:not(:disabled) {
+  box-shadow: var(--relevo-1);
 }
 
 .chip[aria-pressed='true'] {
@@ -688,8 +839,8 @@ body {
 
 .chip-contagem {
   display: inline-block;
-  margin-left: 0.4rem;
-  color: var(--texto-suave);
+  margin-left: 0.45rem;
+  color: var(--tinta-suave);
   font-size: 0.85rem;
   /* Dígitos de largura fixa: as contagens ficam alinhadas entre os chips em
      vez de dançarem conforme o número. */
@@ -697,7 +848,7 @@ body {
 }
 
 .botao[aria-pressed='true'] .chip-contagem {
-  color: var(--primaria-texto);
+  color: var(--marca-texto);
   opacity: 0.85;
 }
 
@@ -705,32 +856,39 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--borda);
 }
 
 .catalogo-item {
   border-bottom: 1px solid var(--borda);
 }
 
+.catalogo-item:last-child {
+  border-bottom: none;
+}
+
 .catalogo-termo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   width: 100%;
   min-height: var(--alvo-minimo);
-  padding: 0.7rem 0.25rem;
+  padding: 0.8rem 0.6rem;
   border: none;
+  border-radius: var(--curva-p);
   background: none;
   color: inherit;
-  font-family: var(--serifa);
-  font-size: 1.2rem;
+  font-family: var(--display);
+  font-size: 1.25rem;
   font-weight: 600;
+  font-variation-settings: 'SOFT' 60, 'opsz' 40;
   text-align: left;
   cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .catalogo-termo:hover {
-  color: var(--primaria);
+  background: var(--marca-tenue);
+  color: var(--marca);
 }
 
 .catalogo-termo-texto {
@@ -738,58 +896,61 @@ body {
 }
 
 .catalogo-seta {
-  color: var(--texto-suave);
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--tinta-suave);
 }
 
 .catalogo-detalhe {
-  padding: 0 0.25rem 1.25rem;
-  /* Recuo, como o corpo de um verbete sob a palavra-chave. */
-  border-left: 3px solid var(--primaria-clara);
-  padding-left: 0.9rem;
-  margin-left: 0.25rem;
+  margin: 0 0 1rem 0.6rem;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 3px solid var(--marca-tenue);
 }
 
 .catalogo-origem {
-  margin: 0.5rem 0;
-  color: var(--texto-suave);
+  margin: 0.6rem 0;
+  color: var(--tinta-suave);
   font-style: italic;
 }
 
 .catalogo-exemplos {
-  margin: 0.6rem 0;
-  padding-left: 1.1rem;
-  color: var(--texto-suave);
+  margin: 0.7rem 0;
+  padding-left: 1.2rem;
+  color: var(--tinta-suave);
 }
 
 .catalogo-exemplos li {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
 }
 
 .catalogo-exemplos q {
-  color: var(--texto);
+  color: var(--tinta);
   font-style: italic;
 }
 
 .catalogo-variacoes {
-  margin: 0.6rem 0 0;
-  font-size: 0.9rem;
-  color: var(--texto-suave);
+  margin: 0.7rem 0 0;
+  font-size: 0.92rem;
+  color: var(--tinta-suave);
 }
 
 .catalogo-detalhe .botao {
-  margin-top: 0.8rem;
-  min-height: 2.6rem;
-  padding: 0.35rem 0.8rem;
+  margin-top: 0.9rem;
+  min-height: 2.7rem;
+  padding: 0.4rem 0.9rem;
   font-family: var(--legivel);
   font-size: 0.85rem;
 }
 
-/* ---------------------------------------------------------- telas estreitas --- */
+/* -------------------------------------------------------- telas estreitas --- */
 
-@media (max-width: 30rem) {
+@media (max-width: 34rem) {
   .pagina {
-    padding: 1rem 0.9rem 3rem;
+    padding: 1.5rem 0.85rem 3rem;
+  }
+
+  #conteudo {
+    padding: 1.5rem 1.15rem 1.75rem;
   }
 
   .cabecalho {
@@ -797,10 +958,15 @@ body {
        de 48px derrotaria a própria função dela. */
     flex-direction: column;
     align-items: flex-start;
+    gap: 1.15rem;
   }
 
   .marca {
-    font-size: 1.85rem;
+    font-size: 2.15rem;
+  }
+
+  .cartao-titulo {
+    font-size: 1.55rem;
   }
 
   .catalogo {
@@ -809,7 +975,6 @@ body {
     max-height: 100vh;
     height: 100vh;
     margin: 0;
-    border: none;
     border-radius: 0;
   }
 }
