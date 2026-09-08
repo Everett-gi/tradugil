@@ -19,7 +19,7 @@ acompanha a velocidade com que a linguagem online muda.
 |------|---------|----------|
 | F0 | Monorepo, esquema, API de consulta | Pronta, rodando contra o Neon com 1.024 verbetes |
 | F1 | PWA instalável, lógica compartilhada, cascata com IA, catálogo, extensão de navegador | Pronta; falta o nível 3 da cascata |
-| F2 | Android: bolha flutuante, OCR local, Modo Família | App compila com dicionário offline; falta a leitura de tela |
+| F2 | Android: bolha flutuante, OCR local, Modo Família | Recebe texto compartilhado e selecionado, sem permissão nenhuma; falta a leitura de tela |
 
 Nada disso está no ar ainda: falta um servidor, que é o item 3 do
 [passo a passo](PASSO-A-PASSO.md).
@@ -301,6 +301,18 @@ inclusive o que ela vê e o que envia, em
 [`extension/PRIVACIDADE.md`](extension/PRIVACIDADE.md).
 
 ## Rodando o Android
+
+**Duas portas de entrada, e nenhuma delas pede permissão.** O Tradugil
+aparece no "Compartilhar" de qualquer aplicativo, e também no menu que surge
+ao selecionar texto na tela, junto de "Copiar". Nos dois casos quem entrega o
+texto é o sistema, porque a pessoa pediu, e o app não enxerga nada além do
+que foi selecionado.
+
+Esse é o caminho mais curto do produto: sem trocar de aplicativo, sem copiar
+e colar. Ler a tela por conta própria exigiria o `AccessibilityService`, que
+é a permissão que aplicativos maliciosos mais abusam e a que mais faz um APK
+de fora da loja parecer suspeito. Ver
+[`docs/SEGURANCA.md`](docs/SEGURANCA.md).
 
 Abra a pasta `android/` no Android Studio. As instruções completas (versões,
 assinatura do APK e o que ainda falta) estão em

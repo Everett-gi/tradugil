@@ -17,7 +17,8 @@ data class EstadoDaTela(
     val consultando: Boolean = false,
     val nivel: NivelDeExplicacao = NivelDeExplicacao.SIMPLES,
     /**
-     * Ligado por padrão. A escolha protege o caso em que errar custa caro (* uma criança recebendo conteúdo impróprio) em vez do caso em que errar
+     * Ligado por padrão. A escolha protege o caso em que errar custa caro
+     * (uma criança recebendo conteúdo impróprio) em vez do caso em que errar
      * apenas incomoda.
      */
     val modoFamilia: Boolean = true,
@@ -39,8 +40,16 @@ class PrincipalViewModel(private val repositorio: RepositorioDeTraducao) : ViewM
 
     fun alternarModoFamilia() = _estado.update { it.copy(modoFamilia = !it.modoFamilia) }
 
-    /** Texto que chegou pela folha de compartilhamento de outro aplicativo. */
-    fun receberCompartilhado(texto: String) {
+    /**
+     * Texto que chegou de outro aplicativo: compartilhado, ou selecionado na
+     * tela e enviado pelo menu do sistema.
+     *
+     * Consulta na hora, sem esperar toque nenhum. Quem chegou por este
+     * caminho ja disse o que queria ao escolher o Tradugil no menu; pedir
+     * mais um toque seria repetir a pergunta que a pessoa acabou de
+     * responder.
+     */
+    fun receberDeFora(texto: String) {
         _estado.update { it.copy(texto = texto) }
         consultar()
     }

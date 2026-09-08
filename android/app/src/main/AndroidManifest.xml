@@ -11,9 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Tradugil">
 
+        <!--
+            launchMode singleTop: com o app ja aberto, uma nova selecao de
+            texto reaproveita esta instancia e cai no onNewIntent, em vez de
+            empilhar outra copia por cima. Sem isto, selecionar duas vezes
+            seguidas deixaria duas telas do Tradugil na pilha, e o botao
+            "voltar" mostraria a resposta antiga como se fosse a nova.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:label="@string/nome_do_app"
             android:windowSoftInputMode="adjustResize">
 
