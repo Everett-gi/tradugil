@@ -1203,3 +1203,90 @@ body {
   padding: 0.4rem 0.9rem;
   font-size: 0.9rem;
 }
+
+/* ------------------------------ o que o dicionario ja diz, na moderacao --- */
+
+/*
+ * As duas etiquetas de estado do termo na fila. Nao usam cor de alerta de
+ * proposito: nenhuma das duas e problema, sao informacao. "Ja no dicionario"
+ * pede atencao redobrada com o texto proposto; "termo novo" pede atencao com
+ * a prateleira. Cor de risco aqui treinaria a pessoa a ignorar a cor de risco
+ * onde ela significa risco de verdade.
+ */
+.etiqueta-existe {
+  background: var(--marca-tenue);
+  border-color: var(--marca);
+  color: var(--marca);
+}
+
+.etiqueta-novo {
+  background: var(--areia-funda);
+}
+
+/*
+ * Os sentidos ja publicados. Dentro de <details> fechado por padrao: a
+ * comparacao importa, mas abrir tres explicacoes longas em cada linha faria
+ * a fila ficar impossivel de percorrer. Um clique para ver, e a contagem
+ * aparece no resumo para a pessoa saber se vale abrir.
+ */
+.ja-existe {
+  margin-top: 0.9rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--borda);
+  border-radius: var(--curva-p);
+  background: var(--areia);
+}
+
+.ja-existe > summary {
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--marca);
+  cursor: pointer;
+}
+
+.ja-existe-lista {
+  margin: 0.75rem 0 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.ja-existe .dica {
+  margin-top: 0.75rem;
+}
+
+/*
+ * A escolha da prateleira. Fica ACIMA do aprovar, e nao ao lado: e uma
+ * decisao que precisa ser tomada antes, e o botao fica desabilitado ate ela
+ * existir. Ao lado, a pessoa tentaria clicar em aprovar primeiro.
+ */
+.prateleira {
+  margin-top: 1.1rem;
+}
+
+/*
+ * O <select> herda .campo, que e a caixa de texto alta do formulario
+ * principal, e por isso precisa desfazer a altura e a seta nativa: um select
+ * de 7,5 rem de altura com o texto colado no topo fica ilegivel.
+ */
+.prateleira select.campo {
+  min-height: var(--alvo-minimo);
+  margin-bottom: 0.5rem;
+  padding-right: 2.75rem;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--tinta) 50%),
+    linear-gradient(135deg, var(--tinta) 50%, transparent 50%);
+  background-position: right 1.25rem center, right 1rem center;
+  background-size: 0.4rem 0.4rem, 0.4rem 0.4rem;
+  background-repeat: no-repeat;
+}
+
+.prateleira .dica {
+  margin-top: 0;
+}

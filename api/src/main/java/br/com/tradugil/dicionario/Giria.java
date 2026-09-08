@@ -117,6 +117,23 @@ public class Giria {
     }
 
     /**
+     * Põe o verbete numa prateleira do catálogo.
+     *
+     * <p>Idempotente de propósito. A moderação escolhe a categoria a cada
+     * aprovação, e um termo que já existe recebe sentidos novos ao longo do
+     * tempo: sem a checagem, o segundo sentido aprovado na mesma prateleira
+     * inseriria a linha de ligação duas vezes e o verbete apareceria
+     * repetido dentro da própria categoria.</p>
+     */
+    public void entrarNaPrateleira(Categoria categoria) {
+        boolean jaEsta = categorias.stream()
+                .anyMatch(c -> c.getId().equals(categoria.getId()));
+        if (!jaEsta) {
+            categorias.add(categoria);
+        }
+    }
+
+    /**
      * Definições publicáveis, da mais útil para a menos útil.
      *
      * <p>A ordenação por votos é o que faz o dicionário melhorar sozinho: o

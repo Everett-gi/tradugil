@@ -104,6 +104,19 @@ Aprovar **publica**: cria o verbete com as chaves de busca calculadas e a
 explicação marcada como vinda da **comunidade**, e não da curadoria. A origem
 aparece na tela, e é o que permite a quem lê calibrar a confiança.
 
+Quem modera vê, ao lado de cada proposta, o que o dicionário já diz sobre
+aquele termo: os sentidos já publicados e as prateleiras em que ele está.
+Antes a tela mostrava termo, idioma e o texto proposto, e nada mais, e foi
+assim que o dicionário ganhou explicações repetidas que precisaram de duas
+migrações para limpar.
+
+**A prateleira do catálogo é escolhida na aprovação.** O verbete da
+comunidade nascia sem categoria: era encontrado pela busca e nunca aparecia
+no catálogo, que é por onde chega quem não sabe o que procurar. Adivinhar a
+categoria pelo texto foi descartado, porque prateleira errada manda a pessoa
+procurar no lugar errado e ainda parece que funcionou. A regra olha o
+resultado: só é exigida quando o verbete ficaria sem nenhuma.
+
 O primeiro administrador vem de `TRADUGIL_ADMIN_INICIAL`, e não de um
 endpoint: promover exige ser administrador, então sem alguém vindo de fora
 ninguém nunca seria promovido. Ele só promove uma conta que já existe, nunca

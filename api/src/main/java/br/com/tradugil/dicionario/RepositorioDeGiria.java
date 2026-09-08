@@ -16,6 +16,17 @@ public interface RepositorioDeGiria extends JpaRepository<Giria, Long> {
     List<Giria> findByTermoNormalizado(String termoNormalizado);
 
     /**
+     * Os verbetes de um conjunto de termos, numa consulta so.
+     *
+     * <p>Existe para a fila de moderacao. Ela mostra, ao lado de cada
+     * proposta, o que o dicionario ja diz sobre aquele termo; buscar um por
+     * um seriam ate cem idas ao banco para desenhar uma tela, que e a mesma
+     * forma de N+1 que ja custou 1,97 s numa pagina de catalogo antes do
+     * lote de carregamento entrar no application.yml.</p>
+     */
+    List<Giria> findByTermoNormalizadoIn(Collection<String> termosNormalizados);
+
+    /**
      * Resolve o texto inteiro numa consulta só.
      *
      * <p>O {@code /traduzir} recebe uma conversa colada e precisa checar

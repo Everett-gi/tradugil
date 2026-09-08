@@ -5,8 +5,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RepositorioDeCategoria extends JpaRepository<Categoria, Short> {
+
+    /**
+     * Uma prateleira pelo slug.
+     *
+     * <p>Pelo slug, e nao pelo id: o id e detalhe de armazenamento e muda
+     * entre bancos; o slug e o que aparece na URL do catalogo, no pacote
+     * offline e no que a moderacao envia. Quem escolhe a prateleira ao
+     * aprovar manda "gaming", nunca um numero.</p>
+     */
+    Optional<Categoria> findBySlug(String slug);
 
     /**
      * Categorias com quantos verbetes cada uma tem, para o catálogo.

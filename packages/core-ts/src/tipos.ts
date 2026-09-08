@@ -149,4 +149,40 @@ export interface DecisaoDeModeracao {
   aprovar: boolean;
   /** Obrigatório na rejeição: sem ele, quem contribuiu não aprende nada. */
   motivo?: string;
+  /**
+   * Slug da prateleira do catálogo, na aprovação.
+   *
+   * Obrigatório quando o verbete resultante ficaria sem nenhuma: sem
+   * prateleira ele é encontrado pela busca e some do catálogo, que é por onde
+   * chega quem não sabe o que procurar.
+   */
+  categoria?: string;
+}
+
+/**
+ * O que o dicionário já tem para o termo de uma proposta.
+ *
+ * Existe para quem modera não decidir no escuro. Sem isto a tela mostrava
+ * termo, idioma e texto proposto, e nada mais: aprovar sem saber que o
+ * verbete já existe com três sentidos, um deles dizendo quase a mesma coisa,
+ * é como o dicionário ganhou explicações repetidas antes.
+ */
+export interface VerbeteExistente {
+  /** As explicações já publicadas, para a comparação ser imediata. */
+  sentidos: string[];
+  /**
+   * Slugs das prateleiras onde o verbete já está. Vazio significa que ele
+   * existe e não aparece no catálogo, e a aprovação vai exigir uma escolha.
+   */
+  categorias: string[];
+}
+
+/** Uma linha da fila de moderação. `noDicionario` nulo é termo novo. */
+export interface ItemDaFila {
+  id: number;
+  termo: string;
+  idioma: string;
+  explicacaoProposta: string;
+  criadoEm: string;
+  noDicionario: VerbeteExistente | null;
 }

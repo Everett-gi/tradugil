@@ -1,6 +1,7 @@
 import type {
   CategoriaResumo,
   ContribuicaoResposta,
+  ItemDaFila,
   Credenciais,
   DecisaoDeModeracao,
   ErroDaApi,
@@ -169,8 +170,8 @@ export class ClienteTradugil {
 
   /* --------------------------------------------------------- moderacao --- */
 
-  async filaDeModeracao(token: string): Promise<ContribuicaoResposta[]> {
-    return this.requisitar<ContribuicaoResposta[]>('/moderacao/contribuicoes', {
+  async filaDeModeracao(token: string): Promise<ItemDaFila[]> {
+    return this.requisitar<ItemDaFila[]>('/moderacao/contribuicoes', {
       headers: { Authorization: `Bearer ${token}` },
     });
   }

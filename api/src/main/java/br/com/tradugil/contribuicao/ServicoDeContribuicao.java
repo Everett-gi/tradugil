@@ -5,12 +5,15 @@ import br.com.tradugil.comum.erro.RegraDeNegocioException;
 import br.com.tradugil.contribuicao.Contribuicao.StatusDeContribuicao;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.ContribuicaoResposta;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.DecisaoDeModeracao;
+import br.com.tradugil.contribuicao.ContribuicaoDtos.ItemDaFila;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.NovaContribuicao;
+import br.com.tradugil.dicionario.Categoria;
 import br.com.tradugil.dicionario.Definicao;
 import br.com.tradugil.dicionario.Fonte;
 import br.com.tradugil.dicionario.Fonte.TipoDeFonte;
 import br.com.tradugil.dicionario.Giria;
 import br.com.tradugil.dicionario.Idioma;
+import br.com.tradugil.dicionario.RepositorioDeCategoria;
 import br.com.tradugil.dicionario.RepositorioDeDefinicao;
 import br.com.tradugil.dicionario.RepositorioDeFonte;
 import br.com.tradugil.dicionario.RepositorioDeGiria;
@@ -23,6 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicoDeContribuicao {
@@ -43,6 +50,7 @@ public class ServicoDeContribuicao {
     private final RepositorioDeGiria repositorioDeGiria;
     private final RepositorioDeDefinicao repositorioDeDefinicao;
     private final RepositorioDeFonte repositorioDeFonte;
+    private final RepositorioDeCategoria repositorioDeCategoria;
     private final org.springframework.cache.CacheManager gerenciadorDeCache;
 
     public ServicoDeContribuicao(RepositorioDeContribuicao repositorio,
@@ -52,6 +60,7 @@ public class ServicoDeContribuicao {
                                  RepositorioDeGiria repositorioDeGiria,
                                  RepositorioDeDefinicao repositorioDeDefinicao,
                                  RepositorioDeFonte repositorioDeFonte,
+                                 RepositorioDeCategoria repositorioDeCategoria,
                                  org.springframework.cache.CacheManager gerenciadorDeCache) {
         this.repositorio = repositorio;
         this.auditoria = auditoria;
@@ -60,6 +69,7 @@ public class ServicoDeContribuicao {
         this.repositorioDeGiria = repositorioDeGiria;
         this.repositorioDeDefinicao = repositorioDeDefinicao;
         this.repositorioDeFonte = repositorioDeFonte;
+        this.repositorioDeCategoria = repositorioDeCategoria;
         this.gerenciadorDeCache = gerenciadorDeCache;
     }
 
@@ -100,15 +110,53 @@ public class ServicoDeContribuicao {
                 .toList();
     }
 
+    /**
+     * A fila, com o que o dicionário já diz sobre cada termo proposto.
+     *
+     * <h2>Uma consulta, e não uma por linha</h2>
+     *
+     * <p>Cada item precisa saber se o termo já existe. Buscar um a um seriam
+     * até cem idas ao banco para desenhar uma tela, que é a mesma forma de
+     * N+1 que já custou 1,97 s numa página de catálogo. Os termos vão todos
+     * num {@code IN} e o casamento acontece em memória.</p>
+     *
+     * <p>O casamento é por termo normalizado <b>e</b> idioma, e os dois
+     * importam: "feed" existe nos dois idiomas com sentidos diferentes, e
+     * casar só pelo termo mostraria ao moderador o verbete errado, que é pior
+     * do que não mostrar nada.</p>
+     */
     @Transactional(readOnly = true)
-    public List<ContribuicaoResposta> fila(StatusDeContribuicao status, int pagina, int tamanho) {
+    public List<ItemDaFila> fila(StatusDeContribuicao status, int pagina, int tamanho) {
         StatusDeContribuicao filtro = status == null ? StatusDeContribuicao.PENDENTE : status;
-        return repositorio
+        List<Contribuicao> pendentes = repositorio
                 .findByStatusOrderByCriadoEm(filtro, PageRequest.of(
-                        Math.max(pagina, 0), Math.min(Math.max(tamanho, 1), 100)))
-                .stream()
-                .map(ContribuicaoResposta::de)
+                        Math.max(pagina, 0), Math.min(Math.max(tamanho, 1), 100)));
+
+        Set<String> normalizados = pendentes.stream()
+                .map(c -> Normalizador.normalizar(c.getTermo()))
+                .filter(t -> !t.isBlank())
+                .collect(Collectors.toSet());
+
+        Map<String, Giria> existentes = normalizados.isEmpty()
+                ? Map.of()
+                : repositorioDeGiria.findByTermoNormalizadoIn(normalizados).stream()
+                        .collect(Collectors.toMap(
+                                g -> chave(g.getTermoNormalizado(), g.getIdioma().getCodigo()),
+                                Function.identity(),
+                                // Termo repetido no mesmo idioma não deveria
+                                // existir, mas se existir a fila não é o lugar
+                                // de estourar: mostra o primeiro.
+                                (primeiro, segundo) -> primeiro));
+
+        return pendentes.stream()
+                .map(c -> ItemDaFila.de(c, existentes.get(chave(
+                        Normalizador.normalizar(c.getTermo()),
+                        c.getIdioma().getCodigo()))))
                 .toList();
+    }
+
+    private static String chave(String termoNormalizado, String codigoDoIdioma) {
+        return termoNormalizado + "|" + codigoDoIdioma;
     }
 
     /**
@@ -139,8 +187,13 @@ public class ServicoDeContribuicao {
         }
 
         if (decisao.aprovar()) {
+            // A publicação vem ANTES de marcar como aprovada, de propósito.
+            // Se a categoria for inválida ou faltar, a exceção sai daqui com a
+            // contribuição ainda pendente e o moderador pode corrigir. Na
+            // ordem inversa a proposta ficaria aprovada e não publicada, que é
+            // o pior dos dois estados: sairia da fila sem virar verbete.
+            publicar(contribuicao, decisao.categoria());
             contribuicao.aprovar(moderador);
-            publicar(contribuicao);
         } else {
             if (decisao.motivo() == null || decisao.motivo().isBlank()) {
                 // Rejeição sem motivo não ensina nada a quem contribuiu, e a
@@ -163,17 +216,6 @@ public class ServicoDeContribuicao {
     /**
      * Leva a proposta aprovada para o dicionário.
      *
-     * <h2>Isto faltava, e o efeito era grave</h2>
-     *
-     * <p>Até aqui, aprovar marcava a contribuição como APROVADA e gravava a
-     * auditoria, e parava. O verbete nunca era criado. A pessoa via a própria
-     * sugestão aprovada, procurava o termo no dicionário e não encontrava
-     * nada, sem nenhuma explicação possível.</p>
-     *
-     * <p>Pior para o produto: o nível 5 da cascata existe para o dicionário
-     * não envelhecer, e a contribuição é o caminho pelo qual termo novo
-     * entra. Com a publicação faltando, esse caminho terminava num beco.</p>
-     *
      * <h2>Termo que já existe ganha um sentido, não um verbete novo</h2>
      *
      * <p>É a mesma regra do gerador de migrações: dois verbetes para a mesma
@@ -187,20 +229,25 @@ public class ServicoDeContribuicao {
      * duas vezes, que é exatamente o defeito que as migrações V29 e V33
      * limparam.</p>
      *
-     * <h2>Limitação conhecida: o verbete nasce sem categoria</h2>
+     * <h2>A prateleira deixou de ser opcional</h2>
      *
-     * <p>O formulário de contribuição pede termo, idioma e explicação, e mais
-     * nada. Sem categoria, o verbete <b>é encontrado pela busca e pelo
-     * {@code /traduzir}, mas nunca aparece no catálogo</b>, que é organizado
-     * por prateleira.</p>
+     * <p>Antes o verbete da comunidade nascia sem categoria. O efeito era
+     * silencioso e ruim: ele era encontrado pela busca e pelo
+     * {@code /traduzir} e <b>nunca aparecia no catálogo</b>, que é organizado
+     * por prateleira e é justamente por onde chega quem não sabe o que
+     * procurar. Verbete invisível para esse público é meio verbete.</p>
      *
-     * <p>Fica assim de propósito, por enquanto. Adivinhar a categoria a partir
-     * do texto seria classificar em nome de quem contribuiu, e categoria
-     * errada é pior que categoria nenhuma: manda a pessoa procurar na
-     * prateleira errada. O caminho certo é a moderação escolher a categoria na
-     * hora de aprovar, o que exige um campo a mais na tela de moderação.</p>
+     * <p>Adivinhar a categoria pelo texto seria classificar em nome de quem
+     * contribuiu, e prateleira errada é pior que prateleira nenhuma: manda a
+     * pessoa procurar no lugar errado. Quem escolhe é a moderação, ao aprovar,
+     * que é o único momento em que alguém está lendo a proposta com atenção.</p>
+     *
+     * <p>Só é exigida quando faz falta: um sentido novo para um termo que já
+     * está em duas prateleiras não precisa de uma terceira. A regra olha o
+     * resultado, e não o formulário: nenhum verbete sai daqui fora do
+     * catálogo.</p>
      */
-    private void publicar(Contribuicao contribuicao) {
+    private void publicar(Contribuicao contribuicao, String slugDaCategoria) {
         Idioma idioma = contribuicao.getIdioma();
         String normalizado = Normalizador.normalizar(contribuicao.getTermo());
 
@@ -208,6 +255,8 @@ public class ServicoDeContribuicao {
                 .findByTermoNormalizadoAndIdiomaCodigo(normalizado, idioma.getCodigo())
                 .orElseGet(() -> repositorioDeGiria.save(
                         Giria.daComunidade(contribuicao.getTermo(), idioma)));
+
+        aplicarPrateleira(giria, slugDaCategoria);
 
         String explicacao = contribuicao.getExplicacaoProposta().trim();
         boolean jaExiste = giria.getDefinicoes().stream()
@@ -227,7 +276,39 @@ public class ServicoDeContribuicao {
          * publicada só apareceria quando o cache vencesse, em até uma hora, e
          * quem aprovou veria a própria decisão não fazer efeito nenhum.
          */
-        var cache = gerenciadorDeCache.getCache("verbetes");
+        limpar("verbetes");
+    }
+
+    /**
+     * Põe o verbete na prateleira escolhida, e recusa a aprovação se o
+     * resultado ficaria fora do catálogo.
+     */
+    private void aplicarPrateleira(Giria giria, String slug) {
+        if (slug == null || slug.isBlank()) {
+            if (giria.getCategorias().isEmpty()) {
+                throw new RegraDeNegocioException("CATEGORIA_OBRIGATORIA",
+                        "Escolha em qual prateleira do catálogo este verbete entra. "
+                                + "Sem ela, ele existe na busca e não aparece no catálogo.");
+            }
+            return;
+        }
+
+        Categoria categoria = repositorioDeCategoria.findBySlug(slug.trim())
+                .orElseThrow(() -> new RegraDeNegocioException("CATEGORIA_INVALIDA",
+                        "Essa prateleira não existe."));
+        giria.entrarNaPrateleira(categoria);
+        repositorioDeGiria.save(giria);
+
+        /*
+         * A contagem por categoria também está em cache, e é ela que o
+         * catálogo mostra ao lado do nome da prateleira. Sem limpar, a
+         * prateleira anunciaria 40 e abriria com 41.
+         */
+        limpar("categorias");
+    }
+
+    private void limpar(String nomeDoCache) {
+        var cache = gerenciadorDeCache.getCache(nomeDoCache);
         if (cache != null) {
             cache.clear();
         }

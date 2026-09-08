@@ -57,7 +57,8 @@ class PublicacaoDeContribuicaoIT {
                 new NovaContribuicao(termo, "pt-BR",
                         "Explicação de teste, com tamanho suficiente para passar."));
 
-        servico.decidir(moderador.getId(), proposta.id(), new DecisaoDeModeracao(true, null));
+        servico.decidir(moderador.getId(), proposta.id(),
+                new DecisaoDeModeracao(true, null, "gaming"));
 
         var verbete = dicionario.porTermo(termo, "pt-BR");
         assertThat(verbete.termo()).isEqualTo(termo);
@@ -83,7 +84,7 @@ class PublicacaoDeContribuicaoIT {
                         "Explicação de teste, com tamanho suficiente para passar."));
 
         servico.decidir(moderador.getId(), proposta.id(),
-                new DecisaoDeModeracao(false, "Não é uma gíria."));
+                new DecisaoDeModeracao(false, "Não é uma gíria.", null));
 
         assertThat(dicionario.localizar(termo, "pt-BR")).isEmpty();
     }
@@ -116,12 +117,14 @@ class PublicacaoDeContribuicaoIT {
         var primeira = servico.propor(autor.getId(),
                 new NovaContribuicao(termo, "pt-BR",
                         "O primeiro sentido, escrito por quem contribuiu."));
-        servico.decidir(moderador.getId(), primeira.id(), new DecisaoDeModeracao(true, null));
+        servico.decidir(moderador.getId(), primeira.id(),
+                new DecisaoDeModeracao(true, null, "gaming"));
 
         var segunda = servico.propor(autor.getId(),
                 new NovaContribuicao(termo, "pt-BR",
                         "Um segundo sentido, bem diferente do primeiro."));
-        servico.decidir(moderador.getId(), segunda.id(), new DecisaoDeModeracao(true, null));
+        servico.decidir(moderador.getId(), segunda.id(),
+                new DecisaoDeModeracao(true, null, "gaming"));
 
         var verbete = dicionario.porTermo(termo, "pt-BR");
         assertThat(verbete.termo()).isEqualTo(termo);
@@ -140,11 +143,13 @@ class PublicacaoDeContribuicaoIT {
 
         var primeira = servico.propor(autor.getId(),
                 new NovaContribuicao(termo, "pt-BR", explicacao));
-        servico.decidir(moderador.getId(), primeira.id(), new DecisaoDeModeracao(true, null));
+        servico.decidir(moderador.getId(), primeira.id(),
+                new DecisaoDeModeracao(true, null, "gaming"));
 
         var segunda = servico.propor(autor.getId(),
                 new NovaContribuicao(termo, "pt-BR", explicacao));
-        servico.decidir(moderador.getId(), segunda.id(), new DecisaoDeModeracao(true, null));
+        servico.decidir(moderador.getId(), segunda.id(),
+                new DecisaoDeModeracao(true, null, "gaming"));
 
         // Aprovar duas vezes a mesma coisa é erro de moderação, e o pior
         // resultado possível é o verbete mostrar a frase repetida na tela.
@@ -168,7 +173,8 @@ class PublicacaoDeContribuicaoIT {
         var proposta = servico.propor(autor.getId(),
                 new NovaContribuicao(termo, "pt-BR",
                         "Explicação de teste, com tamanho suficiente para passar."));
-        servico.decidir(moderador.getId(), proposta.id(), new DecisaoDeModeracao(true, null));
+        servico.decidir(moderador.getId(), proposta.id(),
+                new DecisaoDeModeracao(true, null, "gaming"));
 
         // Procurado sem acento e em minúsculas, como o usuário digitaria.
         assertThat(dicionario.localizar(

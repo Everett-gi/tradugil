@@ -3,6 +3,7 @@ package br.com.tradugil.contribuicao;
 import br.com.tradugil.contribuicao.Contribuicao.StatusDeContribuicao;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.ContribuicaoResposta;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.DecisaoDeModeracao;
+import br.com.tradugil.contribuicao.ContribuicaoDtos.ItemDaFila;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,9 +31,17 @@ public class ModeracaoController {
         this.servico = servico;
     }
 
-    @Operation(summary = "Fila de moderacao")
+    @Operation(
+            summary = "Fila de moderacao",
+            description = """
+                    Cada item vem com o que o dicionario ja diz sobre o termo:
+                    os sentidos ja publicados e as prateleiras em que ele
+                    esta. Sem isso quem modera decide no escuro, e foi assim
+                    que o dicionario ganhou explicacoes repetidas antes.
+
+                    `noDicionario` nulo significa termo novo.""")
     @GetMapping
-    public ResponseEntity<List<ContribuicaoResposta>> fila(
+    public ResponseEntity<List<ItemDaFila>> fila(
             @RequestParam(name = "status", required = false) StatusDeContribuicao status,
             @RequestParam(name = "pagina", defaultValue = "0") int pagina,
             @RequestParam(name = "tamanho", defaultValue = "20") int tamanho) {
@@ -44,7 +53,12 @@ public class ModeracaoController {
             description = """
                     A decisao e a trilha de auditoria sao gravadas juntas. O
                     registro de auditoria e append-only: o proprio banco recusa
-                    alteracao e remocao.""")
+                    alteracao e remocao.
+
+                    Ao aprovar, `categoria` e o slug da prateleira do catalogo.
+                    E obrigatorio quando o verbete resultante ficaria sem
+                    nenhuma: sem prateleira ele existe na busca e some do
+                    catalogo. Os slugs validos vem de `GET /api/v1/categorias`.""")
     @PatchMapping("/{id}")
     public ResponseEntity<ContribuicaoResposta> decidir(
             @AuthenticationPrincipal Jwt jwt,

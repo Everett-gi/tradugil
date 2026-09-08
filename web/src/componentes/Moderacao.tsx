@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ErroDeApi, type ContribuicaoResposta } from '@tradugil/core';
+import { ErroDeApi, type CategoriaResumo, type ItemDaFila } from '@tradugil/core';
 import { cliente } from '../api.js';
 import { tokenAtual } from '../sessao.js';
 
@@ -13,7 +13,7 @@ import { tokenAtual } from '../sessao.js';
  * mil que a curadoria escreveu, para um público que inclui pessoas idosas e
  * famílias e que não tem como saber a diferença.
  *
- * Por isso duas escolhas de interface:
+ * Por isso quatro escolhas de interface:
  *
  * O botão de rejeitar **exige motivo antes de habilitar**. O servidor já
  * recusa rejeição sem motivo, mas descobrir isso por mensagem de erro depois
@@ -24,11 +24,23 @@ import { tokenAtual } from '../sessao.js';
  * dois botões iguais lado a lado. É uma tela de decisão irreversível operada
  * em sequência, dezenas de vezes seguidas, e é assim que se clica no botão
  * errado por automatismo.
+ *
+ * **O que o dicionário já diz aparece junto.** Antes a tela mostrava termo,
+ * idioma e o texto proposto, e nada mais. Quem modera não tinha como saber
+ * que o verbete já existia com três sentidos, um deles dizendo quase a mesma
+ * coisa, sem abrir outra aba e procurar. Foi assim que o dicionário ganhou
+ * explicações repetidas, que precisaram de duas migrações para limpar.
+ *
+ * **A prateleira do catálogo é escolhida aqui.** Antes o verbete da
+ * comunidade nascia sem categoria: era encontrado pela busca e nunca aparecia
+ * no catálogo, que é por onde chega quem não sabe o que procurar.
  */
 export function Moderacao() {
-  const [fila, setFila] = useState<ContribuicaoResposta[] | null>(null);
+  const [fila, setFila] = useState<ItemDaFila[] | null>(null);
+  const [prateleiras, setPrateleiras] = useState<CategoriaResumo[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const [motivos, setMotivos] = useState<Record<number, string>>({});
+  const [escolhas, setEscolhas] = useState<Record<number, string>>({});
   const [ocupado, setOcupado] = useState<number | null>(null);
 
   const carregar = useCallback(async () => {
@@ -39,7 +51,18 @@ export function Moderacao() {
       return;
     }
     try {
-      setFila(await cliente.filaDeModeracao(token));
+      /*
+       * As prateleiras vêm com modoFamilia desligado de propósito. Aqui a
+       * lista serve para classificar, não para ler: uma categoria só de
+       * verbetes impróprios sumiria da lista e o moderador ficaria sem para
+       * onde mandar exatamente o termo que mais precisa ir para lá.
+       */
+      const [itens, categorias] = await Promise.all([
+        cliente.filaDeModeracao(token),
+        cliente.categorias(false),
+      ]);
+      setFila(itens);
+      setPrateleiras(categorias);
     } catch (e) {
       setErro(
         e instanceof ErroDeApi
@@ -63,7 +86,11 @@ export function Moderacao() {
         setErro('Sua sessão expirou. Entre novamente.');
         return;
       }
-      await cliente.decidir(id, { aprovar, motivo: motivos[id] }, token);
+      await cliente.decidir(
+        id,
+        { aprovar, motivo: motivos[id], categoria: escolhas[id] },
+        token,
+      );
       // Some da lista local na hora, em vez de recarregar tudo: a fila pode
       // ser longa e recarregar faria a próxima linha pular sob o cursor.
       setFila((atual) => (atual ?? []).filter((c) => c.id !== id));
@@ -120,18 +147,87 @@ export function Moderacao() {
           {fila.map((c) => {
             const motivo = (motivos[c.id] ?? '').trim();
             const trabalhando = ocupado === c.id;
+            const jaTemPrateleira = (c.noDicionario?.categorias.length ?? 0) > 0;
+            const escolhida = escolhas[c.id] ?? '';
+            // O servidor recusa a aprovação que deixaria o verbete fora do
+            // catálogo. Espelhar a regra aqui evita que a pessoa descubra
+            // isso por mensagem de erro depois de clicar.
+            const podeAprovar = jaTemPrateleira || escolhida.length > 0;
+
             return (
               <li key={c.id} className="contribuicao contribuicao-fila">
                 <div className="contribuicao-cabeca">
                   <strong>{c.termo}</strong>
                   <span className="etiqueta">{c.idioma}</span>
+                  <span
+                    className={
+                      c.noDicionario ? 'etiqueta etiqueta-existe' : 'etiqueta etiqueta-novo'
+                    }
+                  >
+                    {c.noDicionario ? 'já no dicionário' : 'termo novo'}
+                  </span>
                 </div>
                 <p className="contribuicao-texto">{c.explicacaoProposta}</p>
+
+                {c.noDicionario && c.noDicionario.sentidos.length > 0 && (
+                  <details className="ja-existe">
+                    <summary>
+                      O que o dicionário já diz ({c.noDicionario.sentidos.length}
+                      {c.noDicionario.sentidos.length === 1
+                        ? ' sentido'
+                        : ' sentidos'}
+                      )
+                    </summary>
+                    <ul className="ja-existe-lista">
+                      {c.noDicionario.sentidos.map((sentido) => (
+                        <li key={sentido}>{sentido}</li>
+                      ))}
+                    </ul>
+                    <p className="dica">
+                      Se a proposta repete um destes, recuse: verbete que mostra
+                      a mesma frase duas vezes confunde quem consulta.
+                    </p>
+                  </details>
+                )}
+
+                <div className="prateleira">
+                  <label className="rotulo" htmlFor={`prateleira-${c.id}`}>
+                    {jaTemPrateleira
+                      ? 'Prateleira do catálogo (opcional, já está em ' +
+                        c.noDicionario!.categorias.join(', ') +
+                        ')'
+                      : 'Prateleira do catálogo'}
+                  </label>
+                  <select
+                    id={`prateleira-${c.id}`}
+                    className="campo campo-linha"
+                    value={escolhida}
+                    onChange={(e) =>
+                      setEscolhas((p) => ({ ...p, [c.id]: e.target.value }))
+                    }
+                  >
+                    <option value="">
+                      {jaTemPrateleira ? 'Manter como está' : 'Escolha uma'}
+                    </option>
+                    {prateleiras.map((p) => (
+                      <option key={p.slug} value={p.slug}>
+                        {p.nome}
+                      </option>
+                    ))}
+                  </select>
+                  {!jaTemPrateleira && (
+                    <p className="dica">
+                      Sem prateleira o verbete é encontrado na busca e não
+                      aparece no catálogo, que é por onde chega quem não sabe o
+                      que procurar.
+                    </p>
+                  )}
+                </div>
 
                 <button
                   type="button"
                   className="botao botao-aprovar"
-                  disabled={trabalhando}
+                  disabled={trabalhando || !podeAprovar}
                   onClick={() => void decidir(c.id, true)}
                 >
                   Aprovar e publicar

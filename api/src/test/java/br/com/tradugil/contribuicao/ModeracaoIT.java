@@ -40,7 +40,7 @@ class ModeracaoIT {
         Long autor = criarUsuario(Papel.USER);
 
         ContribuicaoResposta proposta = servico.propor(autor, new NovaContribuicao(
-                "bagulho", "pt-BR", "Coisa, objeto indefinido. Serve para qualquer coisa."));
+                termoSo(), "pt-BR", "Coisa, objeto indefinido. Serve para qualquer coisa."));
 
         assertThat(proposta.status()).isEqualTo(StatusDeContribuicao.PENDENTE);
     }
@@ -52,8 +52,8 @@ class ModeracaoIT {
         Long moderador = criarUsuario(Papel.MODERATOR);
 
         ContribuicaoResposta proposta = servico.propor(autor, new NovaContribuicao(
-                "brotou", "pt-BR", "Apareceu de repente, chegou sem avisar."));
-        servico.decidir(moderador, proposta.id(), new DecisaoDeModeracao(true, null));
+                termoSo(), "pt-BR", "Apareceu de repente, chegou sem avisar."));
+        servico.decidir(moderador, proposta.id(), new DecisaoDeModeracao(true, null, "rua"));
 
         var trilha = repositorioDeAuditoria
                 .findByContribuicaoIdOrderByOcorridoEm(proposta.id());
@@ -69,10 +69,10 @@ class ModeracaoIT {
         Long moderador = criarUsuario(Papel.MODERATOR);
 
         ContribuicaoResposta proposta = servico.propor(autor, new NovaContribuicao(
-                "xablau", "pt-BR", "Palavra usada quando não se lembra do nome da coisa."));
+                termoSo(), "pt-BR", "Palavra usada quando não se lembra do nome da coisa."));
 
         assertThatThrownBy(() -> servico.decidir(
-                moderador, proposta.id(), new DecisaoDeModeracao(false, "  ")))
+                moderador, proposta.id(), new DecisaoDeModeracao(false, "  ", null)))
                 .isInstanceOf(RegraDeNegocioException.class);
     }
 
@@ -83,13 +83,13 @@ class ModeracaoIT {
         Long moderador = criarUsuario(Papel.MODERATOR);
 
         ContribuicaoResposta proposta = servico.propor(autor, new NovaContribuicao(
-                "treteiro", "pt-BR", "Quem vive arrumando confusão com os outros."));
-        servico.decidir(moderador, proposta.id(), new DecisaoDeModeracao(true, null));
+                termoSo(), "pt-BR", "Quem vive arrumando confusão com os outros."));
+        servico.decidir(moderador, proposta.id(), new DecisaoDeModeracao(true, null, "rua"));
 
         // Duas abas abertas na fila fariam dois moderadores decidirem a mesma
         // proposta, e a segunda sobrescreveria a primeira em silêncio.
         assertThatThrownBy(() -> servico.decidir(
-                moderador, proposta.id(), new DecisaoDeModeracao(false, "mudei de ideia")))
+                moderador, proposta.id(), new DecisaoDeModeracao(false, "mudei de ideia", null)))
                 .isInstanceOf(RegraDeNegocioException.class);
     }
 
@@ -100,8 +100,8 @@ class ModeracaoIT {
         Long moderador = criarUsuario(Papel.MODERATOR);
 
         ContribuicaoResposta proposta = servico.propor(autor, new NovaContribuicao(
-                "pilantragem", "pt-BR", "Comportamento desonesto, safadeza."));
-        servico.decidir(moderador, proposta.id(), new DecisaoDeModeracao(true, null));
+                termoSo(), "pt-BR", "Comportamento desonesto, safadeza."));
+        servico.decidir(moderador, proposta.id(), new DecisaoDeModeracao(true, null, "rua"));
 
         Long idDaTrilha = repositorioDeAuditoria
                 .findByContribuicaoIdOrderByOcorridoEm(proposta.id())
@@ -154,6 +154,21 @@ class ModeracaoIT {
         assertThatThrownBy(() -> servico.propor(autor, new NovaContribuicao(
                 "hola", "es-ES", "Uma explicação qualquer com tamanho suficiente.")))
                 .isInstanceOf(RegraDeNegocioException.class);
+    }
+
+    /**
+     * Um termo que so este teste conhece.
+     *
+     * <p>Antes eram palavras fixas: "brotou", "treteiro", "pilantragem".
+     * Aprovar publica no dicionario, entao cada execucao contra um banco que
+     * persiste deixava esses verbetes para tras, agora tambem numa prateleira
+     * do catalogo. Um teste que escreve em dado compartilhado deixa de testar
+     * o proprio assunto e passa a decidir o resultado dos outros, na ordem em
+     * que o Surefire resolver roda-los: foi assim que um teste desta pasta
+     * quebrou dois de outra ao publicar um sentido em "cringe".</p>
+     */
+    private static String termoSo() {
+        return "termomoderacao" + System.nanoTime();
     }
 
     private Long criarUsuario(Papel papel) {
