@@ -6,10 +6,12 @@ import br.com.tradugil.contribuicao.Contribuicao.StatusDeContribuicao;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.ContribuicaoResposta;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.DecisaoDeModeracao;
 import br.com.tradugil.contribuicao.ContribuicaoDtos.NovaContribuicao;
+import br.com.tradugil.dicionario.RepositorioDeGiria;
 import br.com.tradugil.dicionario.ServicoDeDicionario;
 import br.com.tradugil.identidade.RepositorioDeUsuario;
 import br.com.tradugil.identidade.Usuario;
 import br.com.tradugil.identidade.Usuario.Papel;
+import br.com.tradugil.traducao.Normalizador;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,9 @@ class PrateleiraNaAprovacaoIT {
 
     @Autowired
     private RepositorioDeUsuario usuarios;
+
+    @Autowired
+    private RepositorioDeGiria girias;
 
     @Test
     @DisplayName("o verbete aprovado entra na prateleira escolhida")
@@ -93,7 +98,24 @@ class PrateleiraNaAprovacaoIT {
         assertThat(servico.minhasPropostas(autor).getFirst().status())
                 .as("recusada a aprovação, a proposta tem de continuar na fila")
                 .isEqualTo(StatusDeContribuicao.PENDENTE);
-        assertThat(dicionario.localizar(termo, "pt-BR")).isEmpty();
+
+        /*
+         * BUSCA EXATA, E NÃO localizar().
+         *
+         * A primeira versão usava localizar() e falhou na CI. Não por bug do
+         * código: localizar() termina numa busca por semelhança, de propósito,
+         * e os termos que os testes desta classe geram compartilham o prefixo
+         * "termoprateleira". Um verbete publicado por outro teste da mesma
+         * classe tem trigramas suficientes em comum e volta como palpite.
+         *
+         * Para "este termo não virou verbete" a pergunta é exata, e usar a
+         * busca tolerante para respondê-la mistura duas coisas: o teste
+         * passaria a depender de quantos termos parecidos existem no banco.
+         */
+        assertThat(girias.findByTermoNormalizadoAndIdiomaCodigo(
+                Normalizador.normalizar(termo), "pt-BR"))
+                .as("aprovação recusada não pode deixar o verbete criado para trás")
+                .isEmpty();
     }
 
     @Test
