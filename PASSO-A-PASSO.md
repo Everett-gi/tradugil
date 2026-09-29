@@ -163,6 +163,26 @@ por mês**. Duas mudanças no repositório tiram o aperto:
   15 MB gastaria a cota de tráfego em uns 60 downloads. O endereço do site
   continua o mesmo: `/baixar/tradugil.apk` redireciona para a última Release.
 
+As imagens já estão publicadas. Elas sobem a cada push na `main`, e você pode
+conferir em <https://github.com/Everett-gi?tab=packages>.
+
+### Um ajuste de conta que só você pode fazer
+
+As imagens do GHCR **nascem privadas**, e o servidor vai recusar o download
+até você liberar. São dois cliques, e depois nunca mais:
+
+1. Abra <https://github.com/Everett-gi?tab=packages>.
+2. Entre em `tradugil-api`, vá em *Package settings*, role até *Danger Zone*
+   e mude a visibilidade para **Public**.
+3. Repita em `tradugil-borda`.
+
+Imagem pública aqui não expõe nada. Ela tem a aplicação compilada e o site,
+que já são código aberto, e nenhum segredo: eles vivem no
+`/etc/tradugil/api.env`, na máquina, fora de qualquer imagem. A alternativa
+seria guardar um token do GitHub no servidor só para baixar imagem, o que é
+mais uma credencial de longa vida para cuidar em troca de esconder algo que
+já está publicado.
+
 **Quando a máquina estiver de pé, me avise.** O passo a passo completo (área
 de troca, Docker, o atualizador do DuckDNS, os segredos e a subida) está em
 [`infra/README.md`](infra/README.md), e eu te acompanho em cada comando.
