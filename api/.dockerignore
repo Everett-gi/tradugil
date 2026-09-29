@@ -1,0 +1,12 @@
+# O que NAO vai para o contexto de build.
+#
+# Tudo aqui e copiado para o daemon do Docker antes de a primeira linha do
+# Dockerfile rodar. O target/ de um build local passa de 100 MB e nao serve
+# para nada dentro da imagem: o Maven compila de novo lá dentro.
+target/
+
+# Nunca. Segredo em contexto de build vai parar numa camada, e camada e
+# copiavel. Nao esta no repositorio, mas na maquina de quem faz o deploy
+# pode estar.
+.env
+*.env

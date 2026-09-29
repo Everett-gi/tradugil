@@ -1,0 +1,27 @@
+# Contexto de build da borda (infra/Dockerfile.caddy), que roda da raiz do
+# repositorio porque precisa de web/ e packages/core-ts/ juntos.
+#
+# Sem isto, o contexto leva as dependencias e os builds de todo mundo: o
+# node_modules do web, o target/ do Maven, o build/ do Gradle e o .gradle/.
+# São centenas de megabytes enviados ao daemon a cada build, e o node_modules
+# da maquina de quem faz o deploy ainda sobrescreveria o que o npm ci instala
+# dentro do contêiner, que e como um build "funciona aqui e nao la".
+
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+target/
+**/target/
+
+android/
+.git/
+.github/
+
+# O APK e a chave de assinatura nao entram em imagem: imagem e copiavel.
+*.apk
+*.jks
+keystore.properties
+.env
+*.env

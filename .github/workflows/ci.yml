@@ -227,3 +227,84 @@ jobs:
           npm audit --audit-level=high --prefix packages/core-ts
           npm audit --audit-level=high --prefix web
           npm audit --audit-level=high --prefix extension
+
+  implantacao:
+    name: Imagens de implantacao
+    runs-on: ubuntu-latest
+
+    # POR QUE ISTO E UM JOB DA CI
+    #
+    # Dockerfile so e conferido quando alguem constroi, e quem constroi e o
+    # servidor, uma vez, no dia do deploy. Um erro ali aparece no pior
+    # momento possivel: com a maquina de pe, o nome apontando para ela e
+    # ninguem sabendo se o problema e o Docker, a Oracle ou o DNS.
+    #
+    # Dois pontos deste build sao fragua de verdade:
+    #
+    # A borda NAO usa a imagem caddy pronta. O rate_limit do Caddyfile e
+    # modulo de terceiro, e a imagem oficial nao o traz: a borda e compilada
+    # com xcaddy. Se o modulo parar de compilar contra a versao do Caddy, e
+    # aqui que se descobre, e nao no servidor.
+    #
+    # O site e construido dentro da imagem, e nao na maquina de quem faz o
+    # deploy. Entao o que a CI constroi e exatamente o que vai para o ar.
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Sem push: constroi, prova que compila, e descarta. Publicar imagem
+      # exigiria packages: write, e um token com permissao de escrita para
+      # provar que um Dockerfile compila e mais poder do que a tarefa pede.
+      - name: Construir a API
+        uses: docker/build-push-action@v6
+        with:
+          context: api
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Construir a borda
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/Dockerfile.caddy
+          push: false
+          # load para a imagem entrar no daemon e o passo seguinte poder
+          # rodar dentro dela. Sem isto o buildx deixa o resultado so no
+          # cache, e nao ha o que executar.
+          load: true
+          tags: tradugil-borda:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # O compose so revela erro de sintaxe e de referencia quando alguem
+      # sobe. `config` resolve o arquivo inteiro e falha se um servico
+      # apontar para um Dockerfile que nao existe, por exemplo.
+      #
+      # O env_file de producao nao existe no runner, e nem deveria: ele tem
+      # a senha do banco. Um vazio no lugar basta para a validacao.
+      - name: Validar o compose
+        run: |
+          sudo mkdir -p /etc/tradugil
+          sudo touch /etc/tradugil/api.env
+          docker compose -f infra/docker-compose.yml config > /dev/null
+          echo "compose valido"
+
+      # O Caddyfile e a peca com mais regra de seguranca do projeto: TLS,
+      # cabecalhos, os tetos por rota. Um erro de sintaxe ali derruba a
+      # borda inteira, e junto com ela o site e a API.
+      # Valida DENTRO da imagem construida, e nao com um Caddy qualquer. E o
+      # unico jeito de provar o que importa aqui: que o rate_limit existe
+      # naquele binario. Um Caddy padrao recusaria a diretiva, e um Caddy
+      # padrao tolerante seria pior ainda, porque a borda subiria sem teto.
+      - name: Validar o Caddyfile
+        run: |
+          docker run --rm tradugil-borda:ci \
+            caddy validate --config /etc/caddy/Caddyfile
+
+      - name: Conferir o script do DuckDNS
+        run: |
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          shellcheck infra/duckdns-atualiza.sh

@@ -1,0 +1,94 @@
+# O Tradugil inteiro, em dois contêineres.
+#
+#   cd /opt/tradugil
+#   docker compose up -d --build
+#
+# O banco NÃO está aqui de propósito: ele é o Neon, gerenciado, com backup e
+# ponto no tempo que ninguém precisa manter. Subir um Postgres neste servidor
+# significaria ser responsável por backup, atualização e recuperação de uma
+# máquina de plano gratuito, que é onde um projeto pequeno perde dados.
+#
+# Rodar a partir da raiz do repositório, e não desta pasta: o build do site
+# precisa de `web/` e `packages/core-ts/`, e o contexto tem de alcançar os
+# dois. É o que o `context: ..` abaixo faz.
+
+name: tradugil
+
+services:
+
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+
+    # NENHUMA PORTA PUBLICADA.
+    #
+    # A API só é alcançável pela rede interna do compose, e quem fala com ela
+    # é o Caddy. Publicar 8080 aqui abriria a aplicação direto na internet,
+    # por fora da borda: sem TLS, sem o teto de requisição do Caddy, e com o
+    # limitador interno vendo o IP do proxy em vez do IP de quem chama.
+
+    # Os segredos vivem num arquivo fora do repositório, com permissão 600.
+    # Escrever `environment:` aqui os colocaria no git e no `docker inspect`.
+    env_file:
+      - /etc/tradugil/api.env
+
+    healthcheck:
+      # O actuator só expõe /health, e o show-details é `never`: a resposta é
+      # "UP" ou "DOWN", sem revelar qual dependência caiu para quem perguntar.
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8080/actuator/health | grep -q UP"]
+      # 90 s de carência: o Flyway roda na subida e pode ter migração pendente
+      # depois de um deploy. Marcar como doente no meio de uma migração faria
+      # o restart matar o Flyway pela metade.
+      start_period: 90s
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    # O Always Free tem 24 GB, e a API não precisa de mais que isto. O teto
+    # existe para uma consulta patológica não derrubar a borda junto.
+    mem_limit: 2g
+
+    security_opt:
+      - no-new-privileges:true
+
+  borda:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.caddy
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    # A 80 não é opcional, e não é só para redirecionar: é por ela que a
+    # Let's Encrypt confirma que este servidor responde pelo nome, no desafio
+    # HTTP-01. Fechada, o certificado nunca é emitido.
+
+    volumes:
+      # Os certificados. Sem volume, cada `up` pede certificado novo e a
+      # Let's Encrypt limita a cinco por semana para o mesmo nome: alguns
+      # deploys seguidos e o site fica sem TLS por dias.
+      - caddy_dados:/data
+      - caddy_config:/config
+
+      # O APK entra por aqui porque é construído com a chave de assinatura,
+      # que não está no repositório. Somente leitura: a borda serve o arquivo
+      # e não tem motivo para escrever nele.
+      - /opt/tradugil/apk:/srv/apk:ro
+
+    depends_on:
+      api:
+        # Espera a API responder, e não só o contêiner existir. Sem isto, a
+        # borda sobe antes e as primeiras requisições voltam 502 enquanto o
+        # Spring ainda está carregando.
+        condition: service_healthy
+
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  caddy_dados:
+  caddy_config:

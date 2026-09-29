@@ -1,0 +1,67 @@
+# A borda: Caddy com o módulo de limite de requisição, e o site dentro.
+#
+# POR QUE NÃO A IMAGEM `caddy` PRONTA
+#
+# O `rate_limit` do Caddyfile **não vem no Caddy padrão**. É módulo de
+# terceiro (`github.com/mholt/caddy-ratelimit`), e a imagem oficial não o
+# traz. Subir com a imagem pronta dá erro de configuração na largada, o que
+# até é o melhor caso: o pior seria um Caddyfile onde a diretiva fosse
+# ignorada em silêncio e a borda ficasse sem teto nenhum, que é a primeira
+# defesa contra alguém automatizar consultas de termos inventados para gerar
+# custo de IA.
+#
+# Por isso o `xcaddy`: ele compila um Caddy com o módulo dentro.
+
+# ------------------------------------------------------------- compilacao
+
+FROM caddy:2.11-builder AS compilacao
+
+# COMMIT FIXO, E NAO A TAG v0.1.0.
+#
+# O modulo so tem uma versao publicada, de agosto de 2024, e o go.mod dela
+# pede Caddy 2.8. O Caddy atual e 2.11, e compilar a v0.1.0 contra ele e
+# aposta: a API interna do Caddy muda entre menores.
+#
+# O main do modulo pede 2.10 e continua recebendo correcao (a ultima e de
+# junho de 2026), e o aviso de "trabalho em andamento" saiu do README em
+# janeiro. Ou seja, o codigo mantido e o main, e a tag e que esta velha.
+#
+# Fixar o commit resolve os dois lados: pega o codigo que acompanha o Caddy
+# atual e continua reproduzivel, porque uma reconstrucao daqui a um ano
+# compila exatamente isto. Para atualizar, troque o SHA de proposito, e nao
+# por acidente.
+RUN xcaddy build \
+    --with github.com/mholt/caddy-ratelimit@5625512f24f6f59d6f64fb3aafe5eecff0b286db
+
+# --------------------------------------------------------------- o site
+
+# O site e construido aqui, e nao na maquina de quem faz o deploy: assim o
+# que vai para o servidor nao depende da versao do Node de ninguem.
+FROM node:22-alpine AS site
+
+WORKDIR /origem
+
+# A logica compartilhada e dependencia de arquivo do web (file:../packages),
+# entao os dois precisam existir com a mesma estrutura de pastas de antes.
+COPY packages/core-ts ./packages/core-ts
+COPY web ./web
+
+RUN cd packages/core-ts && npm ci && npm run build
+RUN cd web && npm ci && npm run build
+
+# ------------------------------------------------------------------ borda
+
+FROM caddy:2.11-alpine
+
+COPY --from=compilacao /usr/bin/caddy /usr/bin/caddy
+COPY --from=site /origem/web/dist /srv/web
+COPY infra/Caddyfile /etc/caddy/Caddyfile
+
+# O APK entra por volume, e nao por COPY.
+#
+# Ele e construido com a chave de assinatura, que nao esta no repositorio e
+# nao pode entrar numa imagem: imagem e copiavel, e a chave e o unico segredo
+# do projeto que nao tem conserto se vazar. O docker-compose monta a pasta que
+# o contem. Enquanto nao houver APK la, o /baixar/tradugil.apk responde 404,
+# que e o comportamento certo.
+RUN mkdir -p /srv/apk
