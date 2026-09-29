@@ -114,17 +114,25 @@ tradugil.duckdns.org {
 		header @com_hash Cache-Control "public, max-age=31536000, immutable"
 	}
 
-	# ----------------------------------------------------------- APK direto
+	# ------------------------------------------------------------------- APK
 
-	# O aplicativo Android e distribuido pelo site, nao pela Play Store.
-	# O tipo MIME precisa ser este, senao o Android recusa a instalacao.
-	handle /baixar/tradugil.apk {
-		root * /srv/apk
-		header Content-Type "application/vnd.android.package-archive"
-		header Content-Disposition "attachment; filename=tradugil.apk"
-		rewrite * /tradugil.apk
-		file_server
-	}
+	# O aplicativo Android e distribuido pelo site, e nao pela Play Store.
+	#
+	# O ARQUIVO NAO SAI DAQUI. Esta rota redireciona para a Release do GitHub.
+	#
+	# A e2-micro tem 1 GB de trafego de saida por mes, de gratuito. Um APK de
+	# 15 MB gasta isso em uns 60 downloads, e depois passa a ser cobrado por
+	# um arquivo que o GitHub serve sem teto. E o APK e assinado com a chave
+	# que nao esta no repositorio, entao servi-lo daqui dependia de alguem
+	# lembrar de copiar para o servidor a cada versao.
+	#
+	# O endereco curto continua valendo, que e o que importa para quem
+	# instala: o link do site nao muda quando sai versao nova.
+	#
+	# 302, e nao 301: permanente ficaria preso no cache do navegador e do
+	# proxy, e no dia em que o APK voltar a ser servido daqui, ou mudar de
+	# lugar, nao haveria como desfazer.
+	redir /baixar/tradugil.apk https://github.com/Everett-gi/tradugil/releases/latest/download/tradugil.apk 302
 
 	log {
 		output file /var/log/caddy/tradugil.log

@@ -232,12 +232,15 @@ jobs:
     name: Imagens de implantacao
     runs-on: ubuntu-latest
 
-    # POR QUE ISTO E UM JOB DA CI
+    # POR QUE ISTO E UM JOB DA CI, E NAO SO UMA CONFERENCIA
     #
-    # Dockerfile so e conferido quando alguem constroi, e quem constroi e o
-    # servidor, uma vez, no dia do deploy. Um erro ali aparece no pior
-    # momento possivel: com a maquina de pe, o nome apontando para ela e
-    # ninguem sabendo se o problema e o Docker, a Oracle ou o DNS.
+    # Aqui e onde as imagens que vao para o ar sao construidas. O servidor
+    # apenas baixa e sobe.
+    #
+    # Isso deixou de ser preferencia quando o servidor virou uma e2-micro do
+    # Google: 0,25 de vCPU e 1 GB de RAM. Compilar a API com Maven nela
+    # levaria dezenas de minutos e provavelmente morreria sem memoria no
+    # meio de um deploy, que e o pior momento para descobrir qualquer coisa.
     #
     # Dois pontos deste build sao fragua de verdade:
     #
@@ -249,31 +252,70 @@ jobs:
     # O site e construido dentro da imagem, e nao na maquina de quem faz o
     # deploy. Entao o que a CI constroi e exatamente o que vai para o ar.
 
+    # O unico job que escreve alguma coisa. O bloco fica aqui, e nao no topo
+    # do arquivo, para a permissao a mais ser visivel na revisao em vez de
+    # valer para todos os jobs por tabela.
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      REGISTRO: ghcr.io/${{ github.repository_owner }}
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: docker/setup-buildx-action@v3
 
-      # Sem push: constroi, prova que compila, e descarta. Publicar imagem
-      # exigiria packages: write, e um token com permissao de escrita para
-      # provar que um Dockerfile compila e mais poder do que a tarefa pede.
-      - name: Construir a API
+      # So publica em push para a main. Num pull request o job continua
+      # construindo, o que prova que compila, e nao publica: senao qualquer
+      # PR conseguiria trocar a imagem que o servidor baixa.
+      - name: Entrar no GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # SO amd64. A e2-micro do Google e x86_64.
+      #
+      # Construir tambem para arm64 aqui custaria caro: o runner e x86, e o
+      # Maven rodaria dentro do QEMU, o que multiplica o tempo do build por
+      # varias vezes. Se um dia o servidor virar ARM, esta e a linha que muda,
+      # e e melhor mudar de proposito do que pagar o custo todo dia por um
+      # cenario que nao existe.
+      - name: Construir e publicar a API
         uses: docker/build-push-action@v6
         with:
           context: api
-          push: false
+          platforms: linux/amd64
+          push: ${{ github.event_name == 'push' }}
+          # A tag movel e a que o compose usa; a do commit existe para dar
+          # para voltar atras sem adivinhar qual imagem estava no ar.
+          tags: |
+            ${{ env.REGISTRO }}/tradugil-api:main
+            ${{ env.REGISTRO }}/tradugil-api:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # A borda e construida DUAS vezes de proposito, e a segunda e de graca.
+      #
+      # O buildx nao aceita --load e --push na mesma invocacao. E a validacao
+      # do Caddyfile precisa rodar DENTRO da imagem, o que exige ela no
+      # daemon local, entao a ordem e: constroi e carrega, valida, e so
+      # depois publica. A segunda passagem acerta o cache inteiro.
+      #
+      # Publicar antes de validar inverteria a coisa mais importante daqui:
+      # uma imagem com Caddyfile quebrado ficaria disponivel para o servidor
+      # baixar.
       - name: Construir a borda
         uses: docker/build-push-action@v6
         with:
           context: .
           file: infra/Dockerfile.caddy
+          platforms: linux/amd64
           push: false
-          # load para a imagem entrar no daemon e o passo seguinte poder
-          # rodar dentro dela. Sem isto o buildx deixa o resultado so no
-          # cache, e nao ha o que executar.
           load: true
           tags: tradugil-borda:ci
           cache-from: type=gha
@@ -307,4 +349,20 @@ jobs:
       - name: Conferir o script do DuckDNS
         run: |
           sudo apt-get update && sudo apt-get install -y shellcheck
-          shellcheck infra/duckdns-atualiza.sh
+          shellcheck infra/duckdns-atualiza.sh infra/publicar-apk.sh
+
+      # So agora, com o Caddyfile validado dentro da imagem. O cache da
+      # passagem anterior esta inteiro, entao isto e quase instantaneo.
+      - name: Publicar a borda
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/Dockerfile.caddy
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.REGISTRO }}/tradugil-borda:main
+            ${{ env.REGISTRO }}/tradugil-borda:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

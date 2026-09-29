@@ -17,6 +17,15 @@ name: tradugil
 services:
 
   api:
+    # A IMAGEM VEM PRONTA, e o build fica como alternativa.
+    #
+    # A e2-micro tem 0,25 de vCPU e 1 GB de RAM: compilar a API com Maven
+    # nela levaria dezenas de minutos e provavelmente morreria sem memoria no
+    # meio. Quem compila e a CI, num runner de verdade, e o servidor so baixa.
+    #
+    # O `build:` continua aqui de proposito, para `docker compose up --build`
+    # funcionar numa maquina de desenvolvimento sem depender do GHCR.
+    image: ghcr.io/everett-gi/tradugil-api:main
     build:
       context: ../api
       dockerfile: Dockerfile
@@ -46,14 +55,18 @@ services:
       timeout: 10s
       retries: 3
 
-    # O Always Free tem 24 GB, e a API não precisa de mais que isto. O teto
-    # existe para uma consulta patológica não derrubar a borda junto.
-    mem_limit: 2g
+    # A maquina inteira tem 1 GB. O teto aqui nao e folga: e o que impede a
+    # API de consumir tudo e levar a borda junto, e com ela o site.
+    #
+    # Sobram uns 250 MB para o Caddy (que usa uns 30) e para o sistema. A JVM
+    # le este limite pelo cgroup e dimensiona a heap em 75% dele, uns 550 MB.
+    mem_limit: 768m
 
     security_opt:
       - no-new-privileges:true
 
   borda:
+    image: ghcr.io/everett-gi/tradugil-borda:main
     build:
       context: ..
       dockerfile: infra/Dockerfile.caddy
@@ -74,10 +87,16 @@ services:
       - caddy_dados:/data
       - caddy_config:/config
 
-      # O APK entra por aqui porque é construído com a chave de assinatura,
-      # que não está no repositório. Somente leitura: a borda serve o arquivo
-      # e não tem motivo para escrever nele.
-      - /opt/tradugil/apk:/srv/apk:ro
+      # O APK NÃO fica mais aqui. Ele vive nas Releases do GitHub, e a borda
+      # só redireciona. Duas razões, e a segunda é a que decidiu:
+      #
+      # A `e2-micro` tem 1 GB de tráfego de saída por mês. Um APK de 15 MB
+      # gasta isso em cerca de 60 downloads, e depois a conta passa a ser
+      # cobrada por um arquivo que o GitHub serve de graça e sem teto.
+      #
+      # E o APK é assinado com a chave que não está no repositório, então ele
+      # dependia de alguém lembrar de copiar para o servidor a cada versão.
+      # Publicar numa Release deixa o histórico visível e o SHA-256 ao lado.
 
     depends_on:
       api:
