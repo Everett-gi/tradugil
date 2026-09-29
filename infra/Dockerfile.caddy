@@ -41,12 +41,19 @@ FROM node:22-alpine AS site
 
 WORKDIR /origem
 
-# A logica compartilhada e dependencia de arquivo do web (file:../packages),
-# entao os dois precisam existir com a mesma estrutura de pastas de antes.
+# A logica compartilhada e dependencia de arquivo do web
+# (file:../packages/core-ts), entao os dois precisam existir com a mesma
+# estrutura de pastas de antes para o npm resolver o caminho relativo.
 COPY packages/core-ts ./packages/core-ts
 COPY web ./web
 
-RUN cd packages/core-ts && npm ci && npm run build
+# O core-ts NAO e compilado aqui, e nao e esquecimento.
+#
+# Ele publica TypeScript direto ("main": "./src/index.ts"), e quem o compila
+# e o Vite do web, junto com o resto. Nao ha script de build nele, e a
+# primeira versao deste arquivo chamava um: a CI acusou com "Missing script".
+# As devDependencies dele sao so para teste e verificacao de tipos, que a CI
+# roda no job proprio, e nao tem por que entrar numa imagem de producao.
 RUN cd web && npm ci && npm run build
 
 # ------------------------------------------------------------------ borda
