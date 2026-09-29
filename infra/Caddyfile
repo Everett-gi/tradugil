@@ -2,11 +2,23 @@
 #
 # O Caddy resolve tres coisas de uma vez, e por isso substitui a dupla
 # nginx + certbot: TLS automatico com renovacao, proxy reverso e limite de
-# requisicao na borda -- antes de a requisicao custar CPU da aplicacao.
+# requisicao na borda, antes de a requisicao custar CPU da aplicacao.
 #
-# Troque o dominio abaixo pelo real (ou por um DuckDNS enquanto nao houver).
+# O ENDERECO E UM DUCKDNS, decidido em 29 de setembro de 2026. E gratuito e
+# serve para o Tradugil sair da maquina de desenvolvimento. O TLS funciona
+# igual: o Caddy pede o certificado a Let's Encrypt pelo desafio HTTP-01, que
+# so precisa das portas 80 e 443 abertas e do nome resolvendo para esta
+# maquina. Nao ha nada de segunda classe no certificado.
+#
+# O que um DuckDNS exige a mais e manter o IP atualizado. Ver
+# infra/duckdns-atualiza.sh e a unidade systemd ao lado dele.
+#
+# Quando houver dominio proprio, mudam juntos: esta linha, o
+# tradugil.cors.origens do application.yml, o manifesto da extensao (que
+# precisa de versao nova na loja) e o URL_DA_API do build de release do
+# Android.
 
-tradugil.app, www.tradugil.app {
+tradugil.duckdns.org {
 
 	encode gzip zstd
 
@@ -14,7 +26,20 @@ tradugil.app, www.tradugil.app {
 	# mesma envia: se um dia servir um arquivo estatico direto, e daqui que
 	# a protecao vem.
 	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		# UMA SEMANA, e nao um ano, enquanto o endereco for DuckDNS.
+		#
+		# HSTS e uma promessa que o navegador guarda mesmo depois de o site
+		# sumir: durante o max-age ele se recusa a falar HTTP com aquele
+		# nome. Num nome emprestado isso e diferente de um dominio proprio,
+		# porque um nome DuckDNS abandonado volta para a fila e outra pessoa
+		# pode registrar. Um ano de promessa presa nos navegadores sobre um
+		# nome que nao e mais nosso e heranca que ninguem pediu.
+		#
+		# Uma semana ainda cobre o ataque que o HSTS existe para impedir (a
+		# primeira visita e por HTTP, e alguem no meio a redireciona) para
+		# quem usa o site com alguma regularidade. Ao trocar por dominio
+		# proprio, volte para max-age=31536000.
+		Strict-Transport-Security "max-age=604800; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "no-referrer"

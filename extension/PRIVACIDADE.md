@@ -32,7 +32,7 @@ fica guardada.
 
 O destino é fixo e conferido em duas camadas: a lista de origens permitidas
 em `src/preferencias.ts` e as `host_permissions` do manifesto. Só valem
-`https://tradugil.app` e `http://localhost:8080`, o segundo para quem roda o
+`https://tradugil.duckdns.org` e `http://localhost:8080`, o segundo para quem roda o
 servidor na própria máquina durante o desenvolvimento. Uma preferência
 adulterada apontando para outro servidor é recusada antes da requisição.
 

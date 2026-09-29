@@ -43,7 +43,7 @@ O atalho pode colidir com o de outra extensão. Se não responder, veja em
 
 ## Apontando para o servidor local
 
-O padrão é `https://tradugil.app`. Para desenvolver contra a API rodando na
+O padrão é `https://tradugil.duckdns.org`. Para desenvolver contra a API rodando na
 sua máquina, abra o popup, expanda **Servidor** e troque para
 `http://localhost:8080`.
 

@@ -28,7 +28,7 @@
 
   "host_permissions": [
     "http://localhost:8080/*",
-    "https://tradugil.app/*"
+    "https://tradugil.duckdns.org/*"
   ],
 
   "commands": {

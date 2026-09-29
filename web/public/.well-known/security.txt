@@ -4,13 +4,30 @@
 # ter um caminho obvio ate quem consegue resolver, em vez de precisar caçar um
 # contato ou desistir e publicar o achado.
 
-Contact: mailto:seguranca@tradugil.app
+# O CONTATO E UM FORMULARIO, E NAO UM E-MAIL, DE PROPOSITO.
+#
+# O endereco do site e um DuckDNS, e DuckDNS da nome, nao caixa de correio:
+# nao existe seguranca@tradugil.duckdns.org para receber nada. As saidas eram
+# publicar um e-mail pessoal aqui, que e um endereco exposto para sempre em
+# um arquivo feito para ser lido por robo, ou usar o canal que o proprio
+# GitHub oferece.
+#
+# O relato privado do GitHub e melhor nos dois sentidos: chega com o codigo
+# do lado, nasce privado ate a correcao sair, e nao depende de eu lembrar de
+# olhar uma caixa de entrada. A RFC aceita URL no Contact exatamente para
+# casos assim.
+Contact: https://github.com/Everett-gi/tradugil/security/advisories/new
 Preferred-Languages: pt-BR, en
-Canonical: https://tradugil.app/.well-known/security.txt
+Canonical: https://tradugil.duckdns.org/.well-known/security.txt
 
 # Data em que este arquivo deixa de valer. A RFC exige, e por um bom motivo:
 # um contato sem prazo vira um endereco morto que ninguem percebe que morreu.
-Expires: 2027-09-07T00:00:00.000Z
+#
+# Curto de proposito enquanto o endereco for emprestado: um nome DuckDNS
+# abandonado volta para a fila e outra pessoa pode registrar, e um
+# security.txt com anos de validade apontando para um site que nao e mais
+# nosso mandaria relatos para o lugar errado.
+Expires: 2027-03-29T00:00:00.000Z
 
 # O codigo e aberto. Ler a implementacao antes de reportar costuma poupar
 # tempo dos dois lados.

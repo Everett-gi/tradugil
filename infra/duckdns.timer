@@ -1,0 +1,22 @@
+# De cinco em cinco minutos.
+#
+# O intervalo nao e escolha de precisao: o IP muda raramente, e o que importa
+# e o tempo que o site fica fora quando muda. Cinco minutos e o que o proprio
+# DuckDNS recomenda, e mais frequente que isso so gasta requisicao.
+
+[Unit]
+Description=Mantem o nome do Tradugil apontando para esta maquina
+
+[Timer]
+# Logo no boot, porque e quando o IP tem mais chance de ter mudado.
+OnBootSec=1min
+OnUnitActiveSec=5min
+# Sem isto, todas as maquinas do mundo que copiaram esta configuracao
+# chamariam o DuckDNS no mesmo segundo.
+RandomizedDelaySec=30
+# Roda o que ficou para tras enquanto a maquina esteve desligada, em vez de
+# esperar o proximo intervalo inteiro.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

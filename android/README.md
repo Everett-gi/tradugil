@@ -59,7 +59,7 @@ A URL vem do `BuildConfig`, não de uma constante no código:
 - **debug** → `http://10.0.2.2:8080` (como o emulador enxerga o `localhost`
   da máquina que o hospeda). Em aparelho físico, troque pelo IP da máquina
   na rede local.
-- **release** → `https://tradugil.app`
+- **release** → `https://tradugil.duckdns.org`
 
 Estão em `app/build.gradle.kts`.
 

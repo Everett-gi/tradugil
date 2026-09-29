@@ -1,0 +1,37 @@
+# Uma atualizacao do IP no DuckDNS. Disparada pelo duckdns.timer.
+#
+#   sudo install -m 644 duckdns.service duckdns.timer /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now duckdns.timer
+#   systemctl list-timers duckdns.timer
+
+[Unit]
+Description=Atualiza o IP do Tradugil no DuckDNS
+# Sem rede nao ha o que atualizar, e falhar na inicializacao encheria o
+# journal de erro todo boot.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/duckdns-atualiza.sh
+
+# O script le um token. Nao precisa de nada da maquina alem de rede, entao
+# tudo o mais fica fechado: se um dia ele for trocado por algo com defeito,
+# o estrago possivel e pequeno.
+DynamicUser=yes
+# O arquivo de ambiente e 600 e pertence ao root, e o DynamicUser nao o le.
+# Carregado pelo systemd, que roda como root, e entregue ao processo ja como
+# variavel de ambiente.
+EnvironmentFile=/etc/tradugil/duckdns.env
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+# AF_UNIX entra junto, e nao e detalhe: no Ubuntu o glibc resolve nomes
+# falando com o systemd-resolved por socket de dominio unix. Sem ele, o
+# curl nao resolveria www.duckdns.org e o timer falharia a cada cinco
+# minutos com um erro de DNS que nada explica.
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+SystemCallFilter=@system-service

@@ -311,6 +311,37 @@ mais faz um APK de fora da loja parecer malicioso para um antivírus.
 contato e prazo de validade, para quem encontrar uma falha ter caminho até
 quem resolve.
 
+## O endereço é emprestado, e isso muda duas decisões
+
+Em 29 de setembro de 2026 ficou decidido usar um DuckDNS
+(`tradugil.duckdns.org`) enquanto não houver domínio próprio. O TLS é igual:
+o Caddy pede o certificado à Let's Encrypt pelo desafio HTTP-01, que só
+precisa das portas abertas e do nome resolvendo para a máquina. Não há nada
+de segunda classe no certificado.
+
+O que muda é o que se promete com prazo longo, porque um nome DuckDNS
+abandonado volta para a fila e outra pessoa pode registrar:
+
+- **HSTS caiu de um ano para uma semana.** HSTS é uma promessa que o
+  navegador guarda mesmo depois de o site sumir. Uma semana ainda cobre o
+  ataque que o cabeçalho existe para impedir para quem usa o site com alguma
+  regularidade, sem deixar um ano de promessa presa nos navegadores sobre um
+  nome que pode não ser mais nosso.
+- **O `Expires` do `security.txt` caiu para seis meses**, pelo mesmo motivo:
+  um arquivo de contato com anos de validade apontando para um site que
+  trocou de dono manda relatos de falha para o lugar errado.
+
+Uma coisa que **não** é problema, e parece: `evil.duckdns.org` não consegue
+ler nem escrever nada do Tradugil. `duckdns.org` está na Public Suffix List
+(verificado na lista publicada), então o navegador o trata como se fosse um
+domínio de topo: cookie com escopo `.duckdns.org` é recusado, e
+`localStorage`, IndexedDB e service worker são por origem desde sempre.
+
+O `Contact` do `security.txt` aponta para o relato privado do GitHub, e não
+para um e-mail. DuckDNS dá nome, não caixa de correio, e as alternativas
+eram publicar um e-mail pessoal num arquivo feito para robô ler ou usar o
+canal que já existe.
+
 ## O que ainda não está feito
 
 Escrito aqui porque uma lista de defesas sem a lista de buracos é propaganda.

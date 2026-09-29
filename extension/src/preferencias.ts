@@ -24,7 +24,7 @@ export type Preferencias = {
 };
 
 export const PADRAO: Preferencias = {
-  urlDaApi: "https://tradugil.app",
+  urlDaApi: "https://tradugil.duckdns.org",
   modoFamilia: true,
 };
 
@@ -35,7 +35,7 @@ export const PADRAO: Preferencias = {
  * impede que uma preferencia corrompida mande texto selecionado para um
  * servidor qualquer.
  */
-const ORIGENS_PERMITIDAS = ["https://tradugil.app", "http://localhost:8080"];
+const ORIGENS_PERMITIDAS = ["https://tradugil.duckdns.org", "http://localhost:8080"];
 
 export function origemPermitida(url: string): boolean {
   try {

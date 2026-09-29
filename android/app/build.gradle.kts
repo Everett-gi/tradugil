@@ -71,7 +71,7 @@ android {
             buildConfigField("String", "URL_DA_API", "\"http://10.0.2.2:8080\"")
         }
         release {
-            buildConfigField("String", "URL_DA_API", "\"https://tradugil.app\"")
+            buildConfigField("String", "URL_DA_API", "\"https://tradugil.duckdns.org\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

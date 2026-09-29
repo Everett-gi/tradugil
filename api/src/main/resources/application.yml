@@ -117,7 +117,13 @@ tradugil:
     # producao nem precisa desta lista: o Caddy serve site e API na mesma
     # origem, e requisicao de mesma origem nao passa por CORS. Quem precisa
     # dela e a extensao de navegador.
-    origens: https://tradugil.app,https://www.tradugil.app
+    #
+    # O endereco e um DuckDNS por enquanto (decidido em 29 de setembro de
+    # 2026): gratuito, e serve para colocar o Tradugil no ar e mostrar para
+    # alguem. Quando houver dominio proprio, esta linha e a do Caddyfile
+    # mudam juntas, e a extensao precisa de uma versao nova, porque a lista
+    # de origens dela vive no manifesto.
+    origens: https://tradugil.duckdns.org
 
   documentacao:
     # A documentacao descreve toda a superficie da API: e material de trabalho

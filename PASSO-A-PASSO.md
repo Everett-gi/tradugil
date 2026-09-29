@@ -3,7 +3,7 @@
 Este arquivo é a lista do que **só você pode fazer**: coisas que pedem uma
 conta, um cartão ou uma decisão sua. O que é código já está no repositório.
 
-Estado em 7 de setembro de 2026.
+Estado em 29 de setembro de 2026.
 
 ## Já está pronto
 
@@ -16,6 +16,7 @@ Nada a fazer nestes:
 | Chave de assinatura do APK | `android/tradugil.jks` gerada, fora do git |
 | APK assinado | `android/app/build/outputs/apk/release/app-release.apk` |
 | Repositório e CI | 6 jobs, todos verdes |
+| Escolha do endereço | **DuckDNS**, decidido em 29/09. O código já está todo apontando para `tradugil.duckdns.org` |
 
 ## 1. Guardar a chave de assinatura fora desta máquina
 
@@ -46,33 +47,53 @@ Se você usa um gerenciador de senhas, guarde a senha lá também. Perder o
 
 Faça isso hoje. Um disco não avisa antes de falhar.
 
-## 2. Um endereço na internet
+## 2. Registrar o nome no DuckDNS
 
-Hoje o Tradugil só roda na sua máquina. Para outra pessoa acessar, precisa
-de um endereço.
+**Decidido: DuckDNS.** O endereço vai ser `tradugil.duckdns.org`, e o código
+já está todo apontando para ele: o `Caddyfile`, o CORS da API, o manifesto da
+extensão e a URL da build de release do Android.
 
-### Opção gratuita: DuckDNS
-
-Serve para testar e mostrar para alguém. O endereço fica no formato
-`tradugil.duckdns.org`.
+São três minutos:
 
 1. Abra <https://www.duckdns.org> e entre com Google, GitHub ou Reddit.
 2. No campo do topo, digite `tradugil` e clique em **add domain**.
-3. Guarde o **token** que aparece na página. Ele é a senha do serviço:
-   trate como senha, não cole em lugar nenhum público.
+3. A página mostra um **token**. Guarde no gerenciador de senhas.
 
-### Opção paga: registro.br
+**O token é a senha do serviço:** quem o tem aponta `tradugil.duckdns.org`
+para o servidor que quiser. Não cole aqui no chat, não coloque no
+repositório. Ele vai direto no servidor, em `/etc/tradugil/duckdns.env`,
+quando chegarmos no item 3.
 
-Cerca de R$ 40 por ano, e dá um `tradugil.com.br`. Vale quando o projeto
-sair do teste, porque um endereço próprio é o que faz o site parecer um
-produto e não um experimento.
+Nada trava enquanto o nome não existir: o servidor só precisa dele na hora de
+pedir o certificado.
 
-1. Abra <https://registro.br>, crie conta com CPF.
-2. Busque `tradugil.com.br` e conclua o pagamento (boleto ou Pix).
-3. O domínio fica ativo em algumas horas.
+### Uma coisa que o DuckDNS exige a mais
 
-**Escolha uma das duas e me avise qual.** A configuração do servidor muda
-conforme a escolha, e eu já deixo o `infra/Caddyfile` pronto.
+O nome só continua apontando para o servidor enquanto alguém disser qual é o
+IP, e a Oracle Cloud entrega IP efêmero por padrão. Sem isso o site para de
+responder um dia, sem erro em lugar nenhum: o DNS aponta para um endereço que
+não é mais nosso.
+
+Já está resolvido no repositório, e é só instalar quando a máquina existir:
+`infra/duckdns-atualiza.sh` com `duckdns.service` e `duckdns.timer` ao lado,
+que atualizam de cinco em cinco minutos. As instruções estão no cabeçalho do
+próprio script.
+
+### Quando valer a pena trocar por um domínio próprio
+
+`registro.br` custa cerca de R$ 40 por ano e dá um `tradugil.com.br`. Vale
+quando o projeto sair do teste, porque endereço próprio é o que faz o site
+parecer produto e não experimento.
+
+A troca é barata do meu lado: quatro arquivos mudam juntos, e eu faço. O
+único ponto que não é instantâneo é a extensão, porque a lista de endereços
+permitidos vive no manifesto e exige publicar uma versão nova na loja.
+
+Enquanto for DuckDNS, duas configurações ficam mais curtas de propósito: o
+HSTS (uma semana em vez de um ano) e a validade do `security.txt` (seis meses
+em vez de um ano). O motivo está em [`docs/SEGURANCA.md`](docs/SEGURANCA.md):
+nome DuckDNS abandonado volta para a fila e outra pessoa pode registrar, e
+promessa longa sobre nome emprestado é herança que ninguém pediu.
 
 ## 3. Um servidor
 
@@ -90,7 +111,8 @@ projeto inteiro com folga: 4 núcleos ARM, 24 GB de memória.
 4. Espere o e-mail de confirmação. Pode levar de minutos a algumas horas.
 
 Quando a conta estiver de pé, me avise: eu passo o passo a passo de criar a
-máquina, abrir as portas e subir a aplicação.
+máquina, abrir as portas, instalar o atualizador do DuckDNS e subir a
+aplicação.
 
 **Cuidado com uma pegadinha conhecida:** ao criar a máquina, o formato
 `VM.Standard.A1.Flex` é o gratuito. O `VM.Standard.E2.1.Micro` também é,
@@ -130,5 +152,12 @@ Vale saber de dois efeitos dessa escolha:
 
 ## Se você tiver 20 minutos hoje
 
-Faça o item 1 (guardar a chave) e comece o item 3 (a conta na Oracle, que
-demora para aprovar). Os outros esperam.
+Nesta ordem:
+
+1. **Guardar a chave** (item 1). É o único item sem conserto depois.
+2. **Registrar o `tradugil` no DuckDNS** (item 2). Três minutos, e já
+   destrava o certificado quando o servidor existir.
+3. **Começar a conta na Oracle** (item 3), que demora para aprovar e por
+   isso vale disparar cedo.
+
+O item 4 (IA) e o 5 (Play Store) esperam.
