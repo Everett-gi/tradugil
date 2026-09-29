@@ -260,7 +260,18 @@ jobs:
       packages: write
 
     env:
-      REGISTRO: ghcr.io/${{ github.repository_owner }}
+      # MINUSCULO, E ESCRITO NA MAO.
+      #
+      # `github.repository_owner` devolve "Everett-gi", com E maiusculo, e o
+      # GHCR recusa: "repository name must be lowercase". As expressoes do
+      # Actions nao tem funcao para baixar caixa, entao a saida seria um passo
+      # so para isso.
+      #
+      # Escrito aqui tem uma vantagem que compensa: este valor PRECISA bater
+      # com o `image:` do docker-compose.yml, que e o que o servidor baixa.
+      # Gerado por expressao, os dois poderiam divergir sem ninguem ver; lado
+      # a lado no texto, a divergencia aparece na revisao.
+      REGISTRO: ghcr.io/everett-gi
 
     steps:
       - uses: actions/checkout@v4
